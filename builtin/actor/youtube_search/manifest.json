@@ -2,15 +2,15 @@
   "actor_id": "builtin.youtube_search_nab",
   "version": "1.0.0",
   "enabled": true,
-  "title": "Search YouTube for NAB",
-  "description": "Fill the YouTube search box with NAB when the active tab is YouTube.",
+  "title": "Search YouTube for kpop",
+  "description": "Offers to search kpop on YouTube when the active tab is YouTube.",
   "activation": {
     "mode": "desktop_option",
     "priority": "normal",
-    "button_label": "Type NAB"
+    "button_label": "Search kpop"
   },
   "trigger": {
-    "polling_interval_seconds": 1,
+    "polling_interval_seconds": 0.5,
     "filters": {
       "app_patterns": [
         "Google Chrome",

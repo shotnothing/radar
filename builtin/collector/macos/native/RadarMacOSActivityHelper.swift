@@ -22,6 +22,60 @@ func writeJSON(_ object: [String: Any]) {
     }
 }
 
+func isSupportedTerminalContext(_ context: [String: Any]) -> Bool {
+    let bundleID = (context["bundle_id"] as? String ?? "").lowercased()
+    let appName = (context["app_name"] as? String ?? "").lowercased()
+    let supportedBundleIDs: Set<String> = [
+        "com.apple.terminal",
+        "com.googlecode.iterm2",
+        "dev.warp.warp-stable",
+        "io.alacritty",
+        "com.github.wez.wezterm",
+        "net.kovidgoyal.kitty",
+        "co.zeit.hyper",
+        "com.microsoft.vscode",
+        "com.jetbrains.intellij.ce",
+        "com.jetbrains.intellij",
+        "com.jetbrains.goland",
+        "com.jetbrains.pycharm",
+        "com.jetbrains.pycharm.ce",
+        "com.jetbrains.webstorm",
+        "com.todesktop.230313mzl4w4u92"
+    ]
+    let supportedAppNames: Set<String> = [
+        "terminal",
+        "iterm",
+        "iterm2",
+        "warp",
+        "alacritty",
+        "wezterm",
+        "kitty",
+        "hyper",
+        "visual studio code",
+        "code",
+        "cursor",
+        "intellij idea",
+        "goland",
+        "pycharm",
+        "webstorm"
+    ]
+    return supportedBundleIDs.contains(bundleID) || supportedAppNames.contains(appName)
+}
+
+func characters(from event: CGEvent) -> String? {
+    var length = 0
+    var chars = [UniChar](repeating: 0, count: 8)
+    event.keyboardGetUnicodeString(
+        maxStringLength: chars.count,
+        actualStringLength: &length,
+        unicodeString: &chars
+    )
+    if length <= 0 {
+        return nil
+    }
+    return String(utf16CodeUnits: chars, count: length)
+}
+
 func stringAttribute(_ element: AXUIElement, _ attribute: CFString) -> String? {
     var value: CFTypeRef?
     let error = AXUIElementCopyAttributeValue(element, attribute, &value)
@@ -135,6 +189,36 @@ func emitEvent(name: String, fields: [String: Any]) {
     }
 }
 
+func emitKeyInput(event: CGEvent) {
+    let observedAt = epochMs()
+    let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+    let text = characters(from: event)
+    captureQueue.async {
+        let context = foregroundContext()
+        if !isSupportedTerminalContext(context) {
+            return
+        }
+
+        var fields: [String: Any] = [
+            "key_code": keyCode
+        ]
+        if let text, !text.isEmpty {
+            fields["text"] = text
+        }
+
+        var payload: [String: Any] = [
+            "type": "event",
+            "event_name": "key_input",
+            "observed_at": observedAt,
+            "context": context
+        ]
+        for (key, value) in fields {
+            payload[key] = value
+        }
+        writeJSON(payload)
+    }
+}
+
 let eventCallback: CGEventTapCallBack = { _, type, event, _ in
     switch type {
     case .leftMouseDown:
@@ -144,6 +228,7 @@ let eventCallback: CGEventTapCallBack = { _, type, event, _ in
     case .otherMouseDown:
         emitEvent(name: "mouse_click", fields: ["button": "other"])
     case .keyDown:
+        emitKeyInput(event: event)
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         if keyCode == 36 || keyCode == 76 {
             emitEvent(name: "enter_key", fields: ["key_code": keyCode])

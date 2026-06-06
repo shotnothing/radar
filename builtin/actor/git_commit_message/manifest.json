@@ -1,0 +1,30 @@
+{
+  "actor_id": "builtin.git_commit_message",
+  "version": "1.0.0",
+  "enabled": true,
+  "title": "Generate Git commit message",
+  "description": "Offers to generate and copy a commit message when a supported terminal is ready at git commit.",
+  "activation": {
+    "mode": "desktop_option",
+    "priority": "normal",
+    "button_label": "Generate"
+  },
+  "trigger": {
+    "polling_interval_seconds": 1,
+    "filters": {},
+    "should_trigger": {
+      "command": [
+        "python3",
+        "should_trigger.py"
+      ],
+      "timeout_seconds": 8
+    }
+  },
+  "action": {
+    "command": [
+      "python3",
+      "action.py"
+    ],
+    "timeout_seconds": 60
+  }
+}

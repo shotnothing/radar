@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -110,7 +111,7 @@ class ActorRuntimeTest(unittest.TestCase):
             output = runtime.should_trigger("builtin.youtube_search_nab")
 
             self.assertTrue(output["available"])
-            self.assertEqual(output["action_context"]["query"], "NAB")
+            self.assertEqual(output["action_context"]["query"], "kpop")
             self.assertIn("action_request", output)
 
     def test_youtube_actor_filter_skips_non_youtube(self) -> None:
@@ -402,6 +403,59 @@ class ActorRuntimeTest(unittest.TestCase):
 
             self.assertFalse(result["available"])
             self.assertIn("No Radar skill entries", result["reason"])
+
+    def test_codex_skill_actor_falls_back_to_recent_codex_session_cwd(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            repo = root / "workspace" / "radar"
+            repo.mkdir(parents=True)
+            (repo / ".git").mkdir()
+            repo = repo.resolve()
+
+            codex_home = root / "codex"
+            session_file = codex_home / "sessions" / "2026" / "06" / "06" / "session.jsonl"
+            session_file.parent.mkdir(parents=True)
+            session_file.write_text(
+                json.dumps(
+                    {
+                        "type": "session_meta",
+                        "payload": {
+                            "cwd": str(repo),
+                        },
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            skill_dir = (root / "skill").resolve()
+            repo_skill = codex_skill_lib.project_skill_path(skill_dir, repo)
+            repo_skill.mkdir(parents=True)
+            (skill_dir / "SKILL.md").write_text("# Radar Coding Memory\n", encoding="utf-8")
+            (repo_skill / "common_workflows.md").write_text("# Common Workflows\n", encoding="utf-8")
+
+            previous_codex_home = os.environ.get("CODEX_HOME")
+            os.environ["CODEX_HOME"] = str(codex_home)
+            try:
+                result = codex_skill_lib.find_available_skill(
+                    {
+                        "active_context": {
+                            "app_name": "Codex",
+                            "window_title": "Codex",
+                        }
+                    },
+                    {"success": True, "data": {"app_name": "Codex", "tree": {}}},
+                    skill_dir,
+                )
+            finally:
+                if previous_codex_home is None:
+                    os.environ.pop("CODEX_HOME", None)
+                else:
+                    os.environ["CODEX_HOME"] = previous_codex_home
+
+            self.assertTrue(result["available"])
+            self.assertEqual(result["repo_path"], str(repo))
+            self.assertEqual(result["repo_source"], "recent_codex_session")
 
 
 if __name__ == "__main__":

@@ -7,13 +7,17 @@ import { io } from "socket.io-client";
 import {
   Bell,
   Bot,
+  CalendarCheck2,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
   Chrome,
+  ClipboardCheck,
   Cpu,
   DatabaseZap,
   FileText,
+  GitCommitHorizontal,
+  GitPullRequest,
   Link2,
   Layers2,
   Loader2,
@@ -21,6 +25,7 @@ import {
   MessageCircle,
   Play,
   RefreshCw,
+  Send,
   Settings2,
   Sparkles,
   Square,
@@ -49,6 +54,25 @@ type Suggestion = {
   primary_action: string;
   actor_id?: string;
   trigger_id?: string;
+};
+
+type ActorRunResponse = {
+  ok: boolean;
+  output?: {
+    success?: boolean;
+    message?: string;
+    action?: {
+      commit_message?: string;
+      repo_path?: string;
+      branch?: string;
+    };
+  };
+  error?: string;
+};
+
+type AssistantRunState = {
+  status: "idle" | "running" | "result" | "error";
+  message: string;
 };
 
 type PredictionPattern = {
@@ -272,8 +296,8 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
   actor: [
     {
       id: "actor.youtube_search_nab",
-      name: "YouTube Search NAB",
-      description: "Fills the active YouTube search box with NAB.",
+      name: "YouTube Search kpop",
+      description: "Offers to search kpop on YouTube.",
       status: "builtin.youtube_search_nab",
       icon: Workflow,
       defaultEnabled: true,
@@ -309,6 +333,54 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       status: "builtin.codex_use_radar_skill",
       icon: Bot,
       defaultEnabled: true,
+    },
+    {
+      id: "actor.git_commit_message",
+      name: "Git Commit Message",
+      description: "Generates and copies a commit message when a terminal is at git commit.",
+      status: "builtin.git_commit_message",
+      icon: GitCommitHorizontal,
+      defaultEnabled: true,
+    },
+    {
+      id: "actor.meeting_brief",
+      name: "Meeting Brief",
+      description: "Prepares agenda, attendees, and recent context before a calendar event.",
+      status: "demo.meeting_brief",
+      icon: CalendarCheck2,
+      defaultEnabled: false,
+    },
+    {
+      id: "actor.gmail_follow_up",
+      name: "Gmail Follow-up",
+      description: "Drafts a polite follow-up when an email thread is waiting on a reply.",
+      status: "demo.gmail_follow_up",
+      icon: Mail,
+      defaultEnabled: false,
+    },
+    {
+      id: "actor.seatalk_action_items",
+      name: "SeaTalk Action Items",
+      description: "Turns recent chat decisions into a concise task list or reminder draft.",
+      status: "demo.seatalk_action_items",
+      icon: ClipboardCheck,
+      defaultEnabled: false,
+    },
+    {
+      id: "actor.pr_review_prep",
+      name: "PR Review Prep",
+      description: "Summarizes changed files and opens a focused review checklist for a branch.",
+      status: "demo.pr_review_prep",
+      icon: GitPullRequest,
+      defaultEnabled: false,
+    },
+    {
+      id: "actor.send_status_update",
+      name: "Status Update Sender",
+      description: "Composes a short project update from recent work and sends it to chat.",
+      status: "demo.status_update_sender",
+      icon: Send,
+      defaultEnabled: false,
     },
   ],
   connection: [],
@@ -539,6 +611,10 @@ function AssistantWindow() {
     null
   );
   const [queue, setQueue] = useState<Suggestion[]>([]);
+  const [runState, setRunState] = useState<AssistantRunState>({
+    status: "idle",
+    message: "",
+  });
   const currentSuggestionRef = useRef<Suggestion | null>(null);
   const queueRef = useRef<Suggestion[]>([]);
 
@@ -596,24 +672,61 @@ function AssistantWindow() {
   }, []);
 
   function activateSuggestion(suggestion: Suggestion) {
+    setRunState({ status: "idle", message: "" });
     currentSuggestionRef.current = suggestion;
     setCurrentSuggestion(suggestion);
   }
 
-  async function completeCurrent(runActor = false) {
+  async function dismissCurrent() {
     const suggestion = currentSuggestionRef.current;
     if (suggestion?.actor_id && suggestion.trigger_id) {
       try {
         await invoke("complete_actor_suggestion", {
           actorId: suggestion.actor_id,
           triggerId: suggestion.trigger_id,
-          run: runActor,
+          run: false,
         });
       } catch (error) {
-        console.error("Failed to complete actor suggestion:", error);
+        console.error("Failed to dismiss actor suggestion:", error);
       }
     }
 
+    await advanceSuggestion();
+  }
+
+  async function runCurrentAction() {
+    const suggestion = currentSuggestionRef.current;
+    if (suggestion?.actor_id && suggestion.trigger_id) {
+      setRunState({ status: "running", message: "" });
+      try {
+        const response = await invoke<ActorRunResponse>("complete_actor_suggestion", {
+          actorId: suggestion.actor_id,
+          triggerId: suggestion.trigger_id,
+          run: true,
+        });
+        const commitMessage = response.output?.action?.commit_message;
+        if (commitMessage) {
+          setRunState({
+            status: "result",
+            message: `Commit message copied to clipboard:\n\n${commitMessage}`,
+          });
+          return;
+        }
+        await advanceSuggestion();
+      } catch (error) {
+        console.error("Failed to complete actor suggestion:", error);
+        setRunState({
+          status: "error",
+          message: `Failed to run action: ${String(error)}`,
+        });
+      }
+      return;
+    }
+
+    await advanceSuggestion();
+  }
+
+  async function advanceSuggestion() {
     const [nextSuggestion, ...remainingSuggestions] = queueRef.current;
     queueRef.current = remainingSuggestions;
     setQueue(remainingSuggestions);
@@ -625,7 +738,8 @@ function AssistantWindow() {
 
     currentSuggestionRef.current = null;
     setCurrentSuggestion(null);
-    await getCurrentWindow().hide();
+    setRunState({ status: "idle", message: "" });
+    await invoke("dismiss_assistant_window");
   }
 
   if (!currentSuggestion) {
@@ -659,7 +773,13 @@ function AssistantWindow() {
         </header>
 
         <section className="message">
-          <ReactMarkdown>{`**${currentSuggestion.title}**\n\n${currentSuggestion.body}`}</ReactMarkdown>
+          <ReactMarkdown>
+            {runState.status === "idle"
+              ? `**${currentSuggestion.title}**\n\n${currentSuggestion.body}`
+              : runState.status === "running"
+                ? `**Generating commit message**\n\nAnalyzing the current Git diff...`
+                : `**${runState.status === "error" ? "Action failed" : "Commit message ready"}**\n\n${runState.message}`}
+          </ReactMarkdown>
         </section>
 
         <section className="controls" aria-label="Suggestion actions">
@@ -668,18 +788,34 @@ function AssistantWindow() {
             variant="ghost"
             size="sm"
             className="h-7 rounded-[9px] px-2.5 text-xs text-slate-600 hover:bg-white/65 hover:text-slate-900"
-            onClick={() => void completeCurrent(false)}
+            onClick={(event) => {
+              event.stopPropagation();
+              void dismissCurrent();
+            }}
           >
-            Dismiss
+            {runState.status === "result" || runState.status === "error" ? "Done" : "Dismiss"}
           </Button>
-          <Button
-            type="button"
-            size="sm"
-            className="h-7 rounded-[9px] bg-slate-950 px-2.5 text-xs text-white shadow-sm hover:bg-slate-800"
-            onClick={() => void completeCurrent(true)}
-          >
-            {currentSuggestion.primary_action}
-          </Button>
+          {runState.status === "idle" || runState.status === "running" ? (
+            <Button
+              type="button"
+              size="sm"
+              disabled={runState.status === "running"}
+              className="h-7 rounded-[9px] bg-slate-950 px-2.5 text-xs text-white shadow-sm hover:bg-slate-800"
+              onClick={(event) => {
+                event.stopPropagation();
+                void runCurrentAction();
+              }}
+            >
+              {runState.status === "running" ? (
+                <>
+                  <Loader2 size={13} className="animate-spin" />
+                  Generating
+                </>
+              ) : (
+                currentSuggestion.primary_action
+              )}
+            </Button>
+          ) : null}
         </section>
       </div>
     </Card>

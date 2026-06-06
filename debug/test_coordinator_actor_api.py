@@ -101,7 +101,7 @@ class CoordinatorActorAPILiveTest(unittest.TestCase):
             )
             self.assertTrue(filled["success"], filled)
             selectors = filled.get("selectors") or {}
-            self.assertEqual(selectors.get("search_value"), "NAB", filled)
+            self.assertEqual(selectors.get("search_value"), "kpop", filled)
         finally:
             process.terminate()
             try:

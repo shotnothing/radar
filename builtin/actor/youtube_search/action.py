@@ -13,7 +13,7 @@ SEARCH_SELECTOR = "input#search, input[name='search_query'], ytd-searchbox input
 def main() -> None:
     payload = json.load(sys.stdin)
     action_context = payload.get("action_context") or {}
-    query = action_context.get("query") or "NAB"
+    query = action_context.get("query") or "kpop"
     api_url = os.environ["RADAR_API_URL"].rstrip("/")
     token = os.environ.get("RADAR_API_TOKEN", "")
 

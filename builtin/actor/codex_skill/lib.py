@@ -8,6 +8,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+import time
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,7 @@ ABS_PATH_RE = re.compile(
 )
 TRAILING_PATH_CHARS = ".,;:)]}"
 NON_SLUG_RE = re.compile(r"[^a-zA-Z0-9._-]+")
+RECENT_CODEX_SESSION_MAX_AGE_SECONDS = 6 * 60 * 60
 
 
 def safe_slug(value: object) -> str:
@@ -31,6 +33,10 @@ def safe_slug(value: object) -> str:
 
 def default_skill_dir() -> Path:
     return Path(os.environ.get("RADAR_SKILL_DIR", "~/.radar/skill")).expanduser().resolve()
+
+
+def codex_home() -> Path:
+    return Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser().resolve()
 
 
 def read_stdin_json() -> dict[str, Any]:
@@ -154,6 +160,68 @@ def resolve_repo_path(paths: list[Path]) -> Path | None:
     return None
 
 
+def recent_codex_session_paths(limit: int = 8) -> list[Path]:
+    sessions_root = codex_home() / "sessions"
+    try:
+        paths = [path for path in sessions_root.glob("**/*.jsonl") if path.is_file()]
+    except OSError:
+        return []
+
+    now = time.time()
+    fresh_paths: list[Path] = []
+    for path in paths:
+        try:
+            if now - path.stat().st_mtime <= RECENT_CODEX_SESSION_MAX_AGE_SECONDS:
+                fresh_paths.append(path)
+        except OSError:
+            continue
+
+    return sorted(fresh_paths, key=lambda path: path.stat().st_mtime, reverse=True)[:limit]
+
+
+def extract_path_from_codex_event(event: dict[str, Any]) -> Path | None:
+    payload = event.get("payload") or {}
+    cwd = payload.get("cwd")
+    if cwd:
+        return Path(str(cwd)).expanduser()
+
+    arguments = payload.get("arguments")
+    if isinstance(arguments, str) and arguments.strip():
+        try:
+            parsed_arguments = json.loads(arguments)
+        except json.JSONDecodeError:
+            parsed_arguments = {}
+        workdir = parsed_arguments.get("workdir") if isinstance(parsed_arguments, dict) else ""
+        if workdir:
+            return Path(str(workdir)).expanduser()
+
+    return None
+
+
+def extract_paths_from_recent_codex_sessions() -> list[Path]:
+    paths: list[Path] = []
+    seen: set[str] = set()
+    for session_path in recent_codex_session_paths():
+        try:
+            lines = session_path.read_text(encoding="utf-8").splitlines()
+        except OSError:
+            continue
+        for line in reversed(lines):
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            candidate = extract_path_from_codex_event(event)
+            if candidate is None:
+                continue
+            key = str(candidate)
+            if key in seen:
+                continue
+            seen.add(key)
+            paths.append(candidate)
+    return paths
+
+
 def project_skill_path(skill_dir: Path, repo_path: Path) -> Path:
     try:
         resolved_repo = repo_path.resolve()
@@ -181,6 +249,10 @@ def find_available_skill(
         return {"available": False, "reason": "Codex is not the active app."}
 
     repo_path = resolve_repo_path(extract_candidate_paths(payload, accessibility))
+    repo_source = "accessibility"
+    if repo_path is None:
+        repo_path = resolve_repo_path(extract_paths_from_recent_codex_sessions())
+        repo_source = "recent_codex_session"
     if repo_path is None:
         return {"available": False, "reason": "Could not find the active Codex repository from the AX tree."}
 
@@ -198,6 +270,7 @@ def find_available_skill(
         "repo_path": str(repo_path),
         "skill_path": str(skill_dir),
         "repo_skill_path": str(repo_skill_path),
+        "repo_source": repo_source,
     }
 
 

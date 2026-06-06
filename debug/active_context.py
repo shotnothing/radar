@@ -119,6 +119,9 @@ class MacOSActiveContextReader:
             set frontProc to first application process whose frontmost is true
             set appName to name of frontProc
             set bundleId to ""
+            try
+                set bundleId to bundle identifier of frontProc
+            end try
             set windowTitle to ""
             try
                 set windowTitle to name of front window of frontProc
@@ -225,12 +228,30 @@ class MacOSActiveContextReader:
 
         on attr(el, attrName)
             try
-                if attrName is "name" then return name of el as text
-                if attrName is "role" then return role of el as text
-                if attrName is "subrole" then return subrole of el as text
-                if attrName is "title" then return title of el as text
-                if attrName is "value" then return value of el as text
-                if attrName is "description" then return description of el as text
+                if attrName is "name" then
+                    tell application "System Events" to set attrValue to value of attribute "AXTitle" of el as text
+                    return attrValue
+                end if
+                if attrName is "role" then
+                    tell application "System Events" to set attrValue to value of attribute "AXRole" of el as text
+                    return attrValue
+                end if
+                if attrName is "subrole" then
+                    tell application "System Events" to set attrValue to value of attribute "AXSubrole" of el as text
+                    return attrValue
+                end if
+                if attrName is "title" then
+                    tell application "System Events" to set attrValue to value of attribute "AXTitle" of el as text
+                    return attrValue
+                end if
+                if attrName is "value" then
+                    tell application "System Events" to set attrValue to value of attribute "AXValue" of el as text
+                    return attrValue
+                end if
+                if attrName is "description" then
+                    tell application "System Events" to set attrValue to value of attribute "AXDescription" of el as text
+                    return attrValue
+                end if
             end try
             return ""
         end attr
@@ -264,10 +285,10 @@ class MacOSActiveContextReader:
             set out to out & "\"children\":["
             if depth < maxDepth then
                 try
-                    tell application "System Events" to set kids to UI elements of el
-                    set n to count of kids
-                    if n > 80 then set n to 80
-                    repeat with i from 1 to n
+                    tell application "System Events" to set kids to value of attribute "AXChildren" of el
+                    set limitCount to count of kids
+                    if limitCount > 80 then set limitCount to 80
+                    repeat with i from 1 to limitCount
                         if i > 1 then set out to out & ","
                         set out to out & my dumpNode(item i of kids, depth + 1, maxDepth)
                     end repeat

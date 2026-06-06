@@ -57,12 +57,12 @@ def main() -> None:
                 "available": True,
                 "reason": "Active browser tab is YouTube.",
                 "presentation": {
-                    "title": "Search YouTube for NAB",
-                    "message": "Fill the YouTube search box with NAB.",
-                    "button_label": "Type NAB",
+                    "title": "You might want to search kpop",
+                    "message": "Search kpop on YouTube automatically.",
+                    "button_label": "Search kpop",
                 },
                 "action_context": {
-                    "query": "NAB",
+                    "query": "kpop",
                     "url": url,
                 },
                 "debounce_seconds": 30,

@@ -21,7 +21,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup seatalk-ping-actor-live seatalk-ping-actor-open seatalk-ping-applescript-open test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-actor-live test-coordinator-actor-api axtree-debug
+.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup seatalk-ping-actor-live seatalk-ping-actor-open seatalk-ping-applescript-open test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-git-commit-actor test-actor-live test-coordinator-actor-api axtree-debug
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -115,7 +115,7 @@ seatalk-ping-applescript-open:
 test: test-unit test-actor-live
 
 # Run the non-live unit and integration tests.
-test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector-unit test-actor-runtime
+test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector-unit test-actor-runtime test-git-commit-actor
 
 # Run the sample collector integration test.
 test-sample-collector:
@@ -155,6 +155,10 @@ test-macos-collector-unit:
 test-actor-runtime:
 	$(PYTHON) -m py_compile debug/app.py debug/active_context.py debug/chrome_bridge.py debug/actor_runtime.py debug/test_actor_runtime.py builtin/actor/youtube_search/should_trigger.py builtin/actor/youtube_search/action.py builtin/actor/gmail_followup_draft/should_trigger.py builtin/actor/gmail_followup_draft/action.py builtin/actor/gmail_reply_email/should_trigger.py builtin/actor/gmail_reply_email/action.py builtin/actor/calendar_next_open_timeslot/should_trigger.py builtin/actor/calendar_next_open_timeslot/action.py builtin/actor/codex_skill/lib.py builtin/actor/codex_skill/should_trigger.py builtin/actor/codex_skill/action.py
 	$(PYTHON) debug/test_actor_runtime.py
+
+test-git-commit-actor:
+	$(PYTHON) -m py_compile builtin/actor/git_commit_message/lib.py builtin/actor/git_commit_message/should_trigger.py builtin/actor/git_commit_message/action.py debug/test_git_commit_actor.py
+	$(PYTHON) -m unittest debug/test_git_commit_actor.py
 
 # Run coordinator API tests for actor registration and routing.
 test-coordinator-actor-api:

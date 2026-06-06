@@ -5,7 +5,7 @@ use std::{
     net::{TcpListener, TcpStream},
     path::{Path, PathBuf},
     process::{Child, Command, Stdio},
-    sync::{Arc, Mutex, Weak},
+    sync::{Arc, Mutex, OnceLock, Weak},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
@@ -15,14 +15,15 @@ const ACTOR_API_PORT: u16 = 47322;
 const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
 const PROCESSOR_APP_PORT: u16 = 5060;
 const PROXY_API_PORT: u16 = 8888;
-const ACTOR_MONITOR_TICK: Duration = Duration::from_secs(1);
+const ACTOR_MONITOR_TICK: Duration = Duration::from_millis(500);
 const CHROME_BRIDGE_PORT: u16 = 9223;
 const COLLECTOR_META_CHAT_TRANSCRIPT: &str = "builtin/collector/chat_transcript/meta.json";
 const COLLECTOR_META_CHROME: &str = "builtin/collector/chrome/meta.json";
 const COLLECTOR_META_MACOS: &str = "builtin/collector/macos/meta.json";
 const COLLECTOR_META_SEATALK: &str = "builtin/collector/seatalk/meta.json";
-const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: u64 = 1;
+const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: f64 = 1.0;
 const DEFAULT_ACTOR_SUGGESTION_COOLDOWN_SECONDS: u64 = 45;
+const TRAY_OPEN_SUPPRESSION_AFTER_ASSISTANT_DISMISS: Duration = Duration::from_millis(700);
 const GOOGLE_OAUTH_AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_OAUTH_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 const CALENDAR_API_BASE_URL: &str = "https://www.googleapis.com/calendar/v3";
@@ -186,7 +187,7 @@ struct ActorActivation {
 
 #[derive(Clone, Default, serde::Deserialize)]
 struct ActorTrigger {
-    polling_interval_seconds: Option<u64>,
+    polling_interval_seconds: Option<f64>,
 }
 
 #[derive(serde::Deserialize)]
@@ -269,6 +270,7 @@ pub fn run() {
         .manage(ActorRuntimeHandle::new())
         .invoke_handler(tauri::generate_handler![
             complete_actor_suggestion,
+            dismiss_assistant_window,
             get_monitoring_status,
             start_monitoring,
             stop_monitoring,
@@ -327,6 +329,207 @@ fn get_collector_events(limit: Option<usize>) -> Result<CollectorEventsPayload, 
     read_collector_events(limit.unwrap_or(1000))
 }
 
+fn read_collector_events(limit: usize) -> Result<CollectorEventsPayload, String> {
+    let data_root = radar_home().join("collectors");
+    let mut events = Vec::new();
+    let mut errors = Vec::new();
+
+    if data_root.exists() {
+        for file_path in list_jsonl_files(&data_root)? {
+            read_collector_event_file(&data_root, &file_path, &mut events, &mut errors);
+        }
+    }
+
+    events.sort_by(|left, right| right.observed_at.cmp(&left.observed_at));
+    let total_events = events.len();
+    let limit = limit.clamp(1, 5000);
+    if events.len() > limit {
+        events.truncate(limit);
+    }
+
+    let mut collectors = events
+        .iter()
+        .map(|event| event.collector_id.clone())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    collectors.sort();
+
+    let mut sources = events
+        .iter()
+        .flat_map(|event| [event.source_type.clone(), event.source_app.clone()])
+        .filter(|value| !value.is_empty())
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    sources.sort();
+
+    Ok(CollectorEventsPayload {
+        data_root: data_root.display().to_string(),
+        total_events,
+        returned_events: events.len(),
+        collectors,
+        sources,
+        errors,
+        events,
+    })
+}
+
+fn list_jsonl_files(root: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut files = Vec::new();
+    collect_jsonl_files(root, &mut files)?;
+    files.sort();
+    Ok(files)
+}
+
+fn collect_jsonl_files(path: &Path, files: &mut Vec<PathBuf>) -> Result<(), String> {
+    for entry in std::fs::read_dir(path)
+        .map_err(|error| format!("failed to read collector event directory: {error}"))?
+    {
+        let entry =
+            entry.map_err(|error| format!("failed to read collector event entry: {error}"))?;
+        let path = entry.path();
+        if path.is_dir() {
+            collect_jsonl_files(&path, files)?;
+        } else if path.extension().and_then(|value| value.to_str()) == Some("jsonl") {
+            files.push(path);
+        }
+    }
+    Ok(())
+}
+
+fn read_collector_event_file(
+    data_root: &Path,
+    file_path: &Path,
+    events: &mut Vec<CollectorEvent>,
+    errors: &mut Vec<CollectorParseError>,
+) {
+    let relative_path = relative_display_path(data_root, file_path);
+    let fallback_observed_at = file_path
+        .metadata()
+        .ok()
+        .and_then(|metadata| metadata.modified().ok())
+        .and_then(system_time_millis)
+        .unwrap_or_default();
+
+    let Ok(file) = File::open(file_path) else {
+        errors.push(CollectorParseError {
+            file_path: relative_path,
+            line_number: 0,
+            message: "Failed to open collector event file.".to_string(),
+        });
+        return;
+    };
+
+    for (index, line) in BufReader::new(file).lines().enumerate() {
+        let line_number = index + 1;
+        let Ok(line) = line else {
+            errors.push(CollectorParseError {
+                file_path: relative_path.clone(),
+                line_number,
+                message: "Failed to read collector event line.".to_string(),
+            });
+            continue;
+        };
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        match serde_json::from_str::<serde_json::Value>(trimmed) {
+            Ok(value) => events.push(compact_collector_event(
+                value,
+                &relative_path,
+                line_number,
+                fallback_observed_at,
+            )),
+            Err(error) => errors.push(CollectorParseError {
+                file_path: relative_path.clone(),
+                line_number,
+                message: error.to_string(),
+            }),
+        }
+    }
+}
+
+fn compact_collector_event(
+    value: serde_json::Value,
+    file_path: &str,
+    line_number: usize,
+    fallback_observed_at: u64,
+) -> CollectorEvent {
+    let observed_at = json_number_path(&value, &["time", "observed_at"])
+        .or_else(|| json_number_path(&value, &["observed_at"]))
+        .or_else(|| json_number_path(&value, &["timestamp"]))
+        .unwrap_or(fallback_observed_at);
+    let id =
+        json_string_path(&value, &["id"]).unwrap_or_else(|| format!("{file_path}:{line_number}"));
+    let collector_id = json_string_path(&value, &["collector_id"])
+        .unwrap_or_else(|| "unknown.collector".to_string());
+    let source_type = json_string_path(&value, &["source", "type"]).unwrap_or_default();
+    let source_app = json_string_path(&value, &["source", "app"]).unwrap_or_default();
+    let subject_kind = json_string_path(&value, &["subject", "kind"]).unwrap_or_default();
+    let anchor_name = json_string_path(&value, &["anchor", "name"]).unwrap_or_default();
+    let title = json_string_path(&value, &["subject", "title"])
+        .or_else(|| (!anchor_name.is_empty()).then(|| anchor_name.clone()))
+        .unwrap_or_else(|| id.clone());
+
+    CollectorEvent {
+        id,
+        collector_id,
+        observed_at,
+        source_type,
+        source_app,
+        subject_kind,
+        title,
+        text: json_string_path(&value, &["content", "text"]).unwrap_or_default(),
+        anchor_type: json_string_path(&value, &["anchor", "type"]).unwrap_or_default(),
+        action: anchor_name,
+        context_app: json_string_path(&value, &["context", "active_app"]).unwrap_or_default(),
+        context_window: json_string_path(&value, &["context", "active_window_title"])
+            .unwrap_or_default(),
+        artifact_count: value
+            .get("artifacts")
+            .and_then(|item| item.as_array())
+            .map(|items| items.len())
+            .unwrap_or_default(),
+        provenance_type: json_string_path(&value, &["provenance", "source_type"])
+            .unwrap_or_default(),
+        source_uri: json_string_path(&value, &["provenance", "source_uri"]).unwrap_or_default(),
+        file_path: file_path.to_string(),
+        line_number,
+    }
+}
+
+fn json_string_path(value: &serde_json::Value, path: &[&str]) -> Option<String> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    current.as_str().map(str::to_string)
+}
+
+fn json_number_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
+    let mut current = value;
+    for key in path {
+        current = current.get(*key)?;
+    }
+    current.as_u64().or_else(|| current.as_str()?.parse().ok())
+}
+
+fn relative_display_path(root: &Path, path: &Path) -> String {
+    path.strip_prefix(root)
+        .unwrap_or(path)
+        .to_string_lossy()
+        .to_string()
+}
+
+fn system_time_millis(value: SystemTime) -> Option<u64> {
+    value
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|duration| duration.as_millis() as u64)
+}
+
 #[tauri::command]
 fn complete_actor_suggestion(
     state: tauri::State<'_, ActorRuntimeHandle>,
@@ -346,6 +549,17 @@ fn complete_actor_suggestion(
         &actor_id,
         &trigger_id,
     )?))
+}
+
+#[tauri::command]
+fn dismiss_assistant_window(app: tauri::AppHandle) -> Result<(), String> {
+    suppress_tray_settings_open(TRAY_OPEN_SUPPRESSION_AFTER_ASSISTANT_DISMISS);
+    if let Some(window) = app.get_webview_window("assistant") {
+        window
+            .hide()
+            .map_err(|error| format!("failed to hide assistant window: {error}"))?;
+    }
+    Ok(())
 }
 
 fn run_actor_action(
@@ -545,10 +759,13 @@ fn setup_tray(app: &mut tauri::App) -> tauri::Result<()> {
         .on_tray_icon_event(|tray, event| {
             if let TrayIconEvent::Click {
                 button: MouseButton::Left,
-                button_state: MouseButtonState::Up,
+                button_state: MouseButtonState::Down,
                 ..
             } = event
             {
+                if tray_settings_open_is_suppressed() {
+                    return;
+                }
                 let _ = show_settings_window(tray.app_handle());
             }
         });
@@ -559,6 +776,31 @@ fn setup_tray(app: &mut tauri::App) -> tauri::Result<()> {
 
     tray.build(app)?;
     Ok(())
+}
+
+fn tray_settings_suppressed_until() -> &'static Mutex<Option<Instant>> {
+    static SUPPRESSED_UNTIL: OnceLock<Mutex<Option<Instant>>> = OnceLock::new();
+    SUPPRESSED_UNTIL.get_or_init(|| Mutex::new(None))
+}
+
+fn suppress_tray_settings_open(duration: Duration) {
+    if let Ok(mut suppressed_until) = tray_settings_suppressed_until().lock() {
+        *suppressed_until = Some(Instant::now() + duration);
+    }
+}
+
+fn tray_settings_open_is_suppressed() -> bool {
+    let Ok(mut suppressed_until) = tray_settings_suppressed_until().lock() else {
+        return false;
+    };
+    let Some(until) = *suppressed_until else {
+        return false;
+    };
+    if Instant::now() < until {
+        return true;
+    }
+    *suppressed_until = None;
+    false
 }
 
 fn show_settings_window(app: &tauri::AppHandle) -> tauri::Result<()> {
@@ -1569,8 +1811,8 @@ fn actor_poll_is_due(runtime: &ActorRuntimeInner, actor: &ActorPackage) -> bool 
         .trigger
         .polling_interval_seconds
         .unwrap_or(DEFAULT_ACTOR_POLL_INTERVAL_SECONDS)
-        .max(1);
-    let interval = Duration::from_secs(interval_seconds);
+        .max(0.1);
+    let interval = Duration::from_secs_f64(interval_seconds);
     let now = Instant::now();
 
     let Ok(mut last_polled_at) = runtime.last_polled_at.lock() else {
