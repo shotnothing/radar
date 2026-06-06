@@ -204,10 +204,10 @@
 
       .hero-proof {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
         width: 100%;
-        max-width: 650px;
+        max-width: 820px;
         margin-top: 24px;
       }
 
@@ -1042,16 +1042,20 @@
               </div>
               <div class="hero-proof" aria-label="Product highlights">
                 <div class="proof-item">
+                  <div class="proof-value">Collect</div>
+                  <div class="proof-label">Capture real work signals</div>
+                </div>
+                <div class="proof-item">
                   <div class="proof-value">Learn</div>
-                  <div class="proof-label">Observe workflows as they happen once</div>
+                  <div class="proof-label">Find reusable workflow patterns</div>
                 </div>
                 <div class="proof-item">
                   <div class="proof-value">Suggest</div>
-                  <div class="proof-label">Surface useful AI actions proactively</div>
+                  <div class="proof-label">Show useful next actions</div>
                 </div>
                 <div class="proof-item">
                   <div class="proof-value">Evolve</div>
-                  <div class="proof-label">Accepted actions become reusable skills</div>
+                  <div class="proof-label">Accepted actions become skills</div>
                 </div>
               </div>
             </div>
@@ -1259,9 +1263,10 @@
                   <p>Use the repo root and create a local virtual environment for the coordinator and collectors.</p>
                   <div class="code-panel">
                     <div class="code-title"><span>Terminal</span><span>setup</span></div>
-                    <pre><code>cd /Users/SIPSS0578/Desktop/Hackathon
-python3 -m venv /tmp/radar-venv
-/tmp/radar-venv/bin/python -m pip install -r requirements.txt</code></pre>
+                    <pre><code>git clone https://github.com/shotnothing/radar.git
+cd radar
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt</code></pre>
                   </div>
                 </div>
               </article>
@@ -1273,7 +1278,7 @@ python3 -m venv /tmp/radar-venv
                   <p>Build the unpacked extension, then load the generated folder in Chrome Developer Mode.</p>
                   <div class="code-panel">
                     <div class="code-title"><span>Terminal</span><span>extension</span></div>
-                    <pre><code>make PYTHON=/tmp/radar-venv/bin/python package-chrome-extension
+                    <pre><code>make PYTHON=.venv/bin/python package-chrome-extension
 open -a "Google Chrome" chrome://extensions</code></pre>
                   </div>
                 </div>
@@ -1286,9 +1291,9 @@ open -a "Google Chrome" chrome://extensions</code></pre>
                   <p>The coordinator launches the managed Chrome collector and writes JSONL observations under the debug work folder.</p>
                   <div class="code-panel">
                     <div class="code-title"><span>Terminal</span><span>run</span></div>
-                    <pre><code>PATH=/tmp/radar-venv/bin:$PATH \
+                    <pre><code>PATH="$PWD/.venv/bin:$PATH" \
 RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
-make PYTHON=/tmp/radar-venv/bin/python run-coordinator</code></pre>
+make PYTHON=.venv/bin/python run-coordinator</code></pre>
                   </div>
                 </div>
               </article>
