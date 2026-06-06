@@ -17,6 +17,7 @@ from builtin.processor.engine import (
     default_collectors_root,
     env_float,
     iter_collector_jsonl_files,
+    read_json,
     utc_timestamp,
     write_json_atomic,
 )
@@ -45,6 +46,128 @@ def purge_debug_state_files(args):
                 continue
             removed.append(str(candidate))
     return removed
+
+
+def count_complete_entries(path, offset=0):
+    path = Path(path)
+    try:
+        size = path.stat().st_size
+        if offset < 0 or offset > size:
+            offset = 0
+        count = 0
+        with path.open("rb") as input_file:
+            input_file.seek(offset)
+            for line in input_file:
+                if line.endswith(b"\n") and line.strip():
+                    count += 1
+        return count
+    except OSError:
+        return 0
+
+
+def count_available_normalizers(normalizers_root):
+    root = Path(normalizers_root)
+    if not root.exists():
+        return 0
+    return sum(
+        1
+        for candidate in root.iterdir()
+        if candidate.is_dir() and (candidate / "normalizer.py").exists()
+    )
+
+
+def build_started_event(engine, args, purged_paths):
+    return {
+        "type": "debug_started",
+        "created_at": utc_timestamp(),
+        "collectors_root": str(engine.collectors_root),
+        "normalizers_root": str(engine.normalizers_root),
+        "state_dir": str(engine.state_dir),
+        "mode": "replay_existing" if args.replay_existing else "tail",
+        "purged_state": bool(args.purge_state),
+        "purged_path_count": len(purged_paths),
+    }
+
+
+def build_stats_event(engine, args, purged_paths):
+    collector_paths = list(iter_collector_jsonl_files(engine.collectors_root))
+    checkpoint_files = engine.checkpoint.get("files") or {}
+    collector_bytes = 0
+    collector_history_entries = 0
+    collector_pending_entries = 0
+    collector_pending_bytes = 0
+
+    for path in collector_paths:
+        try:
+            size = Path(path).stat().st_size
+        except OSError:
+            size = 0
+        checkpoint = checkpoint_files.get(str(path)) or {}
+        offset = int(checkpoint.get("offset") or 0)
+        if offset < 0 or offset > size:
+            offset = 0
+        collector_bytes += size
+        collector_history_entries += count_complete_entries(path)
+        collector_pending_entries += count_complete_entries(path, offset=offset)
+        collector_pending_bytes += max(size - offset, 0)
+
+    last_result = read_json(engine.last_result_path, {})
+    last_payload = (last_result or {}).get("payload") or {}
+    model = engine.predict.estdec.model
+    config = engine.predict.estdec.config
+    transactions_seen = int(model.get("transactions_seen", 0) or 0)
+
+    event = build_started_event(engine, args, purged_paths)
+    event.update(
+        {
+            "type": "debug_stats",
+            "stats": {
+                "collector_file_count": len(collector_paths),
+                "collector_history_entries": collector_history_entries,
+                "collector_pending_entries": collector_pending_entries,
+                "collector_pending_bytes": collector_pending_bytes,
+                "collector_bytes": collector_bytes,
+                "checkpoint_file_count": len(checkpoint_files),
+                "available_normalizer_count": count_available_normalizers(
+                    engine.normalizers_root
+                ),
+                "normalized_history_entries": count_complete_entries(
+                    engine.normalized_log_path
+                ),
+                "predict_stream_entries": count_complete_entries(
+                    engine.predict.stream_path
+                ),
+                "dictionary_size": len(engine.predict.dictionary.item_to_id),
+                "transactions_seen": transactions_seen,
+                "effective_transaction_count": model.get(
+                    "effective_transaction_count",
+                    0.0,
+                ),
+                "tracked_pattern_count": len(model.get("counts") or {}),
+                "warmup_remaining": max(
+                    config.min_transactions_before_prediction - transactions_seen,
+                    0,
+                ),
+                "last_result_ready": bool(last_payload.get("ready", False)),
+                "last_result_status": last_payload.get("status", ""),
+                "last_result_confidence": last_payload.get("confidence", 0.0),
+            },
+            "config": {
+                "min_transactions_before_prediction": config.min_transactions_before_prediction,
+                "min_confidence": config.min_confidence,
+                "min_pattern_decayed_count": config.min_pattern_decayed_count,
+                "min_support": config.min_support,
+            },
+        }
+    )
+    return event
+
+
+def print_event(event, args):
+    if args.jsonl:
+        print(json.dumps(event, ensure_ascii=True, sort_keys=True), flush=True)
+        return
+    print(json.dumps(event, ensure_ascii=True, indent=2, sort_keys=True), flush=True)
 
 
 def mark_existing_collector_files_seen(engine):
@@ -95,10 +218,7 @@ def print_prediction(scan_result, args):
         scan_result,
         args.max_patterns,
     )
-    if args.jsonl:
-        print(json.dumps(output, ensure_ascii=True, sort_keys=True), flush=True)
-        return
-    print(json.dumps(output, ensure_ascii=True, indent=2, sort_keys=True), flush=True)
+    print_event(output, args)
 
 
 def run(args):
@@ -120,22 +240,9 @@ def run(args):
         mark_existing_collector_files_seen(engine)
 
     if args.print_started:
-        print(
-            json.dumps(
-                {
-                    "type": "debug_started",
-                    "collectors_root": str(engine.collectors_root),
-                    "normalizers_root": str(engine.normalizers_root),
-                    "state_dir": str(engine.state_dir),
-                    "mode": "replay_existing" if args.replay_existing else "tail",
-                    "purged_state": bool(args.purge_state),
-                    "purged_path_count": len(purged_paths),
-                },
-                ensure_ascii=True,
-                sort_keys=True,
-            ),
-            flush=True,
-        )
+        print_event(build_started_event(engine, args, purged_paths), args)
+    if args.stats:
+        print_event(build_stats_event(engine, args, purged_paths), args)
 
     deadline = None if args.duration <= 0 else time.monotonic() + args.duration
     while True:
@@ -143,20 +250,16 @@ def run(args):
         if scan_result.get("prediction"):
             print_prediction(scan_result, args)
         elif args.print_empty:
-            print(
-                json.dumps(
-                    {
-                        "type": "no_prediction",
-                        "created_at": scan_result.get("created_at"),
-                        "files_seen": scan_result.get("files_seen", 0),
-                        "events_seen": scan_result.get("events_seen", 0),
-                        "learning": scan_result.get("learning") or {},
-                        "errors": scan_result.get("errors") or [],
-                    },
-                    ensure_ascii=True,
-                    sort_keys=True,
-                ),
-                flush=True,
+            print_event(
+                {
+                    "type": "no_prediction",
+                    "created_at": scan_result.get("created_at"),
+                    "files_seen": scan_result.get("files_seen", 0),
+                    "events_seen": scan_result.get("events_seen", 0),
+                    "learning": scan_result.get("learning") or {},
+                    "errors": scan_result.get("errors") or [],
+                },
+                args,
             )
 
         if args.once:
@@ -241,7 +344,12 @@ def parse_args():
     parser.add_argument(
         "--print-started",
         action="store_true",
-        help="Print a startup event before watching.",
+        help="Print a lightweight startup event before watching.",
+    )
+    parser.add_argument(
+        "--stats",
+        action="store_true",
+        help="Print startup statistics before watching.",
     )
     parser.add_argument(
         "--jsonl",

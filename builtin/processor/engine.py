@@ -296,10 +296,17 @@ class ProcessorEngine:
                 offset = 0
             with path.open("r", encoding="utf-8") as input_file:
                 input_file.seek(offset)
+                next_offset = offset
                 while True:
+                    line_start = input_file.tell()
                     line = input_file.readline()
                     if not line:
+                        next_offset = input_file.tell()
                         break
+                    if not line.endswith("\n") and input_file.tell() >= size:
+                        next_offset = line_start
+                        break
+                    next_offset = input_file.tell()
                     line = line.strip()
                     if not line:
                         continue
@@ -310,7 +317,7 @@ class ProcessorEngine:
                         continue
                     if isinstance(value, dict):
                         records.append(value)
-                file_state["offset"] = input_file.tell()
+                file_state["offset"] = next_offset
                 file_state["size"] = size
                 file_state["updated_at"] = utc_timestamp()
         except OSError as error:
