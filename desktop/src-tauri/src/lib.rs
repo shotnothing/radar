@@ -272,6 +272,7 @@ pub fn run() {
             complete_actor_suggestion,
             dismiss_assistant_window,
             get_monitoring_status,
+            get_processor_debug_state,
             start_monitoring,
             stop_monitoring,
             get_collector_events,
@@ -308,6 +309,38 @@ pub fn run() {
 #[tauri::command]
 fn get_monitoring_status(state: tauri::State<'_, ActorRuntimeHandle>) -> MonitoringStatus {
     state.status()
+}
+
+#[tauri::command]
+fn get_processor_debug_state() -> Result<serde_json::Value, String> {
+    let client = reqwest::blocking::Client::builder()
+        .timeout(Duration::from_secs(3))
+        .build()
+        .map_err(|error| format!("failed to build processor debug client: {error}"))?;
+    let base_url = processor_app_url();
+
+    let health = client
+        .get(format!("{base_url}/health"))
+        .send()
+        .map_err(|error| format!("failed to read processor health: {error}"))?
+        .error_for_status()
+        .map_err(|error| format!("processor health failed: {error}"))?
+        .json::<serde_json::Value>()
+        .map_err(|error| format!("failed to parse processor health: {error}"))?;
+
+    let last_prediction = client
+        .get(format!("{base_url}/last_prediction"))
+        .send()
+        .map_err(|error| format!("failed to read last prediction: {error}"))?
+        .error_for_status()
+        .map_err(|error| format!("last prediction failed: {error}"))?
+        .json::<serde_json::Value>()
+        .map_err(|error| format!("failed to parse last prediction: {error}"))?;
+
+    Ok(serde_json::json!({
+        "health": health,
+        "last_prediction": last_prediction,
+    }))
 }
 
 #[tauri::command]

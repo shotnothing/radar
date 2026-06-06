@@ -334,6 +334,240 @@ body {
   background: #ffffff;
 }
 
+.debug-panel {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  min-height: 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.debug-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 54px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+}
+
+.debug-status-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.debug-status {
+  padding: 3px 8px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.15;
+  border-radius: 999px;
+  background: #f1f5f9;
+}
+
+.debug-status--connected {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.debug-status--error {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+.debug-status--disconnected {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.debug-count {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.debug-clear-button {
+  height: 30px;
+  min-width: 78px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.debug-diagnostics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(68px, auto)) minmax(0, 1fr);
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+}
+
+.debug-metric {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.debug-metric span {
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.debug-metric strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 740;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.debug-metric--wide {
+  min-width: 0;
+}
+
+.debug-diagnostic-note,
+.debug-diagnostic-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.debug-diagnostic-note {
+  color: #64748b;
+}
+
+.debug-diagnostic-error {
+  color: #b91c1c;
+}
+
+.prediction-log-list {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 18px 18px;
+}
+
+.prediction-log-row {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.prediction-log-main {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.prediction-log-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+.prediction-log-title-row h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 740;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prediction-log-title-row time {
+  flex: 0 0 auto;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.prediction-log-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.prediction-log-meta span {
+  max-width: 210px;
+  overflow: hidden;
+  padding: 3px 7px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #f8fafc;
+}
+
+.prediction-log-reason {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.prediction-log-payload {
+  min-width: 0;
+}
+
+.prediction-log-payload summary {
+  width: fit-content;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.prediction-log-payload pre {
+  max-height: 240px;
+  margin: 8px 0 0;
+  overflow: auto;
+  padding: 10px;
+  color: #334155;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
 .module-row {
   display: grid;
   grid-template-columns: 34px 1fr auto;

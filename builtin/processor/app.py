@@ -48,6 +48,14 @@ runtime = {
 }
 
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    return response
+
+
 def mark_existing_collector_files_seen(engine):
     engine.checkpoint = {"version": 1, "files": {}, "updated_at": utc_timestamp()}
     for path in iter_collector_jsonl_files(engine.collectors_root):
@@ -219,6 +227,17 @@ def scan_loop(args):
                 "errors": scan_result.get("errors") or [],
             }
             runtime["last_error"] = ""
+            socketio.emit(
+                "processor_scan",
+                {
+                    "type": "processor_scan",
+                    **runtime["last_scan"],
+                    "has_last_prediction": runtime["last_prediction"] is not None,
+                    "collectors_root": str(engine.collectors_root),
+                    "normalizers_root": str(engine.normalizers_root),
+                    "state_dir": str(engine.state_dir),
+                },
+            )
 
             if scan_result.get("prediction"):
                 event = (
@@ -283,6 +302,19 @@ def handle_connect():
     )
     if runtime["last_prediction"] is not None:
         emit("prediction_generated", runtime["last_prediction"])
+    if runtime["last_scan"] is not None:
+        engine = runtime.get("engine")
+        emit(
+            "processor_scan",
+            {
+                "type": "processor_scan",
+                **runtime["last_scan"],
+                "has_last_prediction": runtime["last_prediction"] is not None,
+                "collectors_root": str(engine.collectors_root) if engine else "",
+                "normalizers_root": str(engine.normalizers_root) if engine else "",
+                "state_dir": str(engine.state_dir) if engine else "",
+            },
+        )
 
 
 @socketio.on("disconnect")

@@ -198,6 +198,8 @@ def collector_command(meta):
     command = runtime.get("command")
     if not command:
         raise ValueError("collector meta is missing runtime.command")
+    if command in {"python", "python3"}:
+        command = sys.executable
     return [command, *runtime.get("args", [])]
 
 
