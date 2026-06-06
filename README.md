@@ -9,10 +9,33 @@ harness to exercise the runtime contract.
 
 ```bash
 pip install -r requirements.txt
-python3 debug/app.py --work-dir debug/work
+python3 debug/app.py
 ```
 
-By default the debug harness listens on `http://localhost:5000`.
+By default the debug harness listens on `http://localhost:5000` and stores
+collector data under `RADAR_HOME`, which defaults to `~/.radar`.
+
+The project env file is `.env`. The Makefile loads it automatically:
+
+```bash
+make install
+make test-sample-collector
+make run-coordinator
+```
+
+To run the built-in sample collector against the debug harness:
+
+```bash
+python3 builtin/collector/sample/collector.py
+```
+
+It registers as `builtin.sample`, writes one spec-shaped JSONL event under the
+coordinator-assigned collector work folder, sends heartbeats for the requested
+duration, and then disconnects.
+
+For coordinator-managed testing, run `make run-coordinator`. The debug
+coordinator reads `RADAR_COLLECTOR_META` and starts the configured collector
+process itself.
 
 ## Socket.IO Roles
 

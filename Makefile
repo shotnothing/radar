@@ -1,0 +1,19 @@
+PYTHON ?= python3
+ENV_FILE ?= .env
+
+ifneq (,$(wildcard $(ENV_FILE)))
+include $(ENV_FILE)
+export
+endif
+
+.PHONY: install run-coordinator test-sample-collector
+
+install:
+	$(PYTHON) -m pip install -r requirements.txt
+
+run-coordinator:
+	$(PYTHON) debug/app.py --host $(RADAR_HOST) --port $(RADAR_PORT) --collector-meta $(RADAR_COLLECTOR_META)
+
+test-sample-collector:
+	$(PYTHON) -m py_compile debug/app.py builtin/collector/sample/collector.py debug/test_sample_collector.py
+	$(PYTHON) debug/test_sample_collector.py

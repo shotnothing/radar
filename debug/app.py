@@ -1,4 +1,9 @@
 import argparse
+import atexit
+import json
+import os
+import subprocess
+import time
 from pathlib import Path
 
 import eventlet
@@ -18,8 +23,19 @@ registry = {
     "debug": {},
 }
 config = {
-    "work_root": Path("debug/work").resolve(),
+    "work_root": Path(os.environ.get("RADAR_HOME", "~/.radar")).expanduser().resolve(),
 }
+managed_collectors = []
+
+
+def repo_root():
+    return Path(__file__).resolve().parents[1]
+
+
+def split_env_list(value):
+    if not value:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
 
 
 def require_field(payload, field):
@@ -48,6 +64,80 @@ def collector_work_dir(collector_id):
     work_dir = config["work_root"] / "collectors" / folder_name
     work_dir.mkdir(parents=True, exist_ok=True)
     return work_dir
+
+
+def load_collector_meta(meta_path):
+    path = Path(meta_path)
+    if not path.is_absolute():
+        path = repo_root() / path
+    with path.open(encoding="utf-8") as meta_file:
+        meta = json.load(meta_file)
+    return path, meta
+
+
+def collector_command(meta):
+    runtime = meta.get("runtime", {})
+    command = runtime.get("command")
+    if not command:
+        raise ValueError("collector meta is missing runtime.command")
+    return [command, *runtime.get("args", [])]
+
+
+def launch_managed_collectors(meta_paths, coordinator_url):
+    time.sleep(0.5)
+    for meta_path in meta_paths:
+        try:
+            path, meta = load_collector_meta(meta_path)
+            command = collector_command(meta)
+            env = os.environ.copy()
+            env.setdefault("RADAR_HOME", str(config["work_root"]))
+            env["RADAR_COORDINATOR_URL"] = coordinator_url
+            process = subprocess.Popen(command, cwd=repo_root(), env=env)
+            managed_collectors.append(
+                {
+                    "collector_id": meta.get("collector_id", str(path)),
+                    "process": process,
+                }
+            )
+            print(
+                f"started collector {meta.get('collector_id', path)} "
+                f"with pid {process.pid}",
+                flush=True,
+            )
+        except Exception as error:
+            print(f"failed to start collector from {meta_path}: {error}", flush=True)
+
+    while managed_collectors:
+        active = []
+        for record in managed_collectors:
+            process = record["process"]
+            exit_code = process.poll()
+            if exit_code is None:
+                active.append(record)
+                continue
+            print(
+                f"collector {record['collector_id']} exited with code {exit_code}",
+                flush=True,
+            )
+        managed_collectors[:] = active
+        time.sleep(1)
+
+
+def stop_managed_collectors():
+    for record in list(managed_collectors):
+        process = record["process"]
+        if process.poll() is not None:
+            continue
+        print(f"stopping collector {record['collector_id']}", flush=True)
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)
+
+
+atexit.register(stop_managed_collectors)
 
 
 def publish_registry():
@@ -247,14 +337,49 @@ def handle_ping():
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Radar debug Socket.IO harness")
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", default=5000, type=int)
-    parser.add_argument("--work-dir", default="debug/work")
+    parser.add_argument("--host", default=os.environ.get("RADAR_HOST", "127.0.0.1"))
+    parser.add_argument("--port", default=int(os.environ.get("RADAR_PORT", 5000)), type=int)
+    parser.add_argument(
+        "--work-dir",
+        default=os.environ.get(
+            "RADAR_WORK_DIR",
+            os.environ.get("RADAR_HOME", "~/.radar"),
+        ),
+    )
+    parser.add_argument(
+        "--collector-meta",
+        action="append",
+        default=None,
+        help="Path to a collector meta.json to launch and manage.",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=os.environ.get("RADAR_DEBUG", "").lower() in {"1", "true", "yes"},
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    config["work_root"] = Path(args.work_dir).resolve()
+    config["work_root"] = Path(args.work_dir).expanduser().resolve()
     config["work_root"].mkdir(parents=True, exist_ok=True)
-    socketio.run(app, host=args.host, port=args.port, debug=True)
+    collector_meta = args.collector_meta
+    if collector_meta is None:
+        collector_meta = split_env_list(os.environ.get("RADAR_COLLECTOR_META"))
+
+    if collector_meta:
+        host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
+        coordinator_url = os.environ.get(
+            "RADAR_COORDINATOR_URL",
+            f"http://{host}:{args.port}",
+        )
+        eventlet.spawn_after(0.5, launch_managed_collectors, collector_meta, coordinator_url)
+
+    socketio.run(
+        app,
+        host=args.host,
+        port=args.port,
+        debug=args.debug,
+        use_reloader=False,
+    )
