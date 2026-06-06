@@ -1,0 +1,42 @@
+{
+  "collector_id": "google.calendar",
+  "display_name": "Google Calendar Collector",
+  "description": "Collects meetings organized by the user through the local desktop Google API bridge.",
+  "protocol_version": 1,
+  "source": {
+    "type": "calendar",
+    "app": "Google Calendar"
+  },
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "builtin/collector/google_calendar/collector.py"
+    ]
+  },
+  "required_permissions": [
+    "local_google_api.google_calendar",
+    "google.oauth.calendar_events_read"
+  ],
+  "capabilities": [
+    "google_calendar_organized_events",
+    "local_google_api",
+    "incremental_scan",
+    "source_provenance",
+    "heartbeat"
+  ],
+  "emits": [
+    "collected_data.calendar_user_organized_meeting"
+  ],
+  "default_config": {
+    "google_api_base_url": "http://127.0.0.1:47611",
+    "organized_events_endpoint": "/google_calendar/events/organized",
+    "scan_interval_seconds": 300,
+    "checkpoint_lookback_seconds": 300,
+    "initial_lookback_seconds": 86400,
+    "future_lookahead_seconds": 2592000,
+    "batch_limit": 100,
+    "duration_seconds": 10,
+    "heartbeat_interval_seconds": 2,
+    "request_timeout_seconds": 10
+  }
+}

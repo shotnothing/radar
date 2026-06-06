@@ -102,7 +102,7 @@ Then open a regular `http://` or `https://` page in Chrome and click, focus,
 type, select, copy, paste, or submit a form. Recorded Chrome data is written to:
 
 ```text
-debug/work/collectors/chrome_browser/YYYYMMDD/artifacts/*.jsonl
+debug/work/collectors/chrome_browser/YYYYMMDD/*.jsonl
 ```
 
 Inspect the latest records:

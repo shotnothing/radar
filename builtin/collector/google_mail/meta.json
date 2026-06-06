@@ -1,0 +1,41 @@
+{
+  "collector_id": "google.mail",
+  "display_name": "Google Mail Collector",
+  "description": "Collects user-sent Gmail messages through the local desktop Google API bridge.",
+  "protocol_version": 1,
+  "source": {
+    "type": "email",
+    "app": "Google Mail"
+  },
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "builtin/collector/google_mail/collector.py"
+    ]
+  },
+  "required_permissions": [
+    "local_google_api.google_mail",
+    "google.oauth.gmail_sent_read"
+  ],
+  "capabilities": [
+    "google_mail_sent",
+    "local_google_api",
+    "incremental_scan",
+    "source_provenance",
+    "heartbeat"
+  ],
+  "emits": [
+    "collected_data.communication_user_email"
+  ],
+  "default_config": {
+    "google_api_base_url": "http://127.0.0.1:47611",
+    "sent_endpoint": "/google_mail/sent",
+    "scan_interval_seconds": 300,
+    "checkpoint_lookback_seconds": 300,
+    "initial_lookback_seconds": 86400,
+    "batch_limit": 100,
+    "duration_seconds": 10,
+    "heartbeat_interval_seconds": 2,
+    "request_timeout_seconds": 10
+  }
+}

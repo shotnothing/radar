@@ -3,6 +3,7 @@ NPM ?= npm
 ENV_FILE ?= .env
 RADAR_HOST ?= 127.0.0.1
 RADAR_PORT ?= 5000
+RADAR_HOME ?= $(HOME)/.radar
 RADAR_WORK_DIR ?= debug/work
 RADAR_ACTOR_PATH ?= builtin/actor
 RADAR_COLLECTOR_VIEWER_HOST ?= 127.0.0.1
@@ -15,7 +16,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-actor-runtime test-actor-live test-coordinator-actor-api
+.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-actor-live test-coordinator-actor-api
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -60,7 +61,7 @@ actor-live-setup:
 test: test-unit test-actor-live
 
 # Run the non-live unit and integration tests.
-test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-actor-runtime
+test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector-unit test-actor-runtime
 
 # Run the sample collector integration test.
 test-sample-collector:
@@ -87,8 +88,12 @@ test-chrome-collector:
 	$(PYTHON) -m py_compile builtin/collector/chrome/runtime.py builtin/collector/chrome/observation.py tests/test_chrome_collector.py
 	$(PYTHON) -m unittest tests.test_chrome_collector
 
-# Run the macOS activity collector unit tests.
+# Run the macOS activity collector against the debug coordinator until stopped.
 test-macos-collector:
+	RADAR_COLLECTOR_META=builtin/collector/macos/meta.json $(PYTHON) debug/app.py --host $(RADAR_HOST) --port $(RADAR_PORT) --work-dir $(RADAR_HOME) --actor-path $(RADAR_ACTOR_PATH)
+
+# Run the macOS activity collector unit tests.
+test-macos-collector-unit:
 	$(PYTHON) -m py_compile builtin/collector/macos/runtime.py builtin/collector/macos/observation.py tests/test_macos_collector.py
 	$(PYTHON) -m unittest tests.test_macos_collector
 

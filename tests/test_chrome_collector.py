@@ -135,7 +135,7 @@ class ChromeObservationTest(unittest.TestCase):
 
 
 class ChromeStorageTest(unittest.TestCase):
-    def test_store_writes_jsonl_under_work_dir_day_artifacts(self) -> None:
+    def test_store_writes_jsonl_under_work_dir_day(self) -> None:
         observed_at = int(datetime(2026, 6, 6, 10, 12, 4).timestamp() * 1000)
         observation = build_observation(
             {
@@ -149,7 +149,7 @@ class ChromeStorageTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             store = JsonlObservationStore(tmp, split_ms=1)
             path = store.write(observation)
-            expected = Path(tmp) / "20260606" / "artifacts" / f"{observed_at}.jsonl"
+            expected = Path(tmp) / "20260606" / f"{observed_at}.jsonl"
 
             self.assertEqual(path, expected)
             line = path.read_text(encoding="utf-8").strip()

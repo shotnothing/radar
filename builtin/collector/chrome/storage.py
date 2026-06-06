@@ -11,7 +11,7 @@ from .observation import coerce_epoch_ms
 
 
 class JsonlObservationStore:
-    """Store observations under work_dir/yyyymmdd/artifacts/*.jsonl."""
+    """Store observations under work_dir/yyyymmdd/*.jsonl."""
 
     def __init__(self, work_dir: str | Path, split_ms: int = 3_600_000) -> None:
         if split_ms <= 0:
@@ -35,4 +35,4 @@ class JsonlObservationStore:
         observed_ms = coerce_epoch_ms(observed_at)
         bucket_ms = observed_ms - (observed_ms % self.split_ms)
         day = datetime.fromtimestamp(observed_ms / 1000).strftime("%Y%m%d")
-        return self.work_dir / day / "artifacts" / f"{bucket_ms}.jsonl"
+        return self.work_dir / day / f"{bucket_ms}.jsonl"
