@@ -13,7 +13,8 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Radar",
+        "label": "assistant",
+        "title": "Radar Suggestion",
         "width": 400,
         "height": 240,
         "resizable": false,
@@ -21,8 +22,21 @@
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": true,
+        "focus": false,
         "shadow": false,
-        "visible": true
+        "visible": false
+      },
+      {
+        "label": "settings",
+        "title": "Radar Settings",
+        "width": 720,
+        "height": 520,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false,
+        "center": true,
+        "visible": false
       }
     ],
     "security": {
