@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import threading
 import time
 import uuid
 from datetime import datetime, timezone
@@ -103,6 +104,40 @@ def env_float(name, default):
         return default
 
 
+def env_int(name, default):
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def pid_exists(pid):
+    if not pid:
+        return True
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
+def start_coordinator_watchdog(pid):
+    if not pid:
+        return
+
+    def watch():
+        while True:
+            if not pid_exists(pid):
+                print("coordinator process exited; exiting orphaned collector", flush=True)
+                os._exit(0)
+            time.sleep(0.5)
+
+    thread = threading.Thread(target=watch, daemon=True)
+    thread.start()
+
+
 def connect_client(client, coordinator_url, timeout):
     deadline = time.monotonic() + timeout
     last_error = None
@@ -129,7 +164,7 @@ def try_reconnect(client, args):
         return False
 
 
-def send_heartbeat(client, output_path):
+def send_heartbeat(client, output_path, timeout):
     client.call(
         "collector:heartbeat",
         {
@@ -137,11 +172,12 @@ def send_heartbeat(client, output_path):
             "permissions": {},
             "last_write": str(output_path),
         },
-        timeout=5,
+        timeout=timeout,
     )
 
 
 def run(args):
+    start_coordinator_watchdog(args.coordinator_pid)
     client = socketio.Client()
     connect_client(client, args.coordinator_url, args.connect_timeout)
 
@@ -160,11 +196,15 @@ def run(args):
         deadline = None if args.duration <= 0 else time.monotonic() + args.duration
         coordinator_lost_at = None
         while deadline is None or time.monotonic() < deadline:
+            if args.coordinator_pid and not pid_exists(args.coordinator_pid):
+                print("coordinator process exited; exiting orphaned collector")
+                break
+
             try:
                 if not client.connected and not try_reconnect(client, args):
                     raise RuntimeError("coordinator is unavailable")
                 coordinator_lost_at = None
-                send_heartbeat(client, output_path)
+                send_heartbeat(client, output_path, args.heartbeat_timeout)
             except (
                 RuntimeError,
                 socketio.exceptions.ConnectionError,
@@ -211,6 +251,12 @@ def parse_args():
         help="Seconds between collector heartbeats while registered.",
     )
     parser.add_argument(
+        "--heartbeat-timeout",
+        default=env_float("RADAR_COLLECTOR_HEARTBEAT_TIMEOUT", 5),
+        type=float,
+        help="Seconds to wait for heartbeat acknowledgement from the coordinator.",
+    )
+    parser.add_argument(
         "--sample-text",
         default=os.environ.get(
             "RADAR_SAMPLE_TEXT",
@@ -223,6 +269,12 @@ def parse_args():
         default=env_float("RADAR_COLLECTOR_CONNECT_TIMEOUT", 10),
         type=float,
         help="Seconds to wait for the coordinator before failing.",
+    )
+    parser.add_argument(
+        "--coordinator-pid",
+        default=env_int("RADAR_COORDINATOR_PID", 0),
+        type=int,
+        help="Coordinator process PID. If it exits, this collector exits as orphaned.",
     )
     parser.add_argument(
         "--orphan-grace-seconds",

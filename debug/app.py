@@ -268,6 +268,7 @@ def launch_managed_collectors(meta_paths, coordinator_url):
             env.setdefault("RADAR_HOME", str(config["work_root"]))
             env["RADAR_COORDINATOR_URL"] = coordinator_url
             env["RADAR_COORDINATOR_SESSION_ID"] = config["session_id"]
+            env["RADAR_COORDINATOR_PID"] = str(os.getpid())
             env["RADAR_COLLECTOR_ID"] = collector_id
             process = subprocess.Popen(command, cwd=repo_root(), env=env)
             state_path = write_collector_state(collector_id, path, command, process)

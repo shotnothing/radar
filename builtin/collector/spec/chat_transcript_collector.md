@@ -101,6 +101,14 @@ The source-native session ID should be stored separately in
 Each source transcript should produce at least one `chat_session_summary` event.
 Message-level events should be emitted when available and useful for processors.
 
+The collector should decide how to group emitted events into JSONL files; it can
+batch by session, source file, event count, size, or another practical boundary.
+Each output JSONL file should still use a timestamp filename that represents the
+collector's chosen file or bucket boundary. Transcript timestamps should be
+preserved in event time fields and provenance so processors can reconstruct the
+time-series order, but timestamps should not force one line per output file or
+otherwise dictate file splitting.
+
 Recommended fields:
 
 - `source.type`: `chat_transcript`.

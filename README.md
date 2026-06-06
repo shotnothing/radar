@@ -62,6 +62,10 @@ To test the collector against fixture transcripts:
 make test-chat-transcript-collector
 ```
 
+The fixture test writes synthetic source transcripts under
+`RADAR_HOME/test_sources/chat_transcript` and collected output under
+`RADAR_HOME/collectors/chat_transcript`.
+
 ## Socket.IO Roles
 
 Every module connects to the coordinator process and registers its role. During

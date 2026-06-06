@@ -8,18 +8,19 @@ This file is for agents and humans working in parallel. Keep changes scoped, res
 
 Radar has three project areas:
 
-- `desktop`: future Wails macOS app. Keep this empty until the Wails shell is
-  introduced.
+- `desktop`: early Tauri macOS app shell. The desktop process will eventually
+  replace the debug harness as the production coordinator.
 - `debug`: lightweight Python Socket.IO harness for local development and
   manual management of collectors, processors, and actors.
 - `builtin`: first-party collectors, processors, and actors shipped with Radar.
 
-The desktop process will be the production coordinator. Until Wails exists, the
-debug harness owns the same local Socket.IO contract so module work can proceed.
+The desktop process will be the production coordinator. Until that coordinator
+is ready, the debug harness owns the same local Socket.IO contract so module work
+can proceed.
 
 ## Current Repository Map
 
-- `radar/desktop/`: future Wails desktop app. Leave empty for now.
+- `radar/desktop/`: early Tauri desktop app.
 - `radar/debug/`: Python debug harness for running the Socket.IO coordinator.
 - `radar/builtin/collector/`: built-in collector contracts and implementations.
 - `radar/builtin/collector/spec/`: collector contracts, event shapes, and
@@ -58,7 +59,6 @@ collector metadata and Socket.IO registration.
 
 Desktop should eventually:
 
-- Stay empty until the Wails shell is introduced.
 - Own lifecycle management for collectors, processors, and actors.
 - Host the local Socket.IO server used by collectors, processors,
   and actors.
@@ -177,6 +177,10 @@ Any background action should have:
 - Keep app-specific collector code behind collector boundaries.
 - Keep schemas stable and versionable.
 - Add tests around shared contracts, privacy policy, and routing behavior as soon as implementation lands.
+- Collector tests should write collected output under `RADAR_HOME`
+  (default `~/.radar`) so humans and agents can inspect the same files after a
+  run. Use synthetic source fixtures under `RADAR_HOME/test_sources/...` when a
+  test should not read real user data.
 - Prefer small adapters over cross-module imports.
 - Avoid adding global mutable state for collector or actor registration.
 - Document new collectors with required permissions, anchors, emitted observation shapes, and privacy risks.

@@ -75,7 +75,7 @@ Field names must use snake_case.
 {
     "id": "uuid",
     "processor_id": "builtin.pattern_detector",
-    "input_refs": ["collector:macos.axtree:1780713574000.jsonl"],
+    "input_refs": ["collector:macos.axtree:20260606/1780713574000.jsonl"],
     "source_refs": [
         {
             "collector_id": "chat.transcript",

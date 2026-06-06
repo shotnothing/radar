@@ -131,6 +131,7 @@ def main():
     env["RADAR_COORDINATOR_URL"] = f"http://127.0.0.1:{port}"
     env["RADAR_SAMPLE_COLLECTOR_DURATION"] = "3"
     env["RADAR_SAMPLE_COLLECTOR_HEARTBEAT_INTERVAL"] = "1"
+    env["RADAR_COLLECTOR_HEARTBEAT_TIMEOUT"] = "2"
 
     process = subprocess.Popen(
         [

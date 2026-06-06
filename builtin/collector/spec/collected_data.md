@@ -13,12 +13,19 @@ event.
     /yyyymmdd
         /artifacts
             /{event_or_session_id}
-        - 1780713574000.jsonl
+        - {file_timestamp_ms}.jsonl
 ```
 
 - `work_dir` is the collector-specific folder assigned by the coordinator.
 - `yyyymmdd` is the collection date in local time.
-- JSONL files are split by time to keep individual files small.
+- JSONL file grouping is collector-defined. A collector may split files by
+  size, event count, session, source, time bucket, or another source-appropriate
+  strategy, as long as each file remains reasonably small and discoverable under
+  `work_dir`.
+- JSONL file names should be timestamps in epoch milliseconds. The timestamp
+  identifies the collector's chosen file or bucket boundary, such as file-open
+  time, first-event time, or time-bucket start. It does not require one output
+  file per event.
 - `state/checkpoint.json` is optional collector-owned state for incremental
   scans, source fingerprints, and cleanup bookkeeping.
 - `artifacts` contains copied artifacts or small metadata files for external
@@ -30,6 +37,10 @@ Field names must use snake_case.
 
 Only `id`, `collector_id`, `source`, and `time.observed_at` are required. Other
 maps can be expanded by each collector when more detail is available.
+
+`time.observed_at` and other event timestamps are sequence metadata for later
+processors. They help reconstruct time-series order, but they do not define the
+file boundary or storage rotation policy.
 
 ```json
 {
@@ -166,7 +177,9 @@ The collector is responsible for:
 
 - Writing events in the shape above.
 - Writing artifacts under the same assigned work folder.
-- Rotating files so individual JSONL files stay small.
+- Choosing a file grouping and rotation strategy that keeps individual JSONL
+  files small, then naming each file with the timestamp for that chosen file or
+  bucket boundary.
 - Reporting health and high-level status through `collector:heartbeat`.
 
 Processors should receive folder or file references from the coordinator and

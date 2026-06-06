@@ -69,5 +69,5 @@ Collected data follows `builtin/collector/spec/collected_data.md`:
 {work_dir}/
   yyyymmdd/
     artifacts/
-      <time_bucket_ms>.jsonl
+      <file_timestamp_ms>.jsonl
 ```

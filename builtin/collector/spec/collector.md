@@ -10,6 +10,10 @@ writes collected data into a coordinator-assigned work folder.
 - The collector registers itself and sends health updates to the coordinator.
 - The collector receives a `work_dir` from the coordinator during registration.
 - The collector writes collected JSONL files and artifacts under `work_dir`.
+- The collector chooses how to group, split, and rotate its JSONL files for its
+  source, then names each JSONL file with the timestamp for that chosen file or
+  bucket boundary. Event timestamps remain ordering metadata for processors, not
+  the splitting scheme.
 - Each collector must provide a `meta.json` file so the coordinator can
   discover, launch, and register it.
 - The collector preserves enough source provenance for processors and actors to

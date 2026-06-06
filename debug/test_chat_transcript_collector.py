@@ -1,6 +1,7 @@
 import importlib.util
 import json
-import tempfile
+import os
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -134,8 +135,17 @@ def build_claude_fixture(root):
     return transcript, tool_result
 
 
-def read_written_events(work_dir):
-    files = sorted(Path(work_dir).glob("**/*.jsonl"))
+def resolve_radar_home():
+    configured = os.environ.get("RADAR_HOME", "~/.radar")
+    return Path(os.path.expandvars(configured)).expanduser().resolve()
+
+
+def read_written_events(work_dir, started_at):
+    files = sorted(
+        path
+        for path in Path(work_dir).glob("**/*.jsonl")
+        if path.stat().st_mtime >= started_at
+    )
     events = []
     for path in files:
         with path.open(encoding="utf-8") as data_file:
@@ -151,74 +161,78 @@ def require(condition, message):
 
 def main():
     collector = load_collector()
-    with tempfile.TemporaryDirectory(prefix="radar-chat-collector-test-") as tmp:
-        tmp = Path(tmp)
-        codex_root = tmp / "codex" / "sessions"
-        claude_root = tmp / "claude" / "projects"
-        work_dir = tmp / "radar" / "collectors" / "chat_transcript"
-        codex_path = build_codex_fixture(codex_root)
-        claude_path, tool_result_path = build_claude_fixture(claude_root)
-        args = SimpleNamespace(
-            codex_sessions_root=str(codex_root),
-            claude_projects_root=str(claude_root),
-            force=False,
-            emit_empty_sessions=False,
-        )
+    radar_home = resolve_radar_home()
+    fixture_root = radar_home / "test_sources" / "chat_transcript"
+    codex_root = fixture_root / "codex" / "sessions"
+    claude_root = fixture_root / "claude" / "projects"
+    work_dir = radar_home / "collectors" / "chat_transcript"
+    codex_path = build_codex_fixture(codex_root)
+    claude_path, tool_result_path = build_claude_fixture(claude_root)
+    args = SimpleNamespace(
+        codex_sessions_root=str(codex_root),
+        claude_projects_root=str(claude_root),
+        force=True,
+        emit_empty_sessions=False,
+    )
 
-        first = collector.scan_sources(args, work_dir)
-        events = read_written_events(work_dir)
-        kinds = [event["subject"]["kind"] for event in events]
-        require(first["sessions_seen"] == 2, f"unexpected sessions_seen: {first}")
-        require(first["sessions_changed"] == 2, f"unexpected sessions_changed: {first}")
-        require(kinds.count("chat_session_summary") == 2, f"missing summaries: {kinds}")
-        require("chat_message" in kinds, f"missing message event: {kinds}")
-        require("chat_tool_call" in kinds, f"missing tool call event: {kinds}")
-        require("chat_tool_result" in kinds, f"missing tool result event: {kinds}")
+    started_at = time.time()
+    first = collector.scan_sources(args, work_dir)
+    events = read_written_events(work_dir, started_at)
+    kinds = [event["subject"]["kind"] for event in events]
+    require(first["sessions_seen"] == 2, f"unexpected sessions_seen: {first}")
+    require(first["sessions_changed"] == 2, f"unexpected sessions_changed: {first}")
+    require(kinds.count("chat_session_summary") == 2, f"missing summaries: {kinds}")
+    require("chat_message" in kinds, f"missing message event: {kinds}")
+    require("chat_tool_call" in kinds, f"missing tool call event: {kinds}")
+    require("chat_tool_result" in kinds, f"missing tool result event: {kinds}")
 
-        summaries = [event for event in events if event["subject"]["kind"] == "chat_session_summary"]
-        require(
-            all(event["artifacts"][0]["storage"] == "external_pointer" for event in summaries),
-            "summary raw transcript artifact should be an external pointer",
-        )
-        require(
-            any(event["provenance"]["session_key"].startswith("codex-") for event in summaries),
-            "missing codex stable session key",
-        )
-        require(
-            any(event["provenance"]["session_key"].startswith("claude-") for event in summaries),
-            "missing claude stable session key",
-        )
-        require(
-            any(
-                event["provenance"].get("line_start")
-                and event["provenance"].get("source_message_ids")
-                for event in events
-                if event["subject"]["kind"] == "chat_message"
-            ),
-            "message events should include line and message provenance",
-        )
-        require(
-            any(
-                artifact.get("kind") == "external_tool_result"
-                and artifact.get("uri") == tool_result_path.resolve().as_uri()
-                for event in events
-                for artifact in event.get("artifacts", [])
-            ),
-            "missing Claude external tool-result pointer artifact",
-        )
+    summaries = [event for event in events if event["subject"]["kind"] == "chat_session_summary"]
+    require(
+        all(event["artifacts"][0]["storage"] == "external_pointer" for event in summaries),
+        "summary raw transcript artifact should be an external pointer",
+    )
+    require(
+        any(event["provenance"]["session_key"].startswith("codex-") for event in summaries),
+        "missing codex stable session key",
+    )
+    require(
+        any(event["provenance"]["session_key"].startswith("claude-") for event in summaries),
+        "missing claude stable session key",
+    )
+    require(
+        any(
+            event["provenance"].get("line_start")
+            and event["provenance"].get("source_message_ids")
+            for event in events
+            if event["subject"]["kind"] == "chat_message"
+        ),
+        "message events should include line and message provenance",
+    )
+    require(
+        any(
+            artifact.get("kind") == "external_tool_result"
+            and artifact.get("uri") == tool_result_path.resolve().as_uri()
+            for event in events
+            for artifact in event.get("artifacts", [])
+        ),
+        "missing Claude external tool-result pointer artifact",
+    )
 
-        checkpoint = json.loads((work_dir / "state" / "checkpoint.json").read_text())
-        require(codex_path.resolve().as_uri() in checkpoint["sources"], "codex checkpoint missing")
-        require(claude_path.resolve().as_uri() in checkpoint["sources"], "claude checkpoint missing")
+    checkpoint = json.loads((work_dir / "state" / "checkpoint.json").read_text())
+    require(codex_path.resolve().as_uri() in checkpoint["sources"], "codex checkpoint missing")
+    require(claude_path.resolve().as_uri() in checkpoint["sources"], "claude checkpoint missing")
 
-        second = collector.scan_sources(args, work_dir)
-        require(second["sessions_changed"] == 0, f"second scan should skip unchanged files: {second}")
-        require(second["events_written"] == 0, f"second scan wrote unexpected events: {second}")
+    args.force = False
+    second = collector.scan_sources(args, work_dir)
+    require(second["sessions_changed"] == 0, f"second scan should skip unchanged files: {second}")
+    require(second["events_written"] == 0, f"second scan wrote unexpected events: {second}")
 
-        print(f"work_dir: {work_dir}")
-        print(f"events_written: {len(events)}")
-        print(f"codex_session: {checkpoint['sources'][codex_path.resolve().as_uri()]['session_key']}")
-        print(f"claude_session: {checkpoint['sources'][claude_path.resolve().as_uri()]['session_key']}")
+    print(f"RADAR_HOME: {radar_home}")
+    print(f"fixture_root: {fixture_root}")
+    print(f"work_dir: {work_dir}")
+    print(f"events_written: {len(events)}")
+    print(f"codex_session: {checkpoint['sources'][codex_path.resolve().as_uri()]['session_key']}")
+    print(f"claude_session: {checkpoint['sources'][claude_path.resolve().as_uri()]['session_key']}")
 
 
 if __name__ == "__main__":
