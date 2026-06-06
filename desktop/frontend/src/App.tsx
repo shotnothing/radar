@@ -11,10 +11,13 @@ import {
   FileText,
   Link2,
   Layers2,
+  Loader2,
   Mail,
   MessageCircle,
+  Play,
   Settings2,
   Sparkles,
+  Square,
   Unplug,
   Workflow,
   type LucideIcon,
@@ -66,6 +69,13 @@ type GoogleConnectionStatus = {
   email: string | null;
   scopes: string[];
   configured: boolean;
+};
+
+type MonitoringStatus = {
+  running: boolean;
+  api_url: string;
+  chrome_bridge_url: string;
+  work_dir: string;
 };
 
 const settingsTabs: Array<{
@@ -269,17 +279,22 @@ function AssistantWindow() {
   return (
     <Card className="assistant-window" role="main" aria-label="Radar suggestion">
       <div className="assistant-surface" key={currentSuggestion.id}>
-        <header className="assistant-header">
-          <div className="assistant-brand">
-            <span className="assistant-mark" aria-hidden="true">
+        <header className="assistant-header" data-tauri-drag-region="">
+          <div className="assistant-brand" data-tauri-drag-region="">
+            <span
+              className="assistant-mark"
+              aria-hidden="true"
+              data-tauri-drag-region=""
+            >
               <Sparkles size={14} strokeWidth={2.2} />
             </span>
-            <span>Radar</span>
+            <span data-tauri-drag-region="">Radar</span>
           </div>
           {queue.length > 0 ? (
             <span
               className="queue-badge"
               aria-label={`${queue.length} suggestions waiting`}
+              data-tauri-drag-region=""
             >
               <Layers2 size={13} strokeWidth={2.3} />
               {queue.length}
@@ -345,6 +360,10 @@ function SettingsWindow() {
     useState<GoogleConnectionStatus | null>(null);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [googleError, setGoogleError] = useState("");
+  const [monitoringStatus, setMonitoringStatus] =
+    useState<MonitoringStatus | null>(null);
+  const [monitoringBusy, setMonitoringBusy] = useState(false);
+  const [monitoringError, setMonitoringError] = useState("");
 
   useEffect(() => {
     const window = getCurrentWindow();
@@ -361,6 +380,61 @@ function SettingsWindow() {
   useEffect(() => {
     void refreshGoogleStatus();
   }, []);
+
+  useEffect(() => {
+    void refreshMonitoringStatus();
+
+    const intervalId = globalThis.setInterval(() => {
+      void refreshMonitoringStatus();
+    }, 3000);
+
+    return () => globalThis.clearInterval(intervalId);
+  }, []);
+
+  async function refreshMonitoringStatus() {
+    try {
+      const status = await invoke<MonitoringStatus>("get_monitoring_status");
+      setMonitoringStatus(status);
+      setMonitoringError("");
+    } catch (error) {
+      setMonitoringError(String(error));
+    }
+  }
+
+  async function startMonitoring() {
+    setMonitoringBusy(true);
+    setMonitoringError("");
+
+    try {
+      const collectorIds = moduleCatalog.collector
+        .filter((item) => enabledModules[item.id])
+        .map((item) => item.id);
+      const status = await invoke<MonitoringStatus>("start_monitoring", {
+        collectorIds,
+      });
+      setMonitoringStatus(status);
+    } catch (error) {
+      setMonitoringError(String(error));
+      await refreshMonitoringStatus();
+    } finally {
+      setMonitoringBusy(false);
+    }
+  }
+
+  async function stopMonitoring() {
+    setMonitoringBusy(true);
+    setMonitoringError("");
+
+    try {
+      const status = await invoke<MonitoringStatus>("stop_monitoring");
+      setMonitoringStatus(status);
+    } catch (error) {
+      setMonitoringError(String(error));
+      await refreshMonitoringStatus();
+    } finally {
+      setMonitoringBusy(false);
+    }
+  }
 
   async function refreshGoogleStatus() {
     try {
@@ -409,6 +483,7 @@ function SettingsWindow() {
   const activeCopy = settingsCopy[activeSection];
   const activeItems = moduleCatalog[activeSection];
   const isConnectionSection = activeSection === "connection";
+  const monitoringRunning = monitoringStatus?.running ?? false;
 
   return (
     <Card className="settings-window" role="main" aria-label="Radar settings">
@@ -448,6 +523,56 @@ function SettingsWindow() {
             <h1>{activeCopy.title}</h1>
             <p>{activeCopy.description}</p>
           </div>
+          {!isConnectionSection ? (
+            <div className="monitoring-control" aria-label="Monitoring control">
+              <div className="monitoring-copy">
+                <span
+                  className={`monitoring-status ${
+                    monitoringRunning ? "monitoring-status--running" : ""
+                  }`}
+                >
+                  {monitoringRunning ? "running" : "stopped"}
+                </span>
+                <span className="monitoring-endpoint">
+                  {monitoringStatus?.api_url ?? "local runtime"}
+                </span>
+              </div>
+              <Button
+                type="button"
+                variant={monitoringRunning ? "outline" : "default"}
+                size="sm"
+                className={`monitoring-button ${
+                  monitoringRunning ? "" : "monitoring-button--primary"
+                }`}
+                disabled={monitoringBusy}
+                onClick={() =>
+                  monitoringRunning
+                    ? void stopMonitoring()
+                    : void startMonitoring()
+                }
+              >
+                {monitoringBusy ? (
+                  <Loader2
+                    className="monitoring-spinner"
+                    size={14}
+                    strokeWidth={2.2}
+                  />
+                ) : monitoringRunning ? (
+                  <Square size={13} strokeWidth={2.4} />
+                ) : (
+                  <Play size={14} strokeWidth={2.4} />
+                )}
+                {monitoringBusy
+                  ? "Working"
+                  : monitoringRunning
+                    ? "Stop"
+                    : "Start"}
+              </Button>
+              {monitoringError ? (
+                <p className="monitoring-error">{monitoringError}</p>
+              ) : null}
+            </div>
+          ) : null}
         </header>
 
         {isConnectionSection ? (

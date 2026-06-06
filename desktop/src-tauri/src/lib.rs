@@ -14,6 +14,10 @@ const ACTOR_API_PORT: u16 = 47322;
 const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
 const PROXY_API_PORT: u16 = 8888;
 const ACTOR_MONITOR_TICK: Duration = Duration::from_secs(1);
+const CHROME_BRIDGE_PORT: u16 = 9223;
+const COLLECTOR_META_CHAT_TRANSCRIPT: &str = "builtin/collector/chat_transcript/meta.json";
+const COLLECTOR_META_CHROME: &str = "builtin/collector/chrome/meta.json";
+const COLLECTOR_META_SEATALK: &str = "builtin/collector/seatalk/meta.json";
 const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: u64 = 10;
 const DEFAULT_ACTOR_SUGGESTION_COOLDOWN_SECONDS: u64 = 45;
 const GOOGLE_OAUTH_AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -39,6 +43,14 @@ struct ActorRuntimeInner {
     last_polled_at: Mutex<HashMap<String, Instant>>,
 }
 
+#[derive(Clone, serde::Serialize)]
+struct MonitoringStatus {
+    running: bool,
+    api_url: String,
+    chrome_bridge_url: String,
+    work_dir: String,
+}
+
 impl ActorRuntimeHandle {
     fn new() -> Self {
         Self {
@@ -62,16 +74,25 @@ impl ActorRuntimeHandle {
     fn cool_down(&self, actor_id: &str) {
         apply_actor_cooldown(&self.inner, actor_id, None);
     }
+
+    fn status(&self) -> MonitoringStatus {
+        monitoring_status(self)
+    }
+
+    fn start(&self, collector_meta: &str) -> MonitoringStatus {
+        start_actor_runtime_process(self, collector_meta);
+        self.status()
+    }
+
+    fn stop(&self) -> MonitoringStatus {
+        stop_actor_runtime_process(self);
+        self.status()
+    }
 }
 
 impl Drop for ActorRuntimeInner {
     fn drop(&mut self) {
-        if let Ok(mut child) = self.child.lock() {
-            if let Some(process) = child.as_mut() {
-                let _ = process.kill();
-                let _ = process.wait();
-            }
-        }
+        stop_actor_runtime_inner(self);
     }
 }
 
@@ -199,6 +220,9 @@ pub fn run() {
         .manage(ActorRuntimeHandle::new())
         .invoke_handler(tauri::generate_handler![
             complete_actor_suggestion,
+            get_monitoring_status,
+            start_monitoring,
+            stop_monitoring,
             get_google_connection_status,
             connect_google_account,
             disconnect_google_account
@@ -209,7 +233,8 @@ pub fn run() {
             setup_tray(app)?;
 
             let actor_runtime = app.state::<ActorRuntimeHandle>().inner().clone();
-            start_actor_runtime_process(&actor_runtime);
+            let collector_meta = default_collector_meta();
+            start_actor_runtime_process(&actor_runtime, &collector_meta);
             start_actor_monitor(app.handle().clone(), Arc::downgrade(&actor_runtime.inner));
             start_proxy_api_server();
 
@@ -224,6 +249,25 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn get_monitoring_status(state: tauri::State<'_, ActorRuntimeHandle>) -> MonitoringStatus {
+    state.status()
+}
+
+#[tauri::command]
+fn start_monitoring(
+    state: tauri::State<'_, ActorRuntimeHandle>,
+    collector_ids: Option<Vec<String>>,
+) -> MonitoringStatus {
+    let collector_meta = collector_meta_for_ids(collector_ids);
+    state.start(&collector_meta)
+}
+
+#[tauri::command]
+fn stop_monitoring(state: tauri::State<'_, ActorRuntimeHandle>) -> MonitoringStatus {
+    state.stop()
 }
 
 #[tauri::command]
@@ -455,7 +499,6 @@ fn show_assistant_window(app: &tauri::AppHandle) -> tauri::Result<()> {
     use tauri::Manager;
 
     if let Some(window) = app.get_webview_window("assistant") {
-        position_assistant_webview_window(&window)?;
         window.show()?;
     }
 
@@ -743,6 +786,41 @@ fn proxy_response(status: u16, content_type: &str, body: &[u8]) -> Vec<u8> {
     let mut response = headers.into_bytes();
     response.extend_from_slice(body);
     response
+}
+
+fn chrome_bridge_url() -> String {
+    format!("ws://127.0.0.1:{CHROME_BRIDGE_PORT}/radar-chrome-bridge-ws")
+}
+
+fn monitoring_status(runtime: &ActorRuntimeHandle) -> MonitoringStatus {
+    MonitoringStatus {
+        running: actor_runtime_is_running(runtime),
+        api_url: actor_api_url(),
+        chrome_bridge_url: chrome_bridge_url(),
+        work_dir: radar_home().display().to_string(),
+    }
+}
+
+fn default_collector_meta() -> String {
+    [COLLECTOR_META_CHROME, COLLECTOR_META_CHAT_TRANSCRIPT].join(",")
+}
+
+fn collector_meta_for_ids(collector_ids: Option<Vec<String>>) -> String {
+    let Some(collector_ids) = collector_ids else {
+        return default_collector_meta();
+    };
+
+    let mut meta_paths = Vec::new();
+    for collector_id in collector_ids {
+        match collector_id.as_str() {
+            "collector.chrome" => meta_paths.push(COLLECTOR_META_CHROME),
+            "collector.chat_transcript" => meta_paths.push(COLLECTOR_META_CHAT_TRANSCRIPT),
+            "collector.seatalk" => meta_paths.push(COLLECTOR_META_SEATALK),
+            _ => {}
+        }
+    }
+
+    meta_paths.join(",")
 }
 
 fn radar_home() -> PathBuf {
@@ -1136,7 +1214,11 @@ fn radar_repo_root() -> Option<PathBuf> {
         .map(|path| path.to_path_buf())
 }
 
-fn start_actor_runtime_process(runtime: &ActorRuntimeHandle) {
+fn start_actor_runtime_process(runtime: &ActorRuntimeHandle, collector_meta: &str) {
+    if actor_runtime_is_running(runtime) {
+        return;
+    }
+
     let Some(repo_root) = radar_repo_root() else {
         eprintln!("radar actor runtime: could not resolve repo root");
         return;
@@ -1166,6 +1248,8 @@ fn start_actor_runtime_process(runtime: &ActorRuntimeHandle) {
         .env("RADAR_HOME", &home)
         .env("RADAR_API_TOKEN", ACTOR_API_TOKEN)
         .env("RADAR_ACTOR_PATH", "builtin/actor")
+        .env("RADAR_COLLECTOR_META", collector_meta)
+        .env("RADAR_CHROME_BRIDGE_PORT", CHROME_BRIDGE_PORT.to_string())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn();
@@ -1178,6 +1262,53 @@ fn start_actor_runtime_process(runtime: &ActorRuntimeHandle) {
             eprintln!("radar actor runtime: failed to start debug coordinator: {error}");
         }
     }
+}
+
+fn stop_actor_runtime_process(runtime: &ActorRuntimeHandle) {
+    stop_actor_runtime_inner(runtime.inner.as_ref());
+}
+
+fn stop_actor_runtime_inner(runtime: &ActorRuntimeInner) {
+    let child = match runtime.child.lock() {
+        Ok(mut child_slot) => child_slot.take(),
+        Err(_) => None,
+    };
+
+    if let Some(mut process) = child {
+        let _ = process.kill();
+        let _ = process.wait();
+    }
+
+    if let Ok(mut inflight_actors) = runtime.inflight_actors.lock() {
+        inflight_actors.clear();
+    }
+    if let Ok(mut cooldown_until) = runtime.cooldown_until.lock() {
+        cooldown_until.clear();
+    }
+    if let Ok(mut last_polled_at) = runtime.last_polled_at.lock() {
+        last_polled_at.clear();
+    }
+}
+
+fn actor_runtime_is_running(runtime: &ActorRuntimeHandle) -> bool {
+    let mut child_slot = match runtime.inner.child.lock() {
+        Ok(slot) => slot,
+        Err(_) => return false,
+    };
+
+    let should_clear = match child_slot.as_mut() {
+        Some(process) => match process.try_wait() {
+            Ok(Some(_)) | Err(_) => true,
+            Ok(None) => return true,
+        },
+        None => false,
+    };
+
+    if should_clear {
+        *child_slot = None;
+    }
+
+    false
 }
 
 fn start_actor_monitor(app: tauri::AppHandle, runtime: Weak<ActorRuntimeInner>) {
