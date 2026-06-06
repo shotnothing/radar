@@ -239,16 +239,17 @@ class TransactionStore:
 
 @dataclass
 class PredictionConfig:
-    min_support: float = 0.1
-    min_confidence: float = 0.5
-    min_transactions_before_prediction: int = 50
-    min_pattern_decayed_count: float = 3.0
-    decay_rate: float = 2.3e-7  # 5 events/sec, half-life of 1 week
+    # Demo defaults assume about 0.5 normalized events/sec and a 5 minute half-life.
+    min_support: float = 0.01
+    min_confidence: float = 0.01
+    min_transactions_before_prediction: int = 30
+    min_pattern_decayed_count: float = 3.5
+    decay_rate: float = 0.0046209812
     max_items: int = 10000
     max_pattern_size: int = 5
     max_transaction_items: int = 32
     max_candidates_per_transaction: int = 2000
-    prune_below_support: float = 0.01
+    prune_below_support: float = 0.001
     prune_every: int = 100
     min_count: float = 0.01
 
