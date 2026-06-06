@@ -48,6 +48,6 @@
   },
   "extension": {
     "name": "Radar Extension",
-    "path": "builtin/collector/chrome/extension"
+    "path": "extensions/radar-chrome"
   }
 }

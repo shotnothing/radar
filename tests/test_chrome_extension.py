@@ -7,10 +7,10 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from builtin.collector.chrome.package_extension import EXTENSION_FILES, build_extension_package
+from extensions.package_radar_chrome import EXTENSION_FILES, build_extension_package
 
 
-EXTENSION_DIR = Path("builtin/collector/chrome/extension")
+EXTENSION_DIR = Path("extensions/radar-chrome")
 
 
 class ChromeExtensionManifestTest(unittest.TestCase):

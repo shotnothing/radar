@@ -15,7 +15,7 @@ run-coordinator:
 	$(PYTHON) debug/app.py --host $(RADAR_HOST) --port $(RADAR_PORT) --collector-meta $(RADAR_COLLECTOR_META)
 
 package-chrome-extension:
-	$(PYTHON) -m builtin.collector.chrome.package_extension
+	$(PYTHON) -m extensions.package_radar_chrome
 
 test-sample-collector:
 	$(PYTHON) -m py_compile debug/app.py builtin/collector/sample/collector.py debug/test_sample_collector.py

@@ -10,8 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_SOURCE_DIR = REPO_ROOT / "builtin" / "collector" / "chrome" / "extension"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_SOURCE_DIR = REPO_ROOT / "extensions" / "radar-chrome"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "dist"
 PACKAGE_NAME = "radar-extension"
 EXTENSION_FILES = (

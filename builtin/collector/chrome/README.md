@@ -37,8 +37,7 @@ python3 debug/app.py --collector-meta builtin/collector/chrome/meta.json
 - Browser or extension events can be posted to `POST /event` on the local event
   server. The collector converts them to snake_case observations and writes JSONL
   under the assigned `work_dir`.
-- The unpacked Chrome extension lives in `builtin/collector/chrome/extension`.
-  Load that folder in `chrome://extensions` as **Radar Extension**. It captures
+- The Chrome extension app lives in `extensions/radar-chrome`. It captures
   page navigation, clicks, focus, form submits, copy/paste, selection, and
   debounced input events, then forwards them to `http://127.0.0.1:47321/event`.
 
