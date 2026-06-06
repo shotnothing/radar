@@ -4,6 +4,8 @@ Radar is a macOS user-intention system. The future desktop app will be built
 with the desktop runtime in `desktop/` and will coordinate local collectors,
 processors, and actors over Socket.IO.
 
+Project showcase: https://shotnothing.github.io/radar/
+
 For now, `desktop/` is an early Tauri shell. Use the lightweight Python debug
 harness to exercise the collector, processor, and actor runtime contract.
 
@@ -98,8 +100,8 @@ Check that the Chrome collector is listening:
 curl -s http://127.0.0.1:47321/health | /tmp/radar-venv/bin/python -m json.tool
 ```
 
-Then open a regular `http://` or `https://` page in Chrome and click, focus,
-type, select, copy, paste, or submit a form. Recorded Chrome data is written to:
+Then open a regular `http://` or `https://` page in Chrome and click, type,
+select, copy, paste, or submit a form. Recorded Chrome data is written to:
 
 ```text
 debug/work/collectors/chrome_browser/YYYYMMDD/*.jsonl

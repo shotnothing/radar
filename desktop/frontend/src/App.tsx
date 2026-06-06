@@ -24,14 +24,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
 function App() {
@@ -83,10 +75,10 @@ const settingsTabs: Array<{
   label: string;
   icon: LucideIcon;
 }> = [
-  { id: "collector", label: "collector", icon: Settings2 },
-  { id: "processor", label: "processor", icon: Cpu },
-  { id: "actor", label: "actor", icon: Bot },
-  { id: "connection", label: "connection", icon: Link2 },
+  { id: "collector", label: "Collector", icon: Settings2 },
+  { id: "processor", label: "Processor", icon: Cpu },
+  { id: "actor", label: "Actor", icon: Bot },
+  { id: "connection", label: "Connection", icon: Link2 },
 ];
 
 const settingsCopy: Record<
@@ -94,22 +86,22 @@ const settingsCopy: Record<
   { title: string; description: string; empty: string }
 > = {
   collector: {
-    title: "collector",
+    title: "Collector",
     description: "Local sources that collect activity signals.",
     empty: "No collectors configured.",
   },
   processor: {
-    title: "processor",
+    title: "Processor",
     description: "Pipelines that turn collected signals into intent.",
     empty: "No processors configured.",
   },
   actor: {
-    title: "actor",
+    title: "Actor",
     description: "Actions that can be triggered after intent is detected.",
     empty: "No actors configured yet.",
   },
   connection: {
-    title: "connection",
+    title: "Connection",
     description: "External accounts Radar can use with your permission.",
     empty: "No connections configured yet.",
   },
@@ -139,6 +131,14 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Local Codex and Claude transcript files.",
       status: "chat.transcript",
       icon: FileText,
+      defaultEnabled: true,
+    },
+    {
+      id: "collector.macos",
+      name: "macOS Activity",
+      description: "Local clicks, submissions, active window, and focused element context.",
+      status: "macos.activity",
+      icon: Workflow,
       defaultEnabled: true,
     },
   ],
@@ -202,8 +202,6 @@ function AssistantWindow() {
     null
   );
   const [queue, setQueue] = useState<Suggestion[]>([]);
-  const [feedback, setFeedback] = useState("");
-  const [choice, setChoice] = useState("later");
   const currentSuggestionRef = useRef<Suggestion | null>(null);
   const queueRef = useRef<Suggestion[]>([]);
 
@@ -233,13 +231,7 @@ function AssistantWindow() {
     };
   }, []);
 
-  function resetControls() {
-    setFeedback("");
-    setChoice("later");
-  }
-
   function activateSuggestion(suggestion: Suggestion) {
-    resetControls();
     currentSuggestionRef.current = suggestion;
     setCurrentSuggestion(suggestion);
   }
@@ -307,26 +299,6 @@ function AssistantWindow() {
         </section>
 
         <section className="controls" aria-label="Suggestion actions">
-          <Select value={choice} onValueChange={setChoice}>
-            <SelectTrigger
-              aria-label="Reminder timing"
-              className="h-7 w-[104px] rounded-[9px] bg-white text-xs shadow-none"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent side="top" className="rounded-xl">
-              <SelectItem value="later">Remind later</SelectItem>
-              <SelectItem value="today">Keep today</SelectItem>
-              <SelectItem value="never">Never remind</SelectItem>
-            </SelectContent>
-          </Select>
-          <Input
-            value={feedback}
-            onChange={(event) => setFeedback(event.target.value)}
-            placeholder="Add preference"
-            aria-label="Feedback"
-            className="h-7 rounded-[9px] bg-white text-xs shadow-none md:text-xs"
-          />
           <Button
             type="button"
             variant="ghost"

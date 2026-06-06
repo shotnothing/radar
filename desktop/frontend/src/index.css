@@ -119,8 +119,8 @@ body {
 }
 
 .controls {
-  display: grid;
-  grid-template-columns: 104px 1fr auto auto;
+  display: flex;
+  justify-content: flex-end;
   gap: 6px;
   padding: 9px 10px;
   border-top: 1px solid rgba(15, 23, 42, 0.08);

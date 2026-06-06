@@ -75,7 +75,7 @@ http://127.0.0.1:47321/event
   server. The collector converts them to snake_case observations and writes JSONL
   under the assigned `work_dir`.
 - The Chrome extension app lives in `extensions/radar-chrome`. It captures
-  page navigation, clicks, focus, form submits, copy/paste, selection, and
+  page navigation, clicks, form submits, copy/paste, selection, and
   debounced input events, then forwards them to `http://127.0.0.1:47321/event`.
 
 ## Test Collection Output
@@ -86,8 +86,8 @@ Check that the collector event server is healthy:
 curl -s http://127.0.0.1:47321/health | /tmp/radar-venv/bin/python -m json.tool
 ```
 
-Open a regular `http://` or `https://` page in Chrome, then click, focus an
-input, type, select text, copy, paste, or submit a form. Do not test on
+Open a regular `http://` or `https://` page in Chrome, then click, type,
+select text, copy, paste, or submit a form. Do not test on
 `chrome://` pages; Chrome extensions do not inject content scripts there.
 
 Input events are debounced by the extension, so wait about one second after

@@ -221,7 +221,7 @@ class ActorRuntime:
             "actor_id": actor_id,
             "polling_interval_seconds": ensure_dict(manifest.get("trigger")).get(
                 "polling_interval_seconds",
-                10,
+                1,
             ),
             "active_context": ensure_dict(context.get("active_context")),
             "browser": ensure_dict(context.get("browser")),

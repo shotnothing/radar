@@ -41,6 +41,18 @@ def youtube_context(url: str) -> dict[str, object]:
     }
 
 
+def youtube_background_context(url: str) -> dict[str, object]:
+    context = youtube_context(url)
+    context["active_context"] = {
+        "observed_at": 1780713573900,
+        "app_name": "Codex",
+        "bundle_id": "com.openai.codex",
+        "window_title": "radar",
+        "document_path": "/Users/example/radar",
+    }
+    return context
+
+
 class ActorRuntimeTest(unittest.TestCase):
     def test_discovers_builtin_youtube_actor(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -90,6 +102,21 @@ class ActorRuntimeTest(unittest.TestCase):
 
             self.assertFalse(output["available"])
             self.assertTrue(output["filtered"])
+
+    def test_youtube_actor_skips_when_youtube_is_background_tab(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: youtube_background_context("https://www.youtube.com/"),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.youtube_search_nab")
+
+            self.assertFalse(output["available"])
 
     def test_codex_skill_actor_finds_repo_skill_from_axtree(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

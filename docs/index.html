@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Radar - Self-Evolving AI Workflow Assistant</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #090b10;
+        --panel: rgba(255, 255, 255, 0.075);
+        --panel-strong: rgba(255, 255, 255, 0.12);
+        --line: rgba(255, 255, 255, 0.16);
+        --text: #f5f7fb;
+        --muted: #a9b4c4;
+        --soft: #dbe5f4;
+        --cyan: #54d7ff;
+        --mint: #46f0b0;
+        --amber: #ffd36b;
+        --rose: #ff6d8b;
+        --blue: #7aa7ff;
+        --shadow: 0 24px 90px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 18% 15%, rgba(84, 215, 255, 0.2), transparent 30%),
+          radial-gradient(circle at 86% 22%, rgba(70, 240, 176, 0.16), transparent 28%),
+          linear-gradient(135deg, #090b10 0%, #0e1626 46%, #0a0b12 100%);
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        overflow: hidden;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(9, 11, 16, 0.76);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(84, 215, 255, 0.4);
+        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(84, 215, 255, 0.18), rgba(70, 240, 176, 0.1));
+        box-shadow: 0 0 36px rgba(84, 215, 255, 0.22);
+      }
+
+      .brand-mark svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .nav-links a {
+        padding: 10px 12px;
+        border-radius: 10px;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+      }
+
+      .hero {
+        position: relative;
+        min-height: calc(100vh - 76px);
+        display: grid;
+        align-items: center;
+        padding: 18px 0 12px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr);
+        align-items: center;
+        gap: 42px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 680px;
+        font-size: clamp(44px, 5.6vw, 70px);
+        line-height: 0.93;
+        letter-spacing: 0;
+        text-align: center;
+      }
+
+      .lead {
+        max-width: 620px;
+        margin-top: 20px;
+        color: var(--soft);
+        font-size: clamp(17px, 1.6vw, 20px);
+        text-align: center;
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font-weight: 750;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+        transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(84, 215, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .button.primary {
+        border-color: rgba(84, 215, 255, 0.55);
+        background: linear-gradient(135deg, #54d7ff 0%, #46f0b0 100%);
+        color: #061018;
+      }
+
+      .hero-proof {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        width: 100%;
+        max-width: 650px;
+        margin-top: 24px;
+      }
+
+      .proof-item {
+        min-height: 78px;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .proof-value {
+        color: var(--cyan);
+        font-size: 22px;
+        font-weight: 850;
+      }
+
+      .proof-label {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .demo-stage {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 520px;
+      }
+
+      .radar-visual {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(245px, 0.92fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 14px;
+        width: min(100%, 630px);
+        height: 520px;
+        padding: 22px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background:
+          linear-gradient(rgba(84, 215, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(84, 215, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(160deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035));
+        background-size: 34px 34px, 34px 34px, auto;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .radar-visual::before {
+        content: "";
+        position: absolute;
+        inset: -18%;
+        background: conic-gradient(
+          from 245deg,
+          transparent 0deg,
+          rgba(84, 215, 255, 0.08) 34deg,
+          rgba(70, 240, 176, 0.22) 58deg,
+          transparent 92deg,
+          transparent 360deg
+        );
+        animation: sweep 6s linear infinite;
+        z-index: 0;
+      }
+
+      .radar-visual::after {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes sweep {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .mock-window,
+      .suggestion-card,
+      .pipeline-card {
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(10, 16, 27, 0.86);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(18px);
+      }
+
+      .mock-window {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        border-radius: 22px;
+        overflow: hidden;
+      }
+
+      .window-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--rose);
+      }
+
+      .dot:nth-child(2) {
+        background: var(--amber);
+      }
+
+      .dot:nth-child(3) {
+        background: var(--mint);
+      }
+
+      .browser-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 0;
+        padding: 14px;
+      }
+
+      .url-row,
+      .event-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .url-row {
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .url-row span:last-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .event-list {
+        display: grid;
+        flex: 1;
+        align-content: stretch;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .event-row {
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .event-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 11px;
+        background: rgba(84, 215, 255, 0.15);
+        color: var(--cyan);
+        font-weight: 850;
+      }
+
+      .event-copy strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .event-copy span {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .suggestion-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .suggestion-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .confidence {
+        color: var(--cyan);
+      }
+
+      .suggestion-card h3 {
+        margin-top: 14px;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .suggestion-card p {
+        margin-top: 10px;
+        color: var(--soft);
+        font-size: 13px;
+      }
+
+      .choice-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .choice-row button {
+        min-height: 42px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .choice-row button:first-child {
+        background: var(--mint);
+        color: #061018;
+      }
+
+      .pipeline-card {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .pipeline-title {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .pipeline-step {
+        min-height: 62px;
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.075);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .pipeline-step strong {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      section {
+        padding: 90px 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 28px;
+        margin-bottom: 34px;
+      }
+
+      .section-head h2 {
+        max-width: 760px;
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1;
+      }
+
+      .section-head p {
+        max-width: 430px;
+        color: var(--muted);
+      }
+
+      .band {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .feature {
+        min-height: 210px;
+        padding: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .feature svg {
+        width: 30px;
+        height: 30px;
+        color: var(--cyan);
+      }
+
+      .feature h3 {
+        margin-top: 20px;
+        font-size: 20px;
+      }
+
+      .feature p {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .guide-layout {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        gap: 26px;
+        align-items: start;
+      }
+
+      .guide-tabs {
+        position: sticky;
+        top: 102px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .tab-button {
+        width: 100%;
+        min-height: 52px;
+        padding: 0 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.055);
+        color: var(--muted);
+        text-align: left;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .tab-button.active {
+        border-color: rgba(84, 215, 255, 0.5);
+        background: rgba(84, 215, 255, 0.12);
+        color: var(--text);
+      }
+
+      .guide-panel {
+        display: none;
+      }
+
+      .guide-panel.active {
+        display: block;
+      }
+
+      .steps {
+        display: grid;
+        gap: 14px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 18px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .step-number {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: rgba(84, 215, 255, 0.14);
+        color: var(--cyan);
+        font-weight: 900;
+      }
+
+      .step h3 {
+        font-size: 20px;
+      }
+
+      .step p {
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      .code-panel {
+        margin-top: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        background: #080d14;
+        overflow: hidden;
+      }
+
+      .code-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 14px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        padding: 20px;
+        color: #dff7ff;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .architecture {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .arch-node {
+        position: relative;
+        min-height: 150px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .arch-node::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -10px;
+        width: 18px;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(84, 215, 255, 0.8), transparent);
+      }
+
+      .arch-node:last-child::after {
+        display: none;
+      }
+
+      .arch-node span {
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .arch-node h3 {
+        margin-top: 12px;
+        font-size: 19px;
+      }
+
+      .arch-node p {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .closing {
+        padding-bottom: 110px;
+      }
+
+      .closing-box {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 28px;
+        align-items: center;
+        padding: 34px;
+        border: 1px solid rgba(84, 215, 255, 0.26);
+        border-radius: 26px;
+        background:
+          linear-gradient(135deg, rgba(84, 215, 255, 0.14), rgba(70, 240, 176, 0.08)),
+          rgba(255, 255, 255, 0.055);
+        box-shadow: var(--shadow);
+      }
+
+      .closing-box h2 {
+        font-size: clamp(30px, 5vw, 56px);
+        line-height: 1;
+      }
+
+      .closing-box p {
+        max-width: 700px;
+        margin-top: 14px;
+        color: var(--soft);
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .guide-layout,
+        .closing-box {
+          grid-template-columns: 1fr;
+        }
+
+        .demo-stage {
+          justify-content: center;
+          min-height: auto;
+        }
+
+        .radar-visual {
+          grid-template-columns: 1fr;
+          height: auto;
+          margin: auto;
+        }
+
+        .mock-window,
+        .suggestion-card {
+          height: auto;
+        }
+
+        .choice-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .feature-grid,
+        .architecture {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .section-head {
+          display: block;
+        }
+
+        .section-head p {
+          margin-top: 16px;
+        }
+
+        .guide-tabs {
+          position: static;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 24px, 1180px);
+        }
+
+        .nav-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          justify-content: center;
+          gap: 12px;
+          padding: 14px 0;
+        }
+
+        .nav-links {
+          width: 100%;
+          flex-wrap: wrap;
+          gap: 6px;
+          overflow: visible;
+          padding-bottom: 0;
+        }
+
+        .nav-links a {
+          padding: 8px 10px;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 32px;
+        }
+
+        .hero-proof,
+        .feature-grid,
+        .architecture,
+        .guide-tabs {
+          grid-template-columns: 1fr;
+        }
+
+        .demo-stage {
+          display: none;
+        }
+
+        .pipeline {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .step {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav class="nav">
+        <div class="shell nav-inner">
+          <a class="brand" href="#top" aria-label="Radar home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" />
+                <path d="M12 12L18 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <circle cx="12" cy="12" r="2" fill="currentColor" />
+              </svg>
+            </span>
+            <span>Radar</span>
+          </a>
+          <div class="nav-links" aria-label="Page navigation">
+            <a href="#landing">Problem</a>
+            <a href="#user-guide">User Guide</a>
+            <a href="#developer-guide">Developer Guide</a>
+            <a href="#architecture">Architecture</a>
+          </div>
+        </div>
+      </nav>
+
+      <main id="top">
+        <header class="hero shell" id="landing">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h1>LLMs can do the work. Radar learns when to use them.</h1>
+              <p class="lead">
+                People use AI when they remember to ask. Radar watches real workflows,
+                learns reusable patterns while the user works, and proactively suggests
+                or runs the next LLM-powered action at the right moment.
+              </p>
+              <div class="hero-actions">
+                <a class="button primary" href="#user-guide">See user flow</a>
+                <a class="button" href="#developer-guide">View developer guide</a>
+              </div>
+              <div class="hero-proof" aria-label="Product highlights">
+                <div class="proof-item">
+                  <div class="proof-value">Learn</div>
+                  <div class="proof-label">Observe workflows as they happen once</div>
+                </div>
+                <div class="proof-item">
+                  <div class="proof-value">Suggest</div>
+                  <div class="proof-label">Surface useful AI actions proactively</div>
+                </div>
+                <div class="proof-item">
+                  <div class="proof-value">Evolve</div>
+                  <div class="proof-label">Accepted actions become reusable skills</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-stage" aria-label="Radar product preview">
+              <div class="radar-visual">
+                <div class="mock-window">
+                  <div class="window-bar">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                  <div class="browser-body">
+                    <div class="url-row">
+                      <span>Chrome</span>
+                      <span>https://github.com/shotnothing/radar</span>
+                    </div>
+                    <div class="event-list">
+                      <div class="event-row">
+                        <div class="event-icon">1</div>
+                        <div class="event-copy">
+                          <strong>Observe work</strong>
+                          <span>User completes a task once.</span>
+                        </div>
+                      </div>
+                      <div class="event-row">
+                        <div class="event-icon">2</div>
+                        <div class="event-copy">
+                          <strong>Learn pattern</strong>
+                          <span>Radar filters noise and stores the workflow.</span>
+                        </div>
+                      </div>
+                      <div class="event-row">
+                        <div class="event-icon">3</div>
+                        <div class="event-copy">
+                          <strong>Suggest next step</strong>
+                          <span>LLM explains what can be done faster.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="suggestion-card">
+                  <div class="suggestion-top">
+                    <span>Proactive AI suggestion</span>
+                    <span class="confidence">91% confidence</span>
+                  </div>
+                  <h3>Make this a reusable skill.</h3>
+                  <p>
+                    Radar learned the steps from the user's work. Next time, it can
+                    suggest the workflow or let an agent run it directly.
+                  </p>
+                  <div class="choice-row">
+                    <button type="button">Use suggestion</button>
+                    <button type="button">Keep working</button>
+                  </div>
+                </div>
+
+                <div class="pipeline-card">
+                  <div class="pipeline-title">Self-evolving loop</div>
+                  <div class="pipeline">
+                    <div class="pipeline-step"><strong>Work</strong>User acts normally</div>
+                    <div class="pipeline-step"><strong>Learn</strong>Workflow pattern</div>
+                    <div class="pipeline-step"><strong>Suggest</strong>LLM next action</div>
+                    <div class="pipeline-step"><strong>Automate</strong>Reusable skill</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="band" aria-label="Why Radar matters">
+          <div class="shell">
+            <div class="section-head">
+              <h2>The missing layer between people and LLMs.</h2>
+              <p>
+                Users should not have to manually design prompts, agents, workflows, and
+                skills. Radar learns from the work they already do, then brings AI forward
+                only when it has a useful next step.
+              </p>
+            </div>
+            <div class="feature-grid">
+              <article class="feature">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 7h16M7 12h10M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <h3>Passive workflow learning</h3>
+                <p>Observe Chrome and SeaTalk activity while the user works normally, then keep only meaningful action context.</p>
+              </article>
+              <article class="feature">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12a7 7 0 0 1 12-5M19 12a7 7 0 0 1-12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M17 3v4h-4M7 21v-4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <h3>Feedback-weighted memory</h3>
+                <p>When the user accepts a suggestion, that workflow becomes more likely to appear in the same context later.</p>
+              </article>
+              <article class="feature">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 5h16v10H8l-4 4V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                </svg>
+                <h3>LLM-made suggestions</h3>
+                <p>The agent turns learned patterns into clear English suggestions instead of exposing prompts, selectors, or logs.</p>
+              </article>
+              <article class="feature">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                </svg>
+                <h3>Skills without setup</h3>
+                <p>New work can become a reusable workflow after the user performs it once, without manually building a tool first.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="shell" id="user-guide">
+          <div class="section-head">
+            <h2>User guide</h2>
+            <p>How a judge or end user experiences Radar during the hackathon demo.</p>
+          </div>
+
+          <div class="guide-layout">
+            <div class="guide-tabs" role="tablist" aria-label="Guide tabs">
+              <button class="tab-button active" type="button" data-tab="demo">Demo flow</button>
+              <button class="tab-button" type="button" data-tab="user">User controls</button>
+            </div>
+
+            <div>
+              <div class="guide-panel active" id="demo" role="tabpanel">
+                <div class="steps">
+                  <article class="step">
+                    <div class="step-number">01</div>
+                    <div>
+                      <h3>Do normal work first</h3>
+                      <p>The user keeps using Chrome, SeaTalk, GitHub, and the tools they already use. Radar learns in the background.</p>
+                    </div>
+                  </article>
+                  <article class="step">
+                    <div class="step-number">02</div>
+                    <div>
+                      <h3>Agent learns the workflow</h3>
+                      <p>Radar filters noisy UI data, finds repeated patterns, and formats the useful sequence as reusable workflow knowledge.</p>
+                    </div>
+                  </article>
+                  <article class="step">
+                    <div class="step-number">03</div>
+                    <div>
+                      <h3>Side panel suggests what AI can do</h3>
+                      <p>The user sees a plain-English suggestion made by an LLM, such as continuing a repeated task or automating the next step.</p>
+                    </div>
+                  </article>
+                  <article class="step">
+                    <div class="step-number">04</div>
+                    <div>
+                      <h3>Continue, accept, or delegate</h3>
+                      <p>The user can keep working, use the suggestion for a speed boost, or let an agent use learned knowledge to do the work directly.</p>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <div class="guide-panel" id="user" role="tabpanel">
+                <div class="steps">
+                  <article class="step">
+                    <div class="step-number">A</div>
+                    <div>
+                      <h3>Use suggestion</h3>
+                      <p>Applies the suggested next step and increases priority for the same workflow in future sessions.</p>
+                    </div>
+                  </article>
+                  <article class="step">
+                    <div class="step-number">B</div>
+                    <div>
+                      <h3>Keep working</h3>
+                      <p>Dismisses the suggestion without interrupting flow. Radar continues learning and can suggest again later.</p>
+                    </div>
+                  </article>
+                  <article class="step">
+                    <div class="step-number">C</div>
+                    <div>
+                      <h3>Delegate to agent</h3>
+                      <p>Uses learned workflow knowledge to let an agent perform the task directly when the user no longer wants to do it manually.</p>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="band" id="developer-guide">
+          <div class="shell">
+            <div class="section-head">
+              <h2>Developer guide</h2>
+              <p>Minimal commands for running the demo locally and explaining the technical foundation.</p>
+            </div>
+
+            <div class="steps">
+              <article class="step">
+                <div class="step-number">1</div>
+                <div>
+                  <h3>Install Python dependencies</h3>
+                  <p>Use the repo root and create a local virtual environment for the coordinator and collectors.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>setup</span></div>
+                    <pre><code>cd /Users/SIPSS0578/Desktop/Hackathon
+python3 -m venv /tmp/radar-venv
+/tmp/radar-venv/bin/python -m pip install -r requirements.txt</code></pre>
+                  </div>
+                </div>
+              </article>
+
+              <article class="step">
+                <div class="step-number">2</div>
+                <div>
+                  <h3>Package and load the Chrome extension</h3>
+                  <p>Build the unpacked extension, then load the generated folder in Chrome Developer Mode.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>extension</span></div>
+                    <pre><code>make PYTHON=/tmp/radar-venv/bin/python package-chrome-extension
+open -a "Google Chrome" chrome://extensions</code></pre>
+                  </div>
+                </div>
+              </article>
+
+              <article class="step">
+                <div class="step-number">3</div>
+                <div>
+                  <h3>Run the coordinator with Chrome collection</h3>
+                  <p>The coordinator launches the managed Chrome collector and writes JSONL observations under the debug work folder.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>run</span></div>
+                    <pre><code>PATH=/tmp/radar-venv/bin:$PATH \
+RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
+make PYTHON=/tmp/radar-venv/bin/python run-coordinator</code></pre>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="shell" id="architecture">
+          <div class="section-head">
+            <h2>Architecture judges can understand in 30 seconds.</h2>
+            <p>A narrow, demo-ready loop that is still believable as a production direction.</p>
+          </div>
+
+          <div class="architecture" aria-label="Radar architecture">
+            <article class="arch-node">
+              <span>Input</span>
+              <h3>Real work</h3>
+              <p>User activity enters through local collectors and controlled app-specific signals.</p>
+            </article>
+            <article class="arch-node">
+              <span>Filter</span>
+              <h3>Useful signals</h3>
+              <p>Raw UI details become compact events with target, context, and nearby actions.</p>
+            </article>
+            <article class="arch-node">
+              <span>Match</span>
+              <h3>Workflow patterns</h3>
+              <p>Recent sequences are compared against learned patterns with noise removed.</p>
+            </article>
+            <article class="arch-node">
+              <span>Explain</span>
+              <h3>LLM suggestion</h3>
+              <p>The expected next action is translated into human-readable English.</p>
+            </article>
+            <article class="arch-node">
+              <span>Learn</span>
+              <h3>Reusable skill</h3>
+              <p>Accepted actions receive a priority boost and can become reusable workflows.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="shell closing">
+          <div class="closing-box">
+            <div>
+              <h2>Radar makes AI proactive, personal, and self-evolving.</h2>
+              <p>
+                The hackathon story is simple: users work once, Radar learns the pattern,
+                the side panel suggests what AI can do next, and accepted suggestions become
+                reusable skills without manual workflow setup.
+              </p>
+            </div>
+            <a class="button primary" href="#top">Back to top</a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const tabs = document.querySelectorAll(".tab-button");
+      const panels = document.querySelectorAll(".guide-panel");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tab;
+          tabs.forEach((item) => item.classList.toggle("active", item === tab));
+          panels.forEach((panel) => {
+            panel.classList.toggle("active", panel.id === target);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
