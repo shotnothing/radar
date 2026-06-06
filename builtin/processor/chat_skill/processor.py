@@ -120,10 +120,35 @@ PROJECT_CATEGORIES = {
     "source_evidence",
 }
 
-FILE_HINT_RE = re.compile(
-    r"(?:[A-Za-z0-9_./@+~-]+/)?[A-Za-z0-9_./@+~-]+\."
-    r"(?:go|ts|tsx|js|jsx|mjs|cjs|json|yaml|yml|toml|md|mdx|css|scss|html|py|java|kt|rs|sql|sh|proto|graphql|gql|txt)"
-)
+FILE_HINT_TOKEN_RE = re.compile(r"[A-Za-z0-9_./@+~-]+")
+FILE_HINT_EXTENSIONS = {
+    ".cjs",
+    ".css",
+    ".go",
+    ".gql",
+    ".graphql",
+    ".html",
+    ".java",
+    ".js",
+    ".json",
+    ".jsx",
+    ".kt",
+    ".md",
+    ".mdx",
+    ".mjs",
+    ".proto",
+    ".py",
+    ".rs",
+    ".scss",
+    ".sh",
+    ".sql",
+    ".toml",
+    ".ts",
+    ".tsx",
+    ".txt",
+    ".yaml",
+    ".yml",
+}
 PATCH_FILE_RE = re.compile(r"(?m)^\*\*\* (?:Add|Update|Delete) File: ([^\n]+)$")
 NON_SLUG_RE = re.compile(r"[^a-zA-Z0-9._-]+")
 
@@ -175,6 +200,15 @@ def read_json(path, default):
             return json.load(input_file)
     except (OSError, json.JSONDecodeError):
         return default
+
+
+def any_from_json_string(value):
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return value
 
 
 def append_text(path, text):
@@ -238,12 +272,22 @@ def collect_file_hints(value):
                 visit(item)
             return
         text = str(child)
+        parsed = any_from_json_string(text)
+        if isinstance(parsed, (dict, list)):
+            visit(parsed)
+            return
         if len(text) > 200000:
             text = text[:200000]
         for match in PATCH_FILE_RE.findall(text):
             add_file_candidate(match)
-        for match in FILE_HINT_RE.findall(text):
-            add_file_candidate(match)
+        for match in FILE_HINT_TOKEN_RE.finditer(text):
+            candidate = match.group(0)
+            if has_file_extension(candidate):
+                add_file_candidate(candidate)
+
+    def has_file_extension(candidate):
+        normalized = str(candidate or "").lower()
+        return any(normalized.endswith(extension) for extension in FILE_HINT_EXTENSIONS)
 
     def add_file_candidate(candidate):
         candidate = str(candidate or "").strip().strip("`'\" ,;:()[]{}")

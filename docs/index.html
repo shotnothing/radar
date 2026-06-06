@@ -1004,13 +1004,13 @@
         <section class="shell" id="user-guide">
           <div class="section-head">
             <h2>User guide</h2>
-            <p>How a judge or end user experiences Radar during the hackathon demo.</p>
+            <p>Use Radar as a quiet side panel that learns your routines and helps when it sees a useful next step.</p>
           </div>
 
           <div class="guide-layout">
             <div class="guide-tabs" role="tablist" aria-label="Guide tabs">
-              <button class="tab-button active" type="button" data-tab="demo">Demo flow</button>
-              <button class="tab-button" type="button" data-tab="user">User controls</button>
+              <button class="tab-button active" type="button" data-tab="demo">Daily flow</button>
+              <button class="tab-button" type="button" data-tab="user">Your choices</button>
             </div>
 
             <div>
@@ -1019,29 +1019,29 @@
                   <article class="step">
                     <div class="step-number">01</div>
                     <div>
-                      <h3>Do normal work first</h3>
-                      <p>The user keeps using Chrome, SeaTalk, GitHub, and the tools they already use. Radar learns in the background.</p>
+                      <h3>Work normally</h3>
+                      <p>Use your usual tools and follow your normal flow. Radar observes the meaningful steps in the background without asking you to set anything up first.</p>
                     </div>
                   </article>
                   <article class="step">
                     <div class="step-number">02</div>
                     <div>
-                      <h3>Agent learns the workflow</h3>
-                      <p>Radar filters noisy UI data, finds repeated patterns, and formats the useful sequence as reusable workflow knowledge.</p>
+                      <h3>Radar learns the pattern</h3>
+                      <p>When a routine starts to repeat, Radar filters out noise and turns the useful sequence into reusable workflow knowledge.</p>
                     </div>
                   </article>
                   <article class="step">
                     <div class="step-number">03</div>
                     <div>
-                      <h3>Side panel suggests what AI can do</h3>
-                      <p>The user sees a plain-English suggestion made by an LLM, such as continuing a repeated task or automating the next step.</p>
+                      <h3>Get a clear suggestion</h3>
+                      <p>The side panel explains the next helpful action in plain English, so you can use AI without stopping to design a prompt or workflow.</p>
                     </div>
                   </article>
                   <article class="step">
                     <div class="step-number">04</div>
                     <div>
-                      <h3>Continue, accept, or delegate</h3>
-                      <p>The user can keep working, use the suggestion for a speed boost, or let an agent use learned knowledge to do the work directly.</p>
+                      <h3>Choose how much help you want</h3>
+                      <p>Keep working on your own, accept the speed-up, or let an agent run the learned workflow when you no longer want to do it manually.</p>
                     </div>
                   </article>
                 </div>
@@ -1053,21 +1053,21 @@
                     <div class="step-number">A</div>
                     <div>
                       <h3>Use suggestion</h3>
-                      <p>Applies the suggested next step and increases priority for the same workflow in future sessions.</p>
+                      <p>Apply the suggested next step and teach Radar that this workflow is useful in this context.</p>
                     </div>
                   </article>
                   <article class="step">
                     <div class="step-number">B</div>
                     <div>
                       <h3>Keep working</h3>
-                      <p>Dismisses the suggestion without interrupting flow. Radar continues learning and can suggest again later.</p>
+                      <p>Dismiss the suggestion quietly. Radar stays out of the way and keeps learning from your work.</p>
                     </div>
                   </article>
                   <article class="step">
                     <div class="step-number">C</div>
                     <div>
                       <h3>Delegate to agent</h3>
-                      <p>Uses learned workflow knowledge to let an agent perform the task directly when the user no longer wants to do it manually.</p>
+                      <p>Let Radar hand the learned workflow to an agent so it can perform the task directly.</p>
                     </div>
                   </article>
                 </div>
@@ -1130,8 +1130,8 @@ make PYTHON=/tmp/radar-venv/bin/python run-coordinator</code></pre>
 
         <section class="shell" id="architecture">
           <div class="section-head">
-            <h2>Architecture judges can understand in 30 seconds.</h2>
-            <p>A narrow, demo-ready loop that is still believable as a production direction.</p>
+            <h2>Architecture at a glance.</h2>
+            <p>A simple loop that is easy to understand and strong enough to grow into a production system.</p>
           </div>
 
           <div class="architecture" aria-label="Radar architecture">
