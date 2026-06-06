@@ -17,8 +17,9 @@ const ACTOR_MONITOR_TICK: Duration = Duration::from_secs(1);
 const CHROME_BRIDGE_PORT: u16 = 9223;
 const COLLECTOR_META_CHAT_TRANSCRIPT: &str = "builtin/collector/chat_transcript/meta.json";
 const COLLECTOR_META_CHROME: &str = "builtin/collector/chrome/meta.json";
+const COLLECTOR_META_MACOS: &str = "builtin/collector/macos/meta.json";
 const COLLECTOR_META_SEATALK: &str = "builtin/collector/seatalk/meta.json";
-const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: u64 = 10;
+const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: u64 = 1;
 const DEFAULT_ACTOR_SUGGESTION_COOLDOWN_SECONDS: u64 = 45;
 const GOOGLE_OAUTH_AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_OAUTH_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
@@ -824,7 +825,12 @@ fn monitoring_status(runtime: &ActorRuntimeHandle) -> MonitoringStatus {
 }
 
 fn default_collector_meta() -> String {
-    [COLLECTOR_META_CHROME, COLLECTOR_META_CHAT_TRANSCRIPT].join(",")
+    [
+        COLLECTOR_META_CHROME,
+        COLLECTOR_META_CHAT_TRANSCRIPT,
+        COLLECTOR_META_MACOS,
+    ]
+    .join(",")
 }
 
 fn collector_meta_for_ids(collector_ids: Option<Vec<String>>) -> String {
@@ -837,6 +843,7 @@ fn collector_meta_for_ids(collector_ids: Option<Vec<String>>) -> String {
         match collector_id.as_str() {
             "collector.chrome" => meta_paths.push(COLLECTOR_META_CHROME),
             "collector.chat_transcript" => meta_paths.push(COLLECTOR_META_CHAT_TRANSCRIPT),
+            "collector.macos" => meta_paths.push(COLLECTOR_META_MACOS),
             "collector.seatalk" => meta_paths.push(COLLECTOR_META_SEATALK),
             _ => {}
         }

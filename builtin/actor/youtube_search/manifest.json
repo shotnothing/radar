@@ -10,8 +10,12 @@
     "button_label": "Type NAB"
   },
   "trigger": {
-    "polling_interval_seconds": 5,
+    "polling_interval_seconds": 1,
     "filters": {
+      "app_patterns": [
+        "Google Chrome",
+        "com.google.Chrome"
+      ],
       "url_patterns": [
         "https://www.youtube.com/*",
         "https://youtube.com/*"

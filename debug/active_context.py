@@ -113,21 +113,18 @@ class MacOSActiveContextReader:
             set focusedDescription to ""
             set selectedText to ""
             try
-                set focusedEl to focused UI element of frontProc
+                set focusedEl to value of attribute "AXFocusedUIElement" of frontProc
                 try
-                    set focusedRole to role of focusedEl
+                    set focusedRole to value of attribute "AXRole" of focusedEl as text
                 end try
                 try
-                    set focusedTitle to title of focusedEl
+                    set focusedTitle to value of attribute "AXTitle" of focusedEl as text
                 end try
                 try
-                    set focusedValue to value of focusedEl as text
+                    set focusedValue to value of attribute "AXValue" of focusedEl as text
                 end try
                 try
-                    set focusedDescription to description of focusedEl
-                end try
-                try
-                    set selectedText to selected text of focusedEl
+                    set focusedDescription to value of attribute "AXDescription" of focusedEl as text
                 end try
             end try
             return appName & d & bundleId & d & windowTitle & d & documentPath & d & focusedRole & d & focusedTitle & d & focusedValue & d & focusedDescription & d & selectedText

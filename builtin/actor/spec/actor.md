@@ -44,7 +44,7 @@ Field names must use snake_case.
         "button_label": "Run checks"
     },
     "trigger": {
-        "polling_interval_seconds": 10,
+        "polling_interval_seconds": 1,
         "filters": {
             "app_patterns": ["Cursor", "Code"],
             "url_patterns": []
@@ -138,7 +138,7 @@ manifest after it has been loaded and normalized by Radar desktop.
         "button_label": "Run checks"
     },
     "trigger": {
-        "polling_interval_seconds": 10,
+        "polling_interval_seconds": 1,
         "filters": {
             "app_patterns": ["Cursor", "Code"],
             "url_patterns": []
@@ -171,7 +171,7 @@ Input:
 {
     "timestamp": 1780713574000,
     "actor_id": "builtin.release_checks",
-    "polling_interval_seconds": 10,
+    "polling_interval_seconds": 1,
     "active_context": {
         "observed_at": 1780713573900,
         "app_name": "Cursor",

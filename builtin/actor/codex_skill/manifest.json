@@ -10,7 +10,7 @@
     "button_label": "Use skill"
   },
   "trigger": {
-    "polling_interval_seconds": 8,
+    "polling_interval_seconds": 1,
     "filters": {},
     "should_trigger": {
       "command": [
