@@ -14,7 +14,11 @@ feedback.
 - The processor registers its identity, input shapes, output shapes, and
   capabilities.
 - The processor receives collector work folder or file references and feedback
-  from the coordinator.
+  from the coordinator, or scans a configured collector root when run in
+  standalone mode.
+- The processor identifies collector data it can use by event shape,
+  provenance, and declared subject kind. It must not create collector-owned
+  folders or perform collection work itself.
 - The processor emits results back to the coordinator.
 - The processor preserves input provenance so downstream actors, UI, and audit
   views can trace a result back to collected events and source artifacts.
@@ -33,9 +37,18 @@ After opening a Socket.IO connection, a processor must emit
     "protocol_version": 1,
     "accepts": ["collector_work_dir", "collector_file"],
     "produces": ["normalized_action", "prediction_set", "user_suggestion"],
+    "output_targets": ["actor"],
     "capabilities": ["filtering", "pattern_detection"]
 }
 ```
+
+`output_targets` declares where the processor output is intended to be consumed.
+Use a list so mixed processors can opt into more than one target:
+
+- `actor`: processor results are intended for downstream actor evaluation or
+  action routing.
+- `skill`: processor results are intended to update a skill-like knowledge
+  folder.
 
 The coordinator acknowledges registration with:
 
@@ -114,12 +127,16 @@ exact source material, the processor should resolve it from the collector
 
 For chat transcript processing, a recommended pipeline is:
 
-1. Read collector checkpoints and newly changed `chat_session_summary` events.
-2. Load the corresponding collected session JSONL and artifact pointers.
+1. Discover candidate collector work folders under the configured collectors
+   root, or use coordinator-provided collector folder/file references.
+2. Select transcript-like events by subject kind, chat metadata, and provenance,
+   regardless of which collector produced them.
 3. Build a compact normalized session that includes user turns, final assistant
    responses, message IDs, tool call summaries, and files touched.
 4. Keep exact tool arguments and tool results as artifacts or cache files for
    targeted lookup.
-5. Run filtering, redaction, extraction, prediction, or learning processors.
-6. Emit result `source_refs` that preserve session keys, message IDs, tool IDs,
+5. Check a processor-owned checkpoint keyed by normalized source provenance so
+   unchanged sessions are skipped.
+6. Run filtering, redaction, extraction, prediction, or learning processors.
+7. Emit result `source_refs` that preserve session keys, message IDs, tool IDs,
    and source fingerprints.

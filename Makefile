@@ -10,7 +10,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install run-coordinator package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
+.PHONY: install run-coordinator package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -42,7 +42,7 @@ actor-live-setup:
 test: test-unit test-actor-live
 
 # Run the non-live unit and integration tests.
-test-unit: test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime
+test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime
 
 # Run the sample collector integration test.
 test-sample-collector:
@@ -53,6 +53,11 @@ test-sample-collector:
 test-chat-transcript-collector:
 	$(PYTHON) -m py_compile builtin/collector/chat_transcript/collector.py debug/test_chat_transcript_collector.py
 	$(PYTHON) debug/test_chat_transcript_collector.py
+
+# Run the transcript-to-skill processor fixture test.
+test-chat-skill-processor:
+	$(PYTHON) -m py_compile builtin/collector/chat_transcript/collector.py builtin/processor/chat_skill/processor.py debug/test_chat_skill_processor.py
+	$(PYTHON) debug/test_chat_skill_processor.py
 
 # Run the SeaTalk user-authored-message collector fixture test.
 test-seatalk-collector:

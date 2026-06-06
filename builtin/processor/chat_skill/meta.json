@@ -1,0 +1,41 @@
+{
+  "processor_id": "chat.skill",
+  "display_name": "Chat Skill Processor",
+  "description": "Processes chat transcript collector output into a Radar Coding Memory skill folder.",
+  "protocol_version": 1,
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "builtin/processor/chat_skill/processor.py"
+    ]
+  },
+  "accepts": [
+    "collector_work_dir",
+    "collector_file"
+  ],
+  "produces": [
+    "coding_memory_update"
+  ],
+  "output_targets": [
+    "skill"
+  ],
+  "capabilities": [
+    "chat_transcript_filtering",
+    "coding_memory_extraction",
+    "skill_writer",
+    "optional_llm_filter",
+    "optional_llm_extraction"
+  ],
+  "default_config": {
+    "collectors_root": "~/.radar/collectors",
+    "skill_dir": "~/.radar/skill",
+    "duration_seconds": 10,
+    "heartbeat_interval_seconds": 2,
+    "filter_llm_api_key_env": "RADAR_FILTER_LLM_API_KEY",
+    "filter_llm_base_url_env": "RADAR_FILTER_LLM_BASE_URL",
+    "filter_llm_model_env": "RADAR_FILTER_LLM_MODEL",
+    "extraction_llm_api_key_env": "RADAR_EXTRACTION_LLM_API_KEY",
+    "extraction_llm_base_url_env": "RADAR_EXTRACTION_LLM_BASE_URL",
+    "extraction_llm_model_env": "RADAR_EXTRACTION_LLM_MODEL"
+  }
+}

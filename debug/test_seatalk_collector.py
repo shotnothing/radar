@@ -10,6 +10,7 @@ from types import SimpleNamespace
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 COLLECTOR_PATH = REPO_ROOT / "builtin" / "collector" / "seatalk" / "collector.py"
+FIXTURE_BASE_TS = 1780718400
 
 
 def load_collector():
@@ -42,13 +43,13 @@ def create_fixture_db(path):
             """
         )
         rows = [
-            ("group-1", "m1", "", "", 222, text_payload("Can you check this?"), "text", 100),
-            ("group-1", "m2", "", "", 123, text_payload("I will check and update later."), "text", 101),
-            ("group-1", "m3", "", "", 333, text_payload("Thanks."), "text", 102),
-            ("group-1", "m4", "m1", "m1", 222, text_payload("Any update?"), "text", 103),
-            ("group-1", "m5", "m4", "m1", 123, text_payload("Still investigating in the thread."), "text", 104),
-            ("buddy-9", "d1", "", "", 999, text_payload("Ping"), "text", 105),
-            ("buddy-9", "d2", "", "", 123, text_payload("I can do it tomorrow."), "text", 106),
+            ("group-1", "m1", "", "", 222, text_payload("Can you check this?"), "text", FIXTURE_BASE_TS),
+            ("group-1", "m2", "", "", 123, text_payload("I will check and update later."), "text", FIXTURE_BASE_TS + 1),
+            ("group-1", "m3", "", "", 333, text_payload("Thanks."), "text", FIXTURE_BASE_TS + 2),
+            ("group-1", "m4", "m1", "m1", 222, text_payload("Any update?"), "text", FIXTURE_BASE_TS + 3),
+            ("group-1", "m5", "m4", "m1", 123, text_payload("Still investigating in the thread."), "text", FIXTURE_BASE_TS + 4),
+            ("buddy-9", "d1", "", "", 999, text_payload("Ping"), "text", FIXTURE_BASE_TS + 5),
+            ("buddy-9", "d2", "", "", 123, text_payload("I can do it tomorrow."), "text", FIXTURE_BASE_TS + 6),
         ]
         connection.executemany(
             """
@@ -194,6 +195,10 @@ def main():
         require(m2["subject"]["kind"] == "communication_user_message", "wrong subject kind")
         require(m2["content"]["text"] == "I will check and update later.", "wrong text")
         require(
+            m2["time"]["observed_at"] == (FIXTURE_BASE_TS + 1) * 1000,
+            f"observed_at should be realistic epoch milliseconds: {m2['time']}",
+        )
+        require(
             m2["context"]["conversation_name"] == "Payments Infra",
             "missing conversation name",
         )
@@ -227,11 +232,11 @@ def main():
 
         append_message(
             db_path,
-            ("group-1", "m6", "", "", 222, text_payload("Please confirm."), "text", 107),
+            ("group-1", "m6", "", "", 222, text_payload("Please confirm."), "text", FIXTURE_BASE_TS + 7),
         )
         append_message(
             db_path,
-            ("group-1", "m7", "", "", 123, text_payload("Confirmed from my side."), "text", 108),
+            ("group-1", "m7", "", "", 123, text_payload("Confirmed from my side."), "text", FIXTURE_BASE_TS + 8),
         )
         third_started_at = time.time()
         third = collector.scan_sources(args, work_dir)

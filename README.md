@@ -24,6 +24,7 @@ The project env file is `.env`. The Makefile loads it automatically:
 make install
 make test-sample-collector
 make test-chat-transcript-collector
+make test-chat-skill-processor
 make run-coordinator
 ```
 
@@ -65,6 +66,22 @@ make test-chat-transcript-collector
 The fixture test writes synthetic source transcripts under
 `RADAR_HOME/test_sources/chat_transcript` and collected output under
 `RADAR_HOME/collectors/chat_transcript`.
+
+To test the transcript-to-skill processor:
+
+```bash
+make test-chat-skill-processor
+```
+
+At runtime the processor scans `RADAR_HOME/collectors`, discovers collector data
+it can use, and writes the skill-like folder under `RADAR_HOME/skill`. The
+fixture test prepares data in the regular `chat_transcript` collector folder;
+the processor does not own or create a processor-specific collector folder.
+
+The processor supports the same two-tier model shape as Wingman Radar: a cheaper
+filter model (`RADAR_FILTER_LLM_*`) decides whether a transcript is worth
+processing, and a stronger extraction model (`RADAR_EXTRACTION_LLM_*`) distills
+skill entries. Legacy `RADAR_LLM_*` values remain as fallbacks.
 
 ## Socket.IO Roles
 

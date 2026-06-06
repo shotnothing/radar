@@ -140,17 +140,21 @@ def resolve_radar_home():
     return Path(os.path.expandvars(configured)).expanduser().resolve()
 
 
-def read_written_events(work_dir, started_at):
+def read_written_events(work_dir, started_at, fixture_root):
     files = sorted(
         path
         for path in Path(work_dir).glob("**/*.jsonl")
         if path.stat().st_mtime >= started_at
     )
     events = []
+    fixture_uri_prefix = fixture_root.resolve().as_uri()
     for path in files:
         with path.open(encoding="utf-8") as data_file:
             for line in data_file:
-                events.append(json.loads(line))
+                event = json.loads(line)
+                source_uri = (event.get("provenance") or {}).get("source_uri", "")
+                if source_uri.startswith(fixture_uri_prefix):
+                    events.append(event)
     return events
 
 
@@ -177,7 +181,7 @@ def main():
 
     started_at = time.time()
     first = collector.scan_sources(args, work_dir)
-    events = read_written_events(work_dir, started_at)
+    events = read_written_events(work_dir, started_at, fixture_root)
     kinds = [event["subject"]["kind"] for event in events]
     require(first["sessions_seen"] == 2, f"unexpected sessions_seen: {first}")
     require(first["sessions_changed"] == 2, f"unexpected sessions_changed: {first}")
