@@ -1163,6 +1163,238 @@ fn radar_home() -> PathBuf {
     PathBuf::from(home).join(".radar")
 }
 
+fn read_collector_events(limit: usize) -> Result<CollectorEventsPayload, String> {
+    let data_root = radar_home().join("collectors");
+    let files = list_jsonl_files(&data_root)?;
+    let mut events = Vec::new();
+    let mut errors = Vec::new();
+
+    for file_path in files {
+        let fallback_ms = file_modified_ms(&file_path);
+        let file = File::open(&file_path)
+            .map_err(|error| format!("failed to open {}: {error}", file_path.display()))?;
+        let reader = BufReader::new(file);
+
+        for (index, line) in reader.lines().enumerate() {
+            let line_number = index + 1;
+            let line =
+                line.map_err(|error| format!("failed to read {}: {error}", file_path.display()))?;
+            let trimmed = line.trim();
+            if trimmed.is_empty() {
+                continue;
+            }
+
+            match serde_json::from_str::<serde_json::Value>(trimmed) {
+                Ok(value) => {
+                    events.push(compact_collector_event(
+                        &value,
+                        &data_root,
+                        &file_path,
+                        line_number,
+                        fallback_ms,
+                    ));
+                }
+                Err(error) => {
+                    errors.push(CollectorParseError {
+                        file_path: relative_collector_path(&data_root, &file_path),
+                        line_number,
+                        message: error.to_string(),
+                    });
+                }
+            }
+        }
+    }
+
+    let collectors = sorted_unique(
+        events
+            .iter()
+            .map(|event| event.collector_id.clone())
+            .collect(),
+    );
+    let sources = sorted_unique(
+        events
+            .iter()
+            .flat_map(|event| [event.source_type.clone(), event.source_app.clone()])
+            .filter(|value| !value.is_empty())
+            .collect(),
+    );
+    let total_events = events.len();
+    let limit = limit.clamp(1, 5000);
+    events.sort_by(|left, right| right.observed_at.cmp(&left.observed_at));
+    events.truncate(limit);
+    let returned_events = events.len();
+
+    Ok(CollectorEventsPayload {
+        data_root: data_root.display().to_string(),
+        total_events,
+        returned_events,
+        collectors,
+        sources,
+        errors,
+        events,
+    })
+}
+
+fn list_jsonl_files(root: &Path) -> Result<Vec<PathBuf>, String> {
+    let mut files = Vec::new();
+    collect_jsonl_files(root, &mut files)?;
+    files.sort();
+    Ok(files)
+}
+
+fn collect_jsonl_files(folder: &Path, files: &mut Vec<PathBuf>) -> Result<(), String> {
+    let entries = match std::fs::read_dir(folder) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(format!("failed to read {}: {error}", folder.display())),
+    };
+
+    for entry in entries {
+        let entry =
+            entry.map_err(|error| format!("failed to read {}: {error}", folder.display()))?;
+        let path = entry.path();
+        let file_type = entry
+            .file_type()
+            .map_err(|error| format!("failed to inspect {}: {error}", path.display()))?;
+
+        if file_type.is_dir() {
+            let name = entry.file_name();
+            if name == "state" || name == "__pycache__" {
+                continue;
+            }
+            collect_jsonl_files(&path, files)?;
+            continue;
+        }
+
+        if file_type.is_file() && path.extension().is_some_and(|extension| extension == "jsonl") {
+            files.push(path);
+        }
+    }
+
+    Ok(())
+}
+
+fn file_modified_ms(path: &Path) -> u64 {
+    std::fs::metadata(path)
+        .and_then(|metadata| metadata.modified())
+        .ok()
+        .and_then(|modified| modified.duration_since(UNIX_EPOCH).ok())
+        .map(|duration| duration.as_millis() as u64)
+        .unwrap_or_default()
+}
+
+fn compact_collector_event(
+    event: &serde_json::Value,
+    data_root: &Path,
+    file_path: &Path,
+    line_number: usize,
+    fallback_ms: u64,
+) -> CollectorEvent {
+    let relative_path = relative_collector_path(data_root, file_path);
+    let observed_at = get_observed_at(event, fallback_ms);
+    let source = event.get("source").and_then(serde_json::Value::as_object);
+    let subject = event.get("subject").and_then(serde_json::Value::as_object);
+    let anchor = event.get("anchor").and_then(serde_json::Value::as_object);
+    let content = event.get("content").and_then(serde_json::Value::as_object);
+    let provenance = event
+        .get("provenance")
+        .and_then(serde_json::Value::as_object);
+    let context = event.get("context").and_then(serde_json::Value::as_object);
+    let id = json_string(event, "id").unwrap_or_else(|| format!("{relative_path}:{line_number}"));
+    let title = [
+        object_string(subject, "title"),
+        object_string(anchor, "name"),
+        id.clone(),
+    ]
+    .into_iter()
+    .find(|value| !value.trim().is_empty())
+    .unwrap_or_else(|| "Untitled event".to_string());
+
+    CollectorEvent {
+        id: id.clone(),
+        collector_id: json_string(event, "collector_id")
+            .unwrap_or_else(|| "unknown.collector".to_string()),
+        observed_at,
+        source_type: object_string(source, "type"),
+        source_app: object_string(source, "app"),
+        subject_kind: object_string(subject, "kind"),
+        title,
+        text: object_string(content, "text"),
+        anchor_type: object_string(anchor, "type"),
+        action: object_string(anchor, "name"),
+        context_app: object_string(context, "active_app"),
+        context_window: object_string(context, "active_window_title"),
+        artifact_count: event
+            .get("artifacts")
+            .and_then(serde_json::Value::as_array)
+            .map(Vec::len)
+            .unwrap_or_default(),
+        provenance_type: object_string(provenance, "source_type"),
+        source_uri: object_string(provenance, "source_uri"),
+        file_path: relative_path,
+        line_number,
+    }
+}
+
+fn get_observed_at(event: &serde_json::Value, fallback_ms: u64) -> u64 {
+    event
+        .get("time")
+        .and_then(|time| time.get("observed_at"))
+        .or_else(|| event.get("observed_at"))
+        .or_else(|| event.get("timestamp"))
+        .and_then(json_value_ms)
+        .unwrap_or(fallback_ms)
+}
+
+fn json_value_ms(value: &serde_json::Value) -> Option<u64> {
+    if let Some(number) = value.as_u64() {
+        return Some(number);
+    }
+    if let Some(number) = value.as_f64() {
+        if number.is_finite() && number >= 0.0 {
+            return Some(number as u64);
+        }
+    }
+    value
+        .as_str()
+        .map(str::trim)
+        .filter(|value| value.chars().all(|character| character.is_ascii_digit()))
+        .and_then(|value| value.parse::<u64>().ok())
+}
+
+fn json_string(event: &serde_json::Value, key: &str) -> Option<String> {
+    event
+        .get(key)
+        .and_then(serde_json::Value::as_str)
+        .and_then(|value| non_empty_string(Some(value)))
+}
+
+fn object_string(
+    object: Option<&serde_json::Map<String, serde_json::Value>>,
+    key: &str,
+) -> String {
+    object
+        .and_then(|items| items.get(key))
+        .and_then(serde_json::Value::as_str)
+        .and_then(|value| non_empty_string(Some(value)))
+        .unwrap_or_default()
+}
+
+fn relative_collector_path(data_root: &Path, file_path: &Path) -> String {
+    file_path
+        .strip_prefix(data_root)
+        .unwrap_or(file_path)
+        .display()
+        .to_string()
+}
+
+fn sorted_unique(values: Vec<String>) -> Vec<String> {
+    let mut values = values;
+    values.sort();
+    values.dedup();
+    values
+}
+
 fn google_connection_path() -> PathBuf {
     radar_home().join("connections").join("google.json")
 }

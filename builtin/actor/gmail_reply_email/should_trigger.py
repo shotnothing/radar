@@ -62,7 +62,7 @@ def main() -> None:
                 "reason": "Active browser tab is an open Gmail email thread.",
                 "presentation": {
                     "title": "Reply this email",
-                    "message": "Reply placeholder for the current Gmail thread.",
+                    "message": "Open the reply editor for the current Gmail thread.",
                     "button_label": "reply this email",
                 },
                 "action_context": {

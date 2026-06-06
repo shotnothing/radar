@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "enabled": true,
   "title": "Reply this email",
-  "description": "Show a placeholder reply action when a Gmail email thread is open.",
+  "description": "Use Codex CLI with macOS automation to open Gmail's reply editor.",
   "activation": {
     "mode": "desktop_option",
     "priority": "normal",
@@ -33,6 +33,6 @@
       "python3",
       "action.py"
     ],
-    "timeout_seconds": 10
+    "timeout_seconds": 180
   }
 }

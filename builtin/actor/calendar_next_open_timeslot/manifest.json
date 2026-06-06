@@ -33,6 +33,6 @@
       "python3",
       "action.py"
     ],
-    "timeout_seconds": 10
+    "timeout_seconds": 330
   }
 }

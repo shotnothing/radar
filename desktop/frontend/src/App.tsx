@@ -313,7 +313,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
     {
       id: "actor.gmail_reply_email",
       name: "Gmail Reply Email",
-      description: "Shows a placeholder reply action for open Gmail threads.",
+      description: "Uses Codex CLI to open the reply editor for Gmail threads.",
       status: "builtin.gmail_reply_email",
       icon: Mail,
       defaultEnabled: true,

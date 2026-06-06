@@ -3,6 +3,11 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+<<<<<<< Updated upstream
+=======
+import stat
+import subprocess
+>>>>>>> Stashed changes
 import tempfile
 import unittest
 from pathlib import Path
@@ -212,6 +217,51 @@ class ActorRuntimeTest(unittest.TestCase):
 
             self.assertFalse(output["available"])
 
+    def test_gmail_reply_actor_action_invokes_codex_cli(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            fake_codex = Path(tmp) / "codex"
+            captured_args = Path(tmp) / "args.json"
+            fake_codex.write_text(
+                "\n".join(
+                    [
+                        "#!/usr/bin/env python3",
+                        "import json, pathlib, sys",
+                        f"pathlib.Path({str(captured_args)!r}).write_text(json.dumps(sys.argv[1:]))",
+                        "print('reply editor opened')",
+                    ]
+                )
+            )
+            fake_codex.chmod(fake_codex.stat().st_mode | stat.S_IXUSR)
+
+            payload = {
+                "action_context": {
+                    "url": "https://mail.google.com/mail/u/0/#inbox/FMfcgzQgMLvxdbztfPfkNcTpBjgjhKDr"
+                }
+            }
+            env = os.environ.copy()
+            env["RADAR_CODEX_BIN"] = str(fake_codex)
+            result = subprocess.run(
+                ["python3", "builtin/actor/gmail_reply_email/action.py"],
+                input=json.dumps(payload),
+                capture_output=True,
+                text=True,
+                check=False,
+                env=env,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            output = json.loads(result.stdout)
+            args = json.loads(captured_args.read_text())
+
+            self.assertTrue(output["success"])
+            self.assertEqual(args[0], "exec")
+            self.assertIn("--ask-for-approval", args)
+            self.assertIn("never", args)
+            self.assertIn("--sandbox", args)
+            self.assertIn("danger-full-access", args)
+            self.assertIn("Do not type a reply body and do not click Send.", args[-1])
+            self.assertIn(payload["action_context"]["url"], args[-1])
+
     def test_calendar_actor_should_trigger_on_calendar_week_view(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             runtime = ActorRuntime(
@@ -251,6 +301,63 @@ class ActorRuntimeTest(unittest.TestCase):
 
             self.assertFalse(output["available"])
             self.assertTrue(output["filtered"])
+
+    def test_calendar_actor_action_invokes_codex_cli(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            fake_codex = Path(tmp) / "codex"
+            captured_args = Path(tmp) / "args.json"
+            fake_codex.write_text(
+                "\n".join(
+                    [
+                        "#!/usr/bin/env python3",
+                        "import json, pathlib, sys",
+                        f"pathlib.Path({str(captured_args)!r}).write_text(json.dumps(sys.argv[1:]))",
+                        "args = sys.argv[1:]",
+                        "out = args[args.index('--output-last-message') + 1]",
+                        "pathlib.Path(out).write_text('Monday, June 8, 2026, 10:00-10:30 AM SGT. Evidence: visible week view has no event in that slot.')",
+                    ]
+                )
+            )
+            fake_codex.chmod(fake_codex.stat().st_mode | stat.S_IXUSR)
+
+            payload = {
+                "action_context": {
+                    "url": "https://calendar.google.com/calendar/u/0/r/week",
+                },
+                "browser": {
+                    "active_tab": {
+                        "url": "https://calendar.google.com/calendar/u/0/r/week",
+                        "title": "Google Calendar",
+                    }
+                },
+            }
+            env = os.environ.copy()
+            env["RADAR_CODEX_BIN"] = str(fake_codex)
+            env["RADAR_API_URL"] = ""
+            result = subprocess.run(
+                ["python3", "builtin/actor/calendar_next_open_timeslot/action.py"],
+                input=json.dumps(payload),
+                capture_output=True,
+                text=True,
+                check=False,
+                env=env,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+            output = json.loads(result.stdout)
+            args = json.loads(captured_args.read_text())
+
+            self.assertTrue(output["success"])
+            self.assertIn("10:00-10:30 AM SGT", output["answer"])
+            self.assertEqual(args[0], "exec")
+            self.assertIn("--ask-for-approval", args)
+            self.assertIn("never", args)
+            self.assertIn("--sandbox", args)
+            self.assertIn("danger-full-access", args)
+            self.assertIn("--output-last-message", args)
+            self.assertIn("find my next open timeslot", args[-1])
+            self.assertIn("Do not create, edit, delete", args[-1])
+            self.assertIn(payload["action_context"]["url"], args[-1])
 
     def test_event_name_filter_requires_matching_trigger_event(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
