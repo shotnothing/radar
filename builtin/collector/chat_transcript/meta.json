@@ -1,0 +1,37 @@
+{
+  "collector_id": "chat.transcript",
+  "display_name": "Chat Transcript Collector",
+  "description": "Collects local Codex and Claude JSONL transcripts with source provenance.",
+  "protocol_version": 1,
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "builtin/collector/chat_transcript/collector.py"
+    ]
+  },
+  "required_permissions": [
+    "filesystem_read_home"
+  ],
+  "capabilities": [
+    "codex_jsonl",
+    "claude_jsonl",
+    "incremental_scan",
+    "source_provenance",
+    "artifact_pointer",
+    "heartbeat"
+  ],
+  "emits": [
+    "collected_data.chat_session_summary",
+    "collected_data.chat_message",
+    "collected_data.chat_tool_call",
+    "collected_data.chat_tool_result"
+  ],
+  "default_config": {
+    "codex_sessions_root": "~/.codex/sessions",
+    "claude_projects_root": "~/.claude/projects",
+    "scan_interval_seconds": 300,
+    "duration_seconds": 10,
+    "heartbeat_interval_seconds": 2,
+    "copy_raw_transcripts": false
+  }
+}

@@ -12,6 +12,8 @@ writes collected data into a coordinator-assigned work folder.
 - The collector writes collected JSONL files and artifacts under `work_dir`.
 - Each collector must provide a `meta.json` file so the coordinator can
   discover, launch, and register it.
+- The collector preserves enough source provenance for processors and actors to
+  trace an observation back to the original local source.
 
 ## Registration
 
@@ -47,6 +49,19 @@ The coordinator acknowledges registration with:
 The collector owns all writes under `work_dir`. Socket.IO is used for
 registration, health, configuration, and control messages, not for streaming
 collected data.
+
+## Source Traceability
+
+Collectors should prefer durable local references over opaque summaries. When a
+source has stable files, message IDs, line numbers, tool call IDs, window IDs, or
+URLs, the collector should write them into each event's `provenance` map. This
+lets processors compact data for model use while still allowing targeted lookup
+of exact source material when needed.
+
+If the source artifact is already a local file, the collector may either copy it
+under `work_dir` or store an artifact pointer to the original file. Pointer
+artifacts must include the source URI, fingerprint, and storage mode so later
+processors can detect whether the source changed.
 
 ## Socket.IO Events
 

@@ -2,8 +2,10 @@ import argparse
 import atexit
 import json
 import os
+import signal
 import subprocess
 import time
+import uuid
 from pathlib import Path
 
 import eventlet
@@ -24,6 +26,7 @@ registry = {
 }
 config = {
     "work_root": Path(os.environ.get("RADAR_HOME", "~/.radar")).expanduser().resolve(),
+    "session_id": str(uuid.uuid4()),
 }
 managed_collectors = []
 
@@ -36,6 +39,108 @@ def split_env_list(value):
     if not value:
         return []
     return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def utc_timestamp():
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def safe_file_stem(value):
+    return value.replace(".", "_").replace("/", "_")
+
+
+def run_root():
+    return config["work_root"] / "run"
+
+
+def collector_run_root():
+    path = run_root() / "collectors"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def coordinator_state_path():
+    return run_root() / "coordinator.json"
+
+
+def write_json_atomic(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(f"{path.suffix}.tmp")
+    with tmp_path.open("w", encoding="utf-8") as output_file:
+        json.dump(payload, output_file, indent=2, sort_keys=True)
+        output_file.write("\n")
+    tmp_path.replace(path)
+
+
+def read_json(path):
+    with path.open(encoding="utf-8") as input_file:
+        return json.load(input_file)
+
+
+def process_exists(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return not process_is_zombie(pid)
+
+
+def process_is_zombie(pid):
+    result = subprocess.run(
+        ["ps", "-p", str(pid), "-o", "stat="],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.returncode == 0 and result.stdout.strip().startswith("Z")
+
+
+def process_command(pid):
+    result = subprocess.run(
+        ["ps", "-p", str(pid), "-o", "command="],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return ""
+    return result.stdout.strip()
+
+
+def command_matches(record, command_line):
+    command = record.get("command") or []
+    if not command_line or not command:
+        return False
+
+    if len(command) > 1:
+        return all(str(part) in command_line for part in command[1:])
+
+    executable = Path(command[0]).name
+    return bool(executable and executable in command_line)
+
+
+def terminate_pid(pid, grace_seconds=5):
+    if not process_exists(pid):
+        return True
+
+    try:
+        os.kill(pid, signal.SIGTERM)
+    except ProcessLookupError:
+        return True
+    deadline = time.monotonic() + grace_seconds
+    while time.monotonic() < deadline:
+        if not process_exists(pid):
+            return True
+        time.sleep(0.2)
+
+    if process_exists(pid):
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except ProcessLookupError:
+            return True
+    return not process_exists(pid)
 
 
 def require_field(payload, field):
@@ -60,7 +165,7 @@ def register_role(role, role_id, payload):
 
 
 def collector_work_dir(collector_id):
-    folder_name = collector_id.replace(".", "_").replace("/", "_")
+    folder_name = safe_file_stem(collector_id)
     work_dir = config["work_root"] / "collectors" / folder_name
     work_dir.mkdir(parents=True, exist_ok=True)
     return work_dir
@@ -83,25 +188,98 @@ def collector_command(meta):
     return [command, *runtime.get("args", [])]
 
 
+def collector_pid_path(collector_id):
+    return collector_run_root() / f"{safe_file_stem(collector_id)}.json"
+
+
+def write_coordinator_state():
+    write_json_atomic(
+        coordinator_state_path(),
+        {
+            "pid": os.getpid(),
+            "session_id": config["session_id"],
+            "started_at": utc_timestamp(),
+            "radar_home": str(config["work_root"]),
+        },
+    )
+
+
+def write_collector_state(collector_id, meta_path, command, process):
+    path = collector_pid_path(collector_id)
+    write_json_atomic(
+        path,
+        {
+            "collector_id": collector_id,
+            "command": command,
+            "meta_path": str(meta_path),
+            "pid": process.pid,
+            "session_id": config["session_id"],
+            "started_at": utc_timestamp(),
+        },
+    )
+    return path
+
+
+def remove_collector_state(path):
+    if path:
+        Path(path).unlink(missing_ok=True)
+
+
+def recover_stale_collectors():
+    for state_path in collector_run_root().glob("*.json"):
+        try:
+            record = read_json(state_path)
+            pid = int(record.get("pid"))
+        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+            state_path.unlink(missing_ok=True)
+            continue
+
+        if not process_exists(pid):
+            state_path.unlink(missing_ok=True)
+            continue
+
+        command_line = process_command(pid)
+        if not command_matches(record, command_line):
+            print(
+                f"not touching stale collector pid {pid}; command does not match "
+                f"{state_path}",
+                flush=True,
+            )
+            state_path.unlink(missing_ok=True)
+            continue
+
+        collector_id = record.get("collector_id", state_path.stem)
+        print(f"recovering stale collector {collector_id} with pid {pid}", flush=True)
+        if terminate_pid(pid):
+            print(f"stopped stale collector {collector_id}", flush=True)
+            state_path.unlink(missing_ok=True)
+        else:
+            print(f"failed to stop stale collector {collector_id}", flush=True)
+
+
 def launch_managed_collectors(meta_paths, coordinator_url):
     time.sleep(0.5)
     for meta_path in meta_paths:
         try:
             path, meta = load_collector_meta(meta_path)
             command = collector_command(meta)
+            collector_id = meta.get("collector_id", str(path))
             env = os.environ.copy()
             env.setdefault("RADAR_HOME", str(config["work_root"]))
             env["RADAR_COORDINATOR_URL"] = coordinator_url
+            env["RADAR_COORDINATOR_SESSION_ID"] = config["session_id"]
+            env["RADAR_COLLECTOR_ID"] = collector_id
             process = subprocess.Popen(command, cwd=repo_root(), env=env)
+            state_path = write_collector_state(collector_id, path, command, process)
             managed_collectors.append(
                 {
-                    "collector_id": meta.get("collector_id", str(path)),
+                    "collector_id": collector_id,
+                    "pid_path": state_path,
                     "process": process,
                 }
             )
             print(
-                f"started collector {meta.get('collector_id', path)} "
-                f"with pid {process.pid}",
+                f"started collector {collector_id} with pid {process.pid}",
                 flush=True,
             )
         except Exception as error:
@@ -119,6 +297,7 @@ def launch_managed_collectors(meta_paths, coordinator_url):
                 f"collector {record['collector_id']} exited with code {exit_code}",
                 flush=True,
             )
+            remove_collector_state(record.get("pid_path"))
         managed_collectors[:] = active
         time.sleep(1)
 
@@ -127,6 +306,7 @@ def stop_managed_collectors():
     for record in list(managed_collectors):
         process = record["process"]
         if process.poll() is not None:
+            remove_collector_state(record.get("pid_path"))
             continue
         print(f"stopping collector {record['collector_id']}", flush=True)
         process.terminate()
@@ -135,6 +315,7 @@ def stop_managed_collectors():
         except subprocess.TimeoutExpired:
             process.kill()
             process.wait(timeout=5)
+        remove_collector_state(record.get("pid_path"))
 
 
 atexit.register(stop_managed_collectors)
@@ -364,6 +545,8 @@ if __name__ == "__main__":
     args = parse_args()
     config["work_root"] = Path(args.work_dir).expanduser().resolve()
     config["work_root"].mkdir(parents=True, exist_ok=True)
+    recover_stale_collectors()
+    write_coordinator_state()
     collector_meta = args.collector_meta
     if collector_meta is None:
         collector_meta = split_env_list(os.environ.get("RADAR_COLLECTOR_META"))

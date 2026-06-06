@@ -8,14 +8,21 @@ event.
 
 ```text
 /{work_dir}
+    /state
+        - checkpoint.json
     /yyyymmdd
         /artifacts
+            /{event_or_session_id}
         - 1780713574000.jsonl
 ```
 
 - `work_dir` is the collector-specific folder assigned by the coordinator.
 - `yyyymmdd` is the collection date in local time.
-- Artifact files are split by time to keep individual files small.
+- JSONL files are split by time to keep individual files small.
+- `state/checkpoint.json` is optional collector-owned state for incremental
+  scans, source fingerprints, and cleanup bookkeeping.
+- `artifacts` contains copied artifacts or small metadata files for external
+  artifact pointers.
 
 ## Event Shape
 
@@ -61,11 +68,23 @@ maps can be expanded by each collector when more detail is available.
         "active_window_title": "ChatGPT",
         "user_action": "clicked"
     },
+    "provenance": {
+        "source_uri": "file:///Users/example/.codex/sessions/2026/06/06/session.jsonl",
+        "source_type": "codex_jsonl",
+        "source_fingerprint": "12345:1780713574000000000",
+        "session_key": "codex-abc123",
+        "session_id": "session_uuid",
+        "line_start": 42,
+        "line_end": 42,
+        "source_message_ids": ["codex:session_uuid:42"],
+        "tool_ids": ["call_abc"]
+    },
     "artifacts": [
         {
             "id": "artifact_1",
             "kind": "screenshot",
             "uri": "vault://artifacts/artifact_1",
+            "storage": "copied",
             "mime_type": "image/png",
             "size_bytes": 1234567
         }
@@ -87,6 +106,54 @@ maps can be expanded by each collector when more detail is available.
     }
 }
 ```
+
+## Provenance
+
+`provenance` is the trace-back contract between collectors and processors.
+Collectors should include it whenever the source has durable identifiers. The map
+is intentionally extensible, but these fields are recommended:
+
+- `source_uri`: original local file, URL, app resource, or database URI.
+- `source_type`: source-specific format such as `codex_jsonl`,
+  `claude_jsonl`, `macos_axtree`, or `browser_dom`.
+- `source_fingerprint`: cheap change detector for the source, such as
+  `size:mtime_unix_nano`, content hash, or source revision.
+- `session_key`: stable Radar key for a source session.
+- `session_id`: source-native session ID when available.
+- `line_start` and `line_end`: JSONL line range or equivalent source offset.
+- `source_message_ids`: source or Radar-normalized message IDs.
+- `tool_ids`: source or Radar-normalized tool call IDs.
+
+Processors should copy relevant provenance into `input_refs` or result payloads
+instead of inventing new evidence identifiers.
+
+## Artifact References
+
+Artifacts can be copied into `work_dir` or left in place and referenced by
+pointer. Use `storage` to make this explicit:
+
+- `copied`: collector copied the artifact under `work_dir`.
+- `external_pointer`: artifact remains at `uri`; processors must verify the
+  fingerprint before relying on it.
+- `derived`: artifact was produced by the collector from source data, such as a
+  normalized transcript or compact session preview.
+
+Pointer artifacts are useful for large or already-durable sources such as Codex
+transcript files, Claude transcript files, and Claude external `tool-results`
+files. They should include `source_fingerprint` or equivalent metadata in
+`extra_data` when possible.
+
+## Chat Event Kinds
+
+Chat transcript collectors should use the shared event shape and identify chat
+events through `subject.kind`, `anchor.type`, or `extra_data.chat.kind`. Common
+kinds are:
+
+- `chat_session_summary`
+- `chat_message`
+- `chat_tool_call`
+- `chat_tool_result`
+- `normalized_chat_session`
 
 ## Runtime Storage
 

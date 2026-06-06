@@ -37,9 +37,34 @@ def wait_for_state(port, predicate, timeout, description):
     raise RuntimeError(f"timed out waiting for {description}; last_state={last_state}")
 
 
+def wait_for_process_exit(process, timeout, description):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            return
+        time.sleep(0.2)
+    raise RuntimeError(f"timed out waiting for {description}")
+
+
+def wait_for_path_missing(path, timeout, description):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if not path.exists():
+            return
+        time.sleep(0.2)
+    raise RuntimeError(f"timed out waiting for {description}: {path}")
+
+
 def resolve_radar_home():
     configured = os.environ.get("RADAR_HOME", "~/.radar")
     return Path(os.path.expandvars(configured)).expanduser().resolve()
+
+
+def write_runtime_state(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as output_file:
+        json.dump(payload, output_file, indent=2, sort_keys=True)
+        output_file.write("\n")
 
 
 def find_jsonl(radar_home, started_at):
@@ -84,6 +109,20 @@ def main():
     port = free_port()
     radar_home = resolve_radar_home()
     started_at = time.time()
+    stale_command = [sys.executable, "-c", "import time; time.sleep(60)"]
+    stale_process = subprocess.Popen(stale_command)
+    stale_state_path = radar_home / "run" / "collectors" / "fake_stale.json"
+    sample_state_path = radar_home / "run" / "collectors" / "builtin_sample.json"
+    write_runtime_state(
+        stale_state_path,
+        {
+            "collector_id": "fake.stale",
+            "command": stale_command,
+            "pid": stale_process.pid,
+            "session_id": "stale-test-session",
+            "started_at": "2026-06-06T00:00:00Z",
+        },
+    )
 
     env = os.environ.copy()
     env["RADAR_HOME"] = str(radar_home)
@@ -111,17 +150,22 @@ def main():
         stderr=subprocess.STDOUT,
     )
 
+    failure = None
     try:
         wait_for_state(port, lambda state: True, 10, "debug coordinator")
+        wait_for_process_exit(stale_process, 10, "stale collector recovery")
+        wait_for_path_missing(stale_state_path, 10, "stale collector state cleanup")
         registered = wait_for_state(
             port,
             lambda state: any(
                 entry["id"] == "builtin.sample" for entry in state["collector"]
             ),
-            10,
+            15,
             "sample collector registration",
         )
         work_dir = registered["collector"][0]["work_dir"]
+        if not sample_state_path.exists():
+            raise RuntimeError(f"missing managed collector state: {sample_state_path}")
         sample_path = find_jsonl(radar_home, started_at)
         event = validate_jsonl(sample_path)
         wait_for_state(
@@ -130,14 +174,26 @@ def main():
             10,
             "sample collector shutdown",
         )
+        wait_for_path_missing(
+            sample_state_path,
+            10,
+            "managed collector state cleanup",
+        )
         print(f"RADAR_HOME: {radar_home}")
+        print(f"recovered stale collector pid: {stale_process.pid}")
         print(f"registered collector: builtin.sample")
         print(f"collector work_dir: {work_dir}")
         print(f"sample jsonl: {sample_path}")
         print(f"sample event id: {event['id']}")
+    except Exception as error:
+        failure = error
+        raise
     finally:
         terminate(process)
+        terminate(stale_process)
         output = process.stdout.read() if process.stdout else ""
+        if failure is not None and output.strip():
+            print(output)
         if process.returncode not in (0, -15, None):
             print(output)
             raise RuntimeError(f"debug coordinator exited with {process.returncode}")

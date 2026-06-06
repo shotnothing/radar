@@ -116,6 +116,31 @@ def connect_client(client, coordinator_url, timeout):
     raise RuntimeError(f"could not connect to coordinator: {last_error}")
 
 
+def try_reconnect(client, args):
+    if client.connected:
+        return True
+    try:
+        client.connect(args.coordinator_url)
+        registration = register_collector(client)
+        if not registration.get("ok"):
+            raise RuntimeError(f"collector registration failed: {registration}")
+        return True
+    except (RuntimeError, socketio.exceptions.ConnectionError):
+        return False
+
+
+def send_heartbeat(client, output_path):
+    client.call(
+        "collector:heartbeat",
+        {
+            "status": "ok",
+            "permissions": {},
+            "last_write": str(output_path),
+        },
+        timeout=5,
+    )
+
+
 def run(args):
     client = socketio.Client()
     connect_client(client, args.coordinator_url, args.connect_timeout)
@@ -132,25 +157,36 @@ def run(args):
         print(f"registered {COLLECTOR_ID}")
         print(f"wrote sample collected data: {output_path}")
 
-        deadline = time.monotonic() + max(args.duration, 0)
-        while time.monotonic() < deadline:
-            client.call(
-                "collector:heartbeat",
-                {
-                    "status": "ok",
-                    "permissions": {},
-                    "last_write": str(output_path),
-                },
-                timeout=5,
-            )
-            sleep_for = min(
-                max(args.heartbeat_interval, 0.1),
-                max(deadline - time.monotonic(), 0),
-            )
+        deadline = None if args.duration <= 0 else time.monotonic() + args.duration
+        coordinator_lost_at = None
+        while deadline is None or time.monotonic() < deadline:
+            try:
+                if not client.connected and not try_reconnect(client, args):
+                    raise RuntimeError("coordinator is unavailable")
+                coordinator_lost_at = None
+                send_heartbeat(client, output_path)
+            except (
+                RuntimeError,
+                socketio.exceptions.ConnectionError,
+                socketio.exceptions.TimeoutError,
+            ):
+                now = time.monotonic()
+                if coordinator_lost_at is None:
+                    coordinator_lost_at = now
+                if now - coordinator_lost_at >= args.orphan_grace_seconds:
+                    print("coordinator unavailable; exiting orphaned collector")
+                    break
+
+            interval = max(args.heartbeat_interval, 0.1)
+            remaining = interval
+            if deadline is not None:
+                remaining = min(remaining, max(deadline - time.monotonic(), 0))
+            sleep_for = max(min(remaining, interval), 0)
             if sleep_for:
                 time.sleep(sleep_for)
     finally:
-        client.disconnect()
+        if client.connected:
+            client.disconnect()
 
 
 def parse_args():
@@ -166,7 +202,7 @@ def parse_args():
         "--duration",
         default=env_float("RADAR_SAMPLE_COLLECTOR_DURATION", 10),
         type=float,
-        help="Seconds to stay registered before disconnecting.",
+        help="Seconds to stay registered before disconnecting. Use <= 0 to run forever.",
     )
     parser.add_argument(
         "--heartbeat-interval",
@@ -187,6 +223,12 @@ def parse_args():
         default=env_float("RADAR_COLLECTOR_CONNECT_TIMEOUT", 10),
         type=float,
         help="Seconds to wait for the coordinator before failing.",
+    )
+    parser.add_argument(
+        "--orphan-grace-seconds",
+        default=env_float("RADAR_COLLECTOR_ORPHAN_GRACE_SECONDS", 15),
+        type=float,
+        help="Seconds to keep running without a coordinator before exiting.",
     )
     return parser.parse_args()
 

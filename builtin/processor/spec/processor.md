@@ -16,6 +16,8 @@ feedback.
 - The processor receives collector work folder or file references and feedback
   from the coordinator.
 - The processor emits results back to the coordinator.
+- The processor preserves input provenance so downstream actors, UI, and audit
+  views can trace a result back to collected events and source artifacts.
 
 Processors should not talk directly to collectors or actors. The coordinator
 owns routing, policy, persistence, and user-visible side effects.
@@ -74,6 +76,17 @@ Field names must use snake_case.
     "id": "uuid",
     "processor_id": "builtin.pattern_detector",
     "input_refs": ["collector:macos.axtree:1780713574000.jsonl"],
+    "source_refs": [
+        {
+            "collector_id": "chat.transcript",
+            "event_id": "uuid",
+            "source_uri": "file:///Users/example/.codex/sessions/2026/06/06/session.jsonl",
+            "source_fingerprint": "12345:1780713574000000000",
+            "session_key": "codex-abc123",
+            "source_message_ids": ["codex:session_uuid:42"],
+            "tool_ids": ["call_abc"]
+        }
+    ],
     "kind": "user_suggestion",
     "created_at": "2026-06-06T10:12:05Z",
     "confidence": 0.82,
@@ -90,3 +103,23 @@ Field names must use snake_case.
 
 The coordinator owns persistence, policy checks, UI presentation, and actor
 eligibility decisions for processor results.
+
+## Replay And Targeted Lookup
+
+Processors should avoid copying large raw transcripts or tool outputs into
+results. Prefer compact payloads plus `source_refs` that point back to collected
+events, source transcript lines, and artifact IDs. If a model or actor needs
+exact source material, the processor should resolve it from the collector
+`work_dir` and validate the source fingerprint before use.
+
+For chat transcript processing, a recommended pipeline is:
+
+1. Read collector checkpoints and newly changed `chat_session_summary` events.
+2. Load the corresponding collected session JSONL and artifact pointers.
+3. Build a compact normalized session that includes user turns, final assistant
+   responses, message IDs, tool call summaries, and files touched.
+4. Keep exact tool arguments and tool results as artifacts or cache files for
+   targeted lookup.
+5. Run filtering, redaction, extraction, prediction, or learning processors.
+6. Emit result `source_refs` that preserve session keys, message IDs, tool IDs,
+   and source fingerprints.

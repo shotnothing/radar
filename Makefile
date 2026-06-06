@@ -6,7 +6,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install run-coordinator test-sample-collector
+.PHONY: install run-coordinator test-sample-collector test-chat-transcript-collector
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
@@ -17,3 +17,7 @@ run-coordinator:
 test-sample-collector:
 	$(PYTHON) -m py_compile debug/app.py builtin/collector/sample/collector.py debug/test_sample_collector.py
 	$(PYTHON) debug/test_sample_collector.py
+
+test-chat-transcript-collector:
+	$(PYTHON) -m py_compile builtin/collector/chat_transcript/collector.py debug/test_chat_transcript_collector.py
+	$(PYTHON) debug/test_chat_transcript_collector.py
