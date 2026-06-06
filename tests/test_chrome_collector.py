@@ -27,12 +27,19 @@ class FakeChromeStateReader:
 
 
 class FakeSocketClient:
-    def __init__(self, ack: dict[str, object]) -> None:
+    def __init__(
+        self,
+        ack: dict[str, object],
+        *,
+        connect_failures: int = 0,
+    ) -> None:
         self.ack = ack
+        self.connect_failures = connect_failures
         self.connected_to: str | None = None
         self.calls: list[tuple[str, dict[str, object]]] = []
         self.handlers: dict[str, object] = {}
         self.disconnected = False
+        self.connect_attempts = 0
 
     def on(self, event: str):
         def decorator(func):
@@ -42,6 +49,9 @@ class FakeSocketClient:
         return decorator
 
     def connect(self, url: str) -> None:
+        self.connect_attempts += 1
+        if self.connect_attempts <= self.connect_failures:
+            raise RuntimeError("temporary connection failure")
         self.connected_to = url
 
     def call(self, event: str, payload: dict[str, object], timeout: float = 0) -> dict[str, object]:
@@ -198,6 +208,41 @@ class CoordinatorClientTest(unittest.TestCase):
         self.assertEqual(event, "collector:register")
         self.assertEqual(payload["collector_id"], CHROME_COLLECTOR_ID)
         self.assertEqual(payload["protocol_version"], 1)
+
+    def test_register_retries_until_coordinator_is_ready(self) -> None:
+        socket = FakeSocketClient(
+            {
+                "ok": True,
+                "role": "collector",
+                "collector_id": CHROME_COLLECTOR_ID,
+                "work_dir": "/tmp/radar/chrome",
+            },
+            connect_failures=2,
+        )
+        client = CoordinatorClient(
+            "http://127.0.0.1:5000",
+            collector_id=CHROME_COLLECTOR_ID,
+            capabilities=["active_tab"],
+            metadata={"display_name": "Chrome Browser Collector"},
+            socket_client=socket,
+        )
+
+        work_dir = client.connect_and_register(connect_timeout_seconds=2)
+
+        self.assertEqual(work_dir, "/tmp/radar/chrome")
+        self.assertEqual(socket.connect_attempts, 3)
+
+
+class ChromeMetadataTest(unittest.TestCase):
+    def test_meta_uses_managed_collector_command_shape(self) -> None:
+        meta_path = Path("builtin/collector/chrome/meta.json")
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(meta["collector_id"], CHROME_COLLECTOR_ID)
+        self.assertEqual(meta["runtime"]["command"], "python3")
+        self.assertEqual(meta["runtime"]["args"], ["-m", "builtin.collector.chrome.cli"])
+        self.assertIn("required_permissions", meta)
+        self.assertNotIn("permissions", meta)
 
 
 if __name__ == "__main__":

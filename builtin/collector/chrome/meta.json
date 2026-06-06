@@ -8,9 +8,13 @@
     "bundle_id": "com.google.Chrome"
   },
   "runtime": {
-    "command": "python3 -m builtin.collector.chrome.cli"
+    "command": "python3",
+    "args": [
+      "-m",
+      "builtin.collector.chrome.cli"
+    ]
   },
-  "permissions": [
+  "required_permissions": [
     "macos.automation.google_chrome",
     "chrome.active_tab",
     "chrome.tabs",
@@ -37,6 +41,8 @@
     "event_host": "127.0.0.1",
     "event_port": 47321,
     "poll_interval_ms": 2000,
-    "file_split_ms": 3600000
+    "file_split_ms": 3600000,
+    "heartbeat_interval_seconds": 5,
+    "connect_timeout_seconds": 10
   }
 }

@@ -24,6 +24,12 @@ python3 -m builtin.collector.chrome.cli \
   --event-port 47321
 ```
 
+Or let the debug coordinator launch it from `meta.json`:
+
+```bash
+python3 debug/app.py --collector-meta builtin/collector/chrome/meta.json
+```
+
 ## Source Adapters
 
 - Active-tab polling uses AppleScript on macOS to capture Chrome title and URL

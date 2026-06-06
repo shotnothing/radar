@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import platform
 import subprocess
 import threading
@@ -244,7 +245,9 @@ def run(args: argparse.Namespace) -> None:
             "event_url": f"http://{args.event_host}:{args.event_port}/event",
         },
     )
-    work_dir = coordinator.connect_and_register()
+    work_dir = coordinator.connect_and_register(
+        connect_timeout_seconds=args.connect_timeout,
+    )
     runtime = ChromeCollectorRuntime(
         work_dir=work_dir,
         collector_id=args.collector_id,
@@ -278,14 +281,58 @@ def run(args: argparse.Namespace) -> None:
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run the Chrome browser collector")
-    parser.add_argument("--coordinator-url", default="http://127.0.0.1:5000")
-    parser.add_argument("--collector-id", default=CHROME_COLLECTOR_ID)
-    parser.add_argument("--event-host", default="127.0.0.1")
-    parser.add_argument("--event-port", default=47321, type=int)
-    parser.add_argument("--poll-interval-ms", default=2000, type=int)
-    parser.add_argument("--file-split-ms", default=3_600_000, type=int)
-    parser.add_argument("--heartbeat-interval", default=5.0, type=float)
+    parser.add_argument(
+        "--coordinator-url",
+        default=os.environ.get("RADAR_COORDINATOR_URL", "http://127.0.0.1:5000"),
+    )
+    parser.add_argument(
+        "--collector-id",
+        default=os.environ.get("RADAR_CHROME_COLLECTOR_ID", CHROME_COLLECTOR_ID),
+    )
+    parser.add_argument(
+        "--event-host",
+        default=os.environ.get("RADAR_CHROME_EVENT_HOST", "127.0.0.1"),
+    )
+    parser.add_argument(
+        "--event-port",
+        default=env_int("RADAR_CHROME_EVENT_PORT", 47321),
+        type=int,
+    )
+    parser.add_argument(
+        "--poll-interval-ms",
+        default=env_int("RADAR_CHROME_POLL_INTERVAL_MS", 2000),
+        type=int,
+    )
+    parser.add_argument(
+        "--file-split-ms",
+        default=env_int("RADAR_CHROME_FILE_SPLIT_MS", 3_600_000),
+        type=int,
+    )
+    parser.add_argument(
+        "--heartbeat-interval",
+        default=env_float("RADAR_CHROME_HEARTBEAT_INTERVAL", 5.0),
+        type=float,
+    )
+    parser.add_argument(
+        "--connect-timeout",
+        default=env_float("RADAR_COLLECTOR_CONNECT_TIMEOUT", 10.0),
+        type=float,
+    )
     return parser
+
+
+def env_int(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def env_float(name: str, default: float) -> float:
+    try:
+        return float(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
 
 
 def main(argv: list[str] | None = None) -> None:

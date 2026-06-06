@@ -67,8 +67,25 @@ class CoordinatorClient:
         target = payload.get("collector_id")
         return target in (None, self.collector_id)
 
-    def connect_and_register(self, timeout_seconds: float = 5.0) -> str:
-        self.socket_client.connect(self.coordinator_url)
+    def connect_and_register(
+        self,
+        *,
+        connect_timeout_seconds: float = 10.0,
+        call_timeout_seconds: float = 5.0,
+    ) -> str:
+        deadline = time.monotonic() + max(connect_timeout_seconds, 0)
+        last_error: Exception | None = None
+        while True:
+            try:
+                self.socket_client.connect(self.coordinator_url)
+                break
+            except Exception as exc:
+                last_error = exc
+                if time.monotonic() >= deadline:
+                    raise RuntimeError(
+                        f"could not connect to coordinator: {last_error}"
+                    ) from exc
+                time.sleep(0.25)
         self.connected = True
         payload = {
             "collector_id": self.collector_id,
@@ -79,7 +96,7 @@ class CoordinatorClient:
         ack = self.socket_client.call(
             "collector:register",
             payload,
-            timeout=timeout_seconds,
+            timeout=call_timeout_seconds,
         )
         if not isinstance(ack, dict) or not ack.get("ok"):
             raise RuntimeError(f"collector registration failed: {ack!r}")
