@@ -240,6 +240,9 @@ class TransactionStore:
 class EstDecConfig:
     algorithm: str = "NativeEstDec"
     min_support: float = 0.1
+    min_confidence: float = 0.25
+    min_transactions_before_prediction: int = 30
+    min_pattern_decayed_count: float = 3.0
     decay_rate: float = 0.05
     max_items: int = 500
     max_pattern_size: int = 3
@@ -254,6 +257,15 @@ class EstDecConfig:
         return cls(
             algorithm=os.environ.get("RADAR_ESTDEC_ALGORITHM", "NativeEstDec"),
             min_support=env_float("RADAR_ESTDEC_MIN_SUPPORT", 0.1),
+            min_confidence=env_float("RADAR_PREDICT_MIN_CONFIDENCE", 0.25),
+            min_transactions_before_prediction=env_int(
+                "RADAR_PREDICT_MIN_TRANSACTIONS",
+                30,
+            ),
+            min_pattern_decayed_count=env_float(
+                "RADAR_PREDICT_MIN_PATTERN_DECAYED_COUNT",
+                3.0,
+            ),
             decay_rate=env_float("RADAR_ESTDEC_DECAY_RATE", 0.05),
             max_items=env_int("RADAR_ESTDEC_MAX_ITEMS", 500),
             max_pattern_size=env_int("RADAR_ESTDEC_MAX_PATTERN_SIZE", 3),
@@ -369,6 +381,8 @@ class EstDecRunner:
             support = count / total
             if support < self.config.min_support:
                 continue
+            if count < self.config.min_pattern_decayed_count:
+                continue
             patterns.append(
                 {
                     "item_ids": item_ids,
@@ -451,6 +465,31 @@ class PredictProcessor:
         for encoded_event in encoded[:25]:
             source_refs.extend(source_refs_for_event(encoded_event.event))
 
+        patterns = estdec_result.get("patterns", [])
+        confidence = round(max((pattern.get("support", 0.0) for pattern in patterns), default=0.0), 6)
+        transactions_seen = int(estdec_result.get("transactions_seen", 0) or 0)
+        warmup_remaining = max(
+            self.estdec.config.min_transactions_before_prediction - transactions_seen,
+            0,
+        )
+        ready = bool(
+            patterns
+            and warmup_remaining == 0
+            and confidence >= self.estdec.config.min_confidence
+        )
+        if warmup_remaining > 0:
+            status = "learning"
+            reason = "minimum transaction history has not been reached"
+        elif not patterns:
+            status = "learning"
+            reason = "no pattern satisfies support and decayed-count thresholds"
+        elif confidence < self.estdec.config.min_confidence:
+            status = "learning"
+            reason = "top pattern confidence is below threshold"
+        else:
+            status = "ready"
+            reason = ""
+
         return {
             "id": str(uuid.uuid4()),
             "processor_id": PROCESSOR_ID,
@@ -458,7 +497,7 @@ class PredictProcessor:
             "source_refs": source_refs,
             "kind": "prediction_set",
             "created_at": utc_timestamp(),
-            "confidence": 0.0 if not estdec_result.get("patterns") else 0.5,
+            "confidence": confidence if ready else 0.0,
             "privacy": {
                 "contains_raw_content": False,
                 "redaction_applied": True,
@@ -474,10 +513,20 @@ class PredictProcessor:
                 "dictionary_path": str(self.dictionary_path),
                 "model_path": str(self.model_path),
                 "estdec_available": estdec_result.get("available", False),
-                "transactions_seen": estdec_result.get("transactions_seen", 0),
+                "ready": ready,
+                "status": status,
+                "reason": reason,
+                "confidence": confidence,
+                "min_confidence": self.estdec.config.min_confidence,
+                "min_transactions_before_prediction": self.estdec.config.min_transactions_before_prediction,
+                "warmup_remaining": warmup_remaining,
+                "min_pattern_decayed_count": self.estdec.config.min_pattern_decayed_count,
+                "min_support": self.estdec.config.min_support,
+                "transactions_seen": transactions_seen,
                 "effective_transaction_count": estdec_result.get("effective_transaction_count", 0.0),
                 "tracked_pattern_count": estdec_result.get("pattern_count", 0),
-                "patterns": estdec_result.get("patterns", []),
+                "patterns": patterns if ready else [],
+                "candidate_patterns": patterns,
                 "error": estdec_result.get("error"),
             },
         }

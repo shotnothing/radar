@@ -32,6 +32,18 @@ def env_float(name, default):
         return default
 
 
+def apply_predict_config_overrides(args):
+    mappings = {
+        "min_transactions_before_prediction": "RADAR_PREDICT_MIN_TRANSACTIONS",
+        "min_confidence": "RADAR_PREDICT_MIN_CONFIDENCE",
+        "min_pattern_decayed_count": "RADAR_PREDICT_MIN_PATTERN_DECAYED_COUNT",
+    }
+    for attr, env_name in mappings.items():
+        value = getattr(args, attr, None)
+        if value is not None:
+            os.environ[env_name] = str(value)
+
+
 def expand_path(value):
     return Path(os.path.expandvars(str(value))).expanduser()
 
@@ -80,6 +92,27 @@ def append_jsonl(path, records):
         for record in records:
             output_file.write(json.dumps(record, ensure_ascii=True, sort_keys=True))
             output_file.write("\n")
+
+
+def compact_learning_status(model_result):
+    payload = (model_result or {}).get("payload") or {}
+    return {
+        "ready": bool(payload.get("ready", False)),
+        "status": payload.get("status", ""),
+        "reason": payload.get("reason", ""),
+        "confidence": payload.get("confidence", 0.0),
+        "min_confidence": payload.get("min_confidence", 0.0),
+        "transactions_seen": payload.get("transactions_seen", 0),
+        "min_transactions_before_prediction": payload.get(
+            "min_transactions_before_prediction",
+            0,
+        ),
+        "warmup_remaining": payload.get("warmup_remaining", 0),
+        "min_support": payload.get("min_support", 0.0),
+        "min_pattern_decayed_count": payload.get("min_pattern_decayed_count", 0.0),
+        "candidate_pattern_count": len(payload.get("candidate_patterns") or []),
+        "prediction_pattern_count": len(payload.get("patterns") or []),
+    }
 
 
 def iter_collector_jsonl_files(collectors_root):
@@ -210,14 +243,17 @@ class ProcessorEngine:
                     continue
                 normalized_records.append(normalized)
 
+        model_result = None
         prediction = None
         if normalized_records:
             append_jsonl(self.normalized_log_path, normalized_records)
-            prediction = self.predict.process_payloads(
+            model_result = self.predict.process_payloads(
                 [record["payload"] for record in normalized_records],
                 input_ref=str(self.normalized_log_path),
             )
-            write_json_atomic(self.last_result_path, prediction)
+            write_json_atomic(self.last_result_path, model_result)
+            if (model_result.get("payload") or {}).get("ready"):
+                prediction = model_result
 
         self.checkpoint["updated_at"] = utc_timestamp()
         write_json_atomic(self.checkpoint_path, self.checkpoint)
@@ -233,7 +269,9 @@ class ProcessorEngine:
             "skipped_without_normalizer": skipped_without_normalizer,
             "skipped_without_payload": skipped_without_payload,
             "normalized_log_path": str(self.normalized_log_path),
-            "last_result_path": str(self.last_result_path) if prediction else "",
+            "last_result_path": str(self.last_result_path) if model_result else "",
+            "learning": compact_learning_status(model_result),
+            "model_result": model_result,
             "prediction": prediction,
             "errors": errors[-10:],
         }
@@ -276,6 +314,7 @@ class ProcessorEngine:
 
 
 def run_watch(args):
+    apply_predict_config_overrides(args)
     engine = ProcessorEngine(
         collectors_root=args.collectors_root,
         normalizers_root=args.normalizers_root,
@@ -349,6 +388,21 @@ def parse_args():
         "--print-empty",
         action="store_true",
         help="Print scan summaries even when no new records are normalized.",
+    )
+    parser.add_argument(
+        "--min-transactions-before-prediction",
+        type=int,
+        help="Minimum total learned transactions required before predictions are emitted.",
+    )
+    parser.add_argument(
+        "--min-confidence",
+        type=float,
+        help="Minimum top-pattern confidence required before predictions are emitted.",
+    )
+    parser.add_argument(
+        "--min-pattern-decayed-count",
+        type=float,
+        help="Minimum decayed count required for a pattern to be eligible.",
     )
     return parser.parse_args()
 
