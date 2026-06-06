@@ -9,10 +9,13 @@ import {
   Chrome,
   Cpu,
   FileText,
+  Link2,
   Layers2,
+  Mail,
   MessageCircle,
   Settings2,
   Sparkles,
+  Unplug,
   Workflow,
   type LucideIcon,
 } from "lucide-react";
@@ -47,7 +50,7 @@ type Suggestion = {
   trigger_id?: string;
 };
 
-type SettingsSection = "collector" | "processor" | "actor";
+type SettingsSection = "collector" | "processor" | "actor" | "connection";
 
 type ModuleConfig = {
   id: string;
@@ -58,6 +61,13 @@ type ModuleConfig = {
   defaultEnabled: boolean;
 };
 
+type GoogleConnectionStatus = {
+  connected: boolean;
+  email: string | null;
+  scopes: string[];
+  configured: boolean;
+};
+
 const settingsTabs: Array<{
   id: SettingsSection;
   label: string;
@@ -66,6 +76,7 @@ const settingsTabs: Array<{
   { id: "collector", label: "collector", icon: Settings2 },
   { id: "processor", label: "processor", icon: Cpu },
   { id: "actor", label: "actor", icon: Bot },
+  { id: "connection", label: "connection", icon: Link2 },
 ];
 
 const settingsCopy: Record<
@@ -86,6 +97,11 @@ const settingsCopy: Record<
     title: "actor",
     description: "Actions that can be triggered after intent is detected.",
     empty: "No actors configured yet.",
+  },
+  connection: {
+    title: "connection",
+    description: "External accounts Radar can use with your permission.",
+    empty: "No connections configured yet.",
   },
 };
 
@@ -152,6 +168,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       defaultEnabled: true,
     },
   ],
+  connection: [],
 };
 
 function getInitialModuleState() {
@@ -316,6 +333,10 @@ function SettingsWindow() {
   const [enabledModules, setEnabledModules] = useState<Record<string, boolean>>(
     getInitialModuleState
   );
+  const [googleStatus, setGoogleStatus] =
+    useState<GoogleConnectionStatus | null>(null);
+  const [googleBusy, setGoogleBusy] = useState(false);
+  const [googleError, setGoogleError] = useState("");
 
   useEffect(() => {
     const window = getCurrentWindow();
@@ -329,8 +350,57 @@ function SettingsWindow() {
     };
   }, []);
 
+  useEffect(() => {
+    void refreshGoogleStatus();
+  }, []);
+
+  async function refreshGoogleStatus() {
+    try {
+      const status = await invoke<GoogleConnectionStatus>(
+        "get_google_connection_status"
+      );
+      setGoogleStatus(status);
+    } catch (error) {
+      setGoogleError(String(error));
+    }
+  }
+
+  async function connectGoogle() {
+    setGoogleBusy(true);
+    setGoogleError("");
+
+    try {
+      const status = await invoke<GoogleConnectionStatus>(
+        "connect_google_account"
+      );
+      setGoogleStatus(status);
+    } catch (error) {
+      setGoogleError(String(error));
+      await refreshGoogleStatus();
+    } finally {
+      setGoogleBusy(false);
+    }
+  }
+
+  async function disconnectGoogle() {
+    setGoogleBusy(true);
+    setGoogleError("");
+
+    try {
+      const status = await invoke<GoogleConnectionStatus>(
+        "disconnect_google_account"
+      );
+      setGoogleStatus(status);
+    } catch (error) {
+      setGoogleError(String(error));
+    } finally {
+      setGoogleBusy(false);
+    }
+  }
+
   const activeCopy = settingsCopy[activeSection];
   const activeItems = moduleCatalog[activeSection];
+  const isConnectionSection = activeSection === "connection";
 
   return (
     <Card className="settings-window" role="main" aria-label="Radar settings">
@@ -372,7 +442,15 @@ function SettingsWindow() {
           </div>
         </header>
 
-        {activeItems.length > 0 ? (
+        {isConnectionSection ? (
+          <ConnectionSettings
+            googleStatus={googleStatus}
+            googleBusy={googleBusy}
+            googleError={googleError}
+            onConnectGoogle={() => void connectGoogle()}
+            onDisconnectGoogle={() => void disconnectGoogle()}
+          />
+        ) : activeItems.length > 0 ? (
           <section className="module-list" aria-label={`${activeCopy.title} list`}>
             {activeItems.map((item) => {
               const Icon = item.icon;
@@ -413,6 +491,91 @@ function SettingsWindow() {
         )}
       </main>
     </Card>
+  );
+}
+
+function ConnectionSettings({
+  googleStatus,
+  googleBusy,
+  googleError,
+  onConnectGoogle,
+  onDisconnectGoogle,
+}: {
+  googleStatus: GoogleConnectionStatus | null;
+  googleBusy: boolean;
+  googleError: string;
+  onConnectGoogle: () => void;
+  onDisconnectGoogle: () => void;
+}) {
+  const connected = googleStatus?.connected ?? false;
+  const configured = googleStatus?.configured ?? false;
+  const email = googleStatus?.email;
+  const scopeLabel =
+    googleStatus?.scopes.includes("https://www.googleapis.com/auth/gmail.readonly")
+      ? "Gmail read-only"
+      : "Google account";
+
+  return (
+    <section className="connection-list" aria-label="Connection list">
+      <article className="connection-row">
+        <div className="connection-icon" aria-hidden="true">
+          <Mail size={18} strokeWidth={2.1} />
+        </div>
+
+        <div className="connection-copy">
+          <div className="module-title-row">
+            <h2>Google</h2>
+            <span
+              className={`connection-status ${
+                connected ? "connection-status--connected" : ""
+              }`}
+            >
+              {connected ? "connected" : "not connected"}
+            </span>
+          </div>
+          <p>
+            {connected && email
+              ? email
+              : "Link a Google account so Radar can read Gmail with your permission."}
+          </p>
+          <div className="connection-meta">
+            <span>{scopeLabel}</span>
+            <span>OAuth browser sign-in</span>
+          </div>
+          {!configured ? (
+            <p className="connection-warning">
+              Set RADAR_GOOGLE_CLIENT_ID before connecting.
+            </p>
+          ) : null}
+          {googleError ? <p className="connection-error">{googleError}</p> : null}
+        </div>
+
+        {connected ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="connection-button"
+            disabled={googleBusy}
+            onClick={onDisconnectGoogle}
+          >
+            <Unplug size={14} strokeWidth={2.2} />
+            {googleBusy ? "Disconnecting" : "Disconnect"}
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            size="sm"
+            className="connection-button connection-button--primary"
+            disabled={googleBusy || !configured}
+            onClick={onConnectGoogle}
+          >
+            <Link2 size={14} strokeWidth={2.2} />
+            {googleBusy ? "Waiting" : "Connect"}
+          </Button>
+        )}
+      </article>
+    </section>
   );
 }
 
