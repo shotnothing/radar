@@ -315,15 +315,15 @@ function AssistantWindow() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent side="top" className="rounded-xl">
-              <SelectItem value="later">稍后提醒</SelectItem>
-              <SelectItem value="today">今天保持</SelectItem>
-              <SelectItem value="never">不再提示</SelectItem>
+              <SelectItem value="later">Remind later</SelectItem>
+              <SelectItem value="today">Keep today</SelectItem>
+              <SelectItem value="never">Never remind</SelectItem>
             </SelectContent>
           </Select>
           <Input
             value={feedback}
             onChange={(event) => setFeedback(event.target.value)}
-            placeholder="补充偏好"
+            placeholder="Add preference"
             aria-label="Feedback"
             className="h-7 rounded-[9px] bg-white text-xs shadow-none md:text-xs"
           />
@@ -334,7 +334,7 @@ function AssistantWindow() {
             className="h-7 rounded-[9px] px-2.5 text-xs text-slate-600 hover:bg-white/65 hover:text-slate-900"
             onClick={() => void completeCurrent(false)}
           >
-            忽略
+            Dismiss
           </Button>
           <Button
             type="button"

@@ -8,7 +8,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-use tauri::{Emitter, Manager};
+use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
 const ACTOR_API_PORT: u16 = 47322;
 const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
@@ -229,6 +229,7 @@ pub fn run() {
         ])
         .setup(|app| {
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+            create_assistant_window(app)?;
             position_assistant_window(app)?;
             setup_tray(app)?;
 
@@ -321,6 +322,27 @@ fn run_actor_action(
     }
 
     Ok(payload)
+}
+
+fn create_assistant_window(app: &mut tauri::App) -> tauri::Result<()> {
+    if app.get_webview_window("assistant").is_some() {
+        return Ok(());
+    }
+
+    WebviewWindowBuilder::new(app, "assistant", WebviewUrl::default())
+        .title("Radar Suggestion")
+        .inner_size(400.0, 240.0)
+        .resizable(false)
+        .fullscreen(false)
+        .decorations(false)
+        .transparent(true)
+        .always_on_top(true)
+        .focused(false)
+        .shadow(false)
+        .visible(false)
+        .accept_first_mouse(true)
+        .build()
+        .map(|_| ())
 }
 
 #[tauri::command]
@@ -454,7 +476,7 @@ fn setup_tray(app: &mut tauri::App) -> tauri::Result<()> {
         tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     };
 
-    let menu = MenuBuilder::new(app).text("quit", "退出").build()?;
+    let menu = MenuBuilder::new(app).text("quit", "Quit").build()?;
     let mut tray = TrayIconBuilder::with_id("main")
         .menu(&menu)
         .show_menu_on_left_click(false)
