@@ -26,6 +26,7 @@ make test-sample-collector
 make test-chat-transcript-collector
 make test-chat-skill-processor
 make run-coordinator
+make run-collector-viewer
 ```
 
 To run the built-in sample collector against the debug harness:

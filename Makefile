@@ -4,13 +4,16 @@ RADAR_HOST ?= 127.0.0.1
 RADAR_PORT ?= 5000
 RADAR_WORK_DIR ?= debug/work
 RADAR_ACTOR_PATH ?= builtin/actor
+RADAR_COLLECTOR_VIEWER_HOST ?= 127.0.0.1
+RADAR_COLLECTOR_VIEWER_PORT ?= 5174
+RADAR_COLLECTOR_VIEWER_DATA ?= $(RADAR_WORK_DIR)/collectors
 
 ifneq (,$(wildcard $(ENV_FILE)))
 include $(ENV_FILE)
 export
 endif
 
-.PHONY: install run-coordinator package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
+.PHONY: install run-coordinator run-collector-viewer package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -19,6 +22,10 @@ install:
 # Run the local Socket.IO coordinator/debug harness.
 run-coordinator:
 	$(PYTHON) debug/app.py --host $(RADAR_HOST) --port $(RADAR_PORT) --work-dir $(RADAR_WORK_DIR) --actor-path $(RADAR_ACTOR_PATH) $(if $(RADAR_COLLECTOR_META),--collector-meta $(RADAR_COLLECTOR_META),)
+
+# Run the local collector JSONL debug viewer.
+run-collector-viewer:
+	cd debug/collector_viewer && npm start -- --host $(RADAR_COLLECTOR_VIEWER_HOST) --port $(RADAR_COLLECTOR_VIEWER_PORT) --data $(abspath $(RADAR_COLLECTOR_VIEWER_DATA))
 
 # Package Radar's Chrome extension into dist/radar-extension.
 package-chrome-extension:
