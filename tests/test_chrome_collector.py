@@ -157,6 +157,24 @@ class ChromeStorageTest(unittest.TestCase):
 
 
 class ChromeRuntimeTest(unittest.TestCase):
+    def test_handle_event_ignores_focus_events(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ChromeCollectorRuntime(work_dir=tmp, split_ms=1)
+
+            observation = runtime.handle_event(
+                {
+                    "event_name": "focus",
+                    "observed_at": 1780713574000,
+                    "document_title": "Example",
+                    "document_url": "https://example.com",
+                    "element": {"tag": "input"},
+                }
+            )
+
+            self.assertIsNone(observation)
+            self.assertEqual(runtime.status_payload()["stored_count"], 0)
+            self.assertEqual(list(Path(tmp).rglob("*.jsonl")), [])
+
     def test_poll_once_stores_only_changed_active_tab(self) -> None:
         states = [
             ChromeTabState("ChatGPT", "ChatGPT", "https://chatgpt.com"),

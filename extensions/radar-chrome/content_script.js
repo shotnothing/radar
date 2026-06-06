@@ -152,10 +152,6 @@ document.addEventListener("click", (event) => {
   sendEvent("click", event.target);
 }, true);
 
-document.addEventListener("focusin", (event) => {
-  sendEvent("focus", event.target);
-}, true);
-
 document.addEventListener("submit", (event) => {
   sendEvent("submit", event.target);
 }, true);

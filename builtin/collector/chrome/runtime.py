@@ -14,8 +14,10 @@ from pathlib import Path
 from typing import Any
 
 from .coordinator import CoordinatorClient
-from .observation import CHROME_COLLECTOR_ID, build_observation, epoch_ms_now
+from .observation import CHROME_COLLECTOR_ID, build_observation, epoch_ms_now, normalize_event_name
 from .storage import JsonlObservationStore
+
+IGNORED_EVENT_NAMES = {"focus", "element_focus"}
 
 CAPABILITIES = [
     "active_tab",
@@ -104,6 +106,12 @@ class ChromeCollectorRuntime:
 
     def handle_event(self, event: dict[str, Any]) -> dict[str, Any] | None:
         if self.paused:
+            return None
+
+        event_name = normalize_event_name(
+            event.get("event_name") or event.get("eventName") or event.get("type")
+        )
+        if event_name in IGNORED_EVENT_NAMES:
             return None
 
         observation = build_observation(event, collector_id=self.collector_id)
