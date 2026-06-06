@@ -417,6 +417,63 @@
         border-radius: 22px;
       }
 
+      .suggestion-placeholder {
+        align-items: stretch;
+        padding: 14px;
+      }
+
+      .placeholder-frame {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        min-height: 250px;
+        border: 1px dashed rgba(84, 215, 255, 0.45);
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(84, 215, 255, 0.1), rgba(70, 240, 176, 0.06)),
+          repeating-linear-gradient(
+            -45deg,
+            rgba(255, 255, 255, 0.04) 0,
+            rgba(255, 255, 255, 0.04) 8px,
+            transparent 8px,
+            transparent 18px
+          );
+        text-align: center;
+      }
+
+      .placeholder-icon {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        margin: 0 auto 16px;
+        border: 1px solid rgba(84, 215, 255, 0.34);
+        border-radius: 16px;
+        background: rgba(84, 215, 255, 0.12);
+        color: var(--cyan);
+      }
+
+      .placeholder-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .placeholder-frame strong {
+        display: block;
+        color: var(--text);
+        font-size: 20px;
+        line-height: 1.1;
+      }
+
+      .placeholder-frame span {
+        display: block;
+        max-width: 190px;
+        margin: 10px auto 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
       .suggestion-top {
         display: flex;
         align-items: center;
@@ -932,19 +989,19 @@
                   </div>
                 </div>
 
-                <div class="suggestion-card">
-                  <div class="suggestion-top">
-                    <span>Proactive AI suggestion</span>
-                    <span class="confidence">91% confidence</span>
-                  </div>
-                  <h3>Make this a reusable skill.</h3>
-                  <p>
-                    Radar learned the steps from the user's work. Next time, it can
-                    suggest the workflow or let an agent run it directly.
-                  </p>
-                  <div class="choice-row">
-                    <button type="button">Use suggestion</button>
-                    <button type="button">Keep working</button>
+                <div class="suggestion-card suggestion-placeholder" aria-label="Suggestion UI image placeholder">
+                  <div class="placeholder-frame">
+                    <div>
+                      <div class="placeholder-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <rect x="4" y="5" width="16" height="14" rx="2.5" stroke="currentColor" stroke-width="2" />
+                          <path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M15.5 15.5l1.5 1.5 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </div>
+                      <strong>Suggestion UI image</strong>
+                      <span>Placeholder for the confirmation screen users will see before Radar acts.</span>
+                    </div>
                   </div>
                 </div>
 
