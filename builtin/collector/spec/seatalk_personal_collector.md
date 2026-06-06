@@ -34,8 +34,8 @@ The collector should treat the root and database path as configurable. Missing
 SeaTalk storage is not fatal; the collector should report it in heartbeat status.
 SeaTalk's production database may be encrypted. Wingman's reader derives the
 SQLCipher key from the app bundle key prefix plus the local user ID. The Radar
-collector should use a SQLCipher-capable Python module when available, or accept
-a readable/decrypted fixture DB for tests.
+collector should use the same key derivation shape and open the database through
+SQLCipher directly.
 
 ## Collector Identity
 
@@ -51,7 +51,10 @@ Recommended `meta.json` fields:
         "command": "python3",
         "args": ["builtin/collector/seatalk/collector.py"]
     },
-    "required_permissions": ["filesystem_read_seatalk_app_support"],
+    "required_permissions": [
+        "filesystem_read_seatalk_app_support",
+        "filesystem_read_seatalk_app_bundle"
+    ],
     "capabilities": [
         "seatalk_sqlite_main",
         "user_authored_messages",
@@ -218,7 +221,7 @@ Collector heartbeats should include high-level state only:
     "messages_seen": 12,
     "messages_changed": 2,
     "events_written": 2,
-    "last_write": "/Users/example/.radar/collectors/seatalk_personal/20260606/artifacts/1780713574000.jsonl",
+    "last_write": "/Users/example/.radar/collectors/seatalk_personal/20260606/1780713574000.jsonl",
     "last_error": ""
 }
 ```

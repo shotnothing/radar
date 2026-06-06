@@ -10,7 +10,7 @@ from eventlet import wsgi
 from eventlet.websocket import WebSocketWSGI
 
 
-BRIDGE_WS_PATH = "/wingman-chrome-bridge-ws"
+BRIDGE_WS_PATH = "/radar-chrome-bridge-ws"
 
 
 class ChromeBridgeServer:

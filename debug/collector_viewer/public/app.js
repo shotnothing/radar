@@ -1,49 +1,57 @@
 const state = {
-  debounceTimer: 0,
   lastPayload: null,
 };
+
+const palette = [
+  "#0f766e",
+  "#b45309",
+  "#2563eb",
+  "#be123c",
+  "#6d28d9",
+  "#15803d",
+  "#c2410c",
+  "#0369a1",
+];
 
 const timeline = document.querySelector("#timeline");
 const emptyState = document.querySelector("#empty-state");
 const template = document.querySelector("#event-template");
-const searchInput = document.querySelector("#search");
-const collectorFilter = document.querySelector("#collector-filter");
-const sourceFilter = document.querySelector("#source-filter");
-const limitInput = document.querySelector("#limit");
+const legend = document.querySelector("#legend");
 const refreshButton = document.querySelector("#refresh");
 const eventCount = document.querySelector("#event-count");
 const collectorCount = document.querySelector("#collector-count");
-const dataRoot = document.querySelector("#data-root");
 const parseErrors = document.querySelector("#parse-errors");
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function pad(value) {
+  return String(value).padStart(2, "0");
+}
 
 function formatDate(ms) {
   if (!ms) {
     return "Unknown time";
   }
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "medium",
-  }).format(new Date(ms));
+  const date = new Date(ms);
+  return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}, ${formatShortTime(ms)}`;
 }
 
-function formatRelative(ms) {
+function formatMarker(ms) {
+  if (!ms) {
+    return "Unknown time";
+  }
+  const date = new Date(ms);
+  return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()} · ${pad(date.getHours())}:00`;
+}
+
+function formatShortTime(ms) {
   if (!ms) {
     return "";
   }
-  const deltaSeconds = Math.round((Date.now() - ms) / 1000);
-  const abs = Math.abs(deltaSeconds);
-  const units = [
-    ["day", 86400],
-    ["hour", 3600],
-    ["minute", 60],
-    ["second", 1],
-  ];
-  const [unit, seconds] = units.find(([, size]) => abs >= size) || units.at(-1);
-  const value = Math.round(deltaSeconds / seconds) * -1;
-  return new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(value, unit);
+  const date = new Date(ms);
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }
 
-function truncate(value, length = 180) {
+function truncate(value, length = 120) {
   const text = String(value || "").replace(/\s+/g, " ").trim();
   if (text.length <= length) {
     return text;
@@ -51,27 +59,9 @@ function truncate(value, length = 180) {
   return `${text.slice(0, length).trim()}...`;
 }
 
-function setOptions(select, values, placeholder) {
-  const selected = select.value;
-  select.replaceChildren(new Option(placeholder, ""));
-  for (const value of values) {
-    select.append(new Option(value, value));
-  }
-  select.value = values.includes(selected) ? selected : "";
-}
-
 function queryString() {
   const params = new URLSearchParams();
-  if (searchInput.value.trim()) {
-    params.set("q", searchInput.value.trim());
-  }
-  if (collectorFilter.value) {
-    params.set("collector", collectorFilter.value);
-  }
-  if (sourceFilter.value) {
-    params.set("source", sourceFilter.value);
-  }
-  params.set("limit", String(limitInput.value || 500));
+  params.set("limit", "1000");
   return params.toString();
 }
 
@@ -101,95 +91,110 @@ async function loadEvents() {
 function render(payload) {
   eventCount.textContent = new Intl.NumberFormat().format(payload.totalEvents || 0);
   collectorCount.textContent = new Intl.NumberFormat().format(payload.collectors?.length || 0);
-  dataRoot.textContent = payload.dataRoot ? `Reading ${payload.dataRoot}` : "";
   parseErrors.textContent = payload.errors?.length
     ? `${payload.errors.length} JSONL parse issue${payload.errors.length === 1 ? "" : "s"}`
     : "";
 
-  setOptions(collectorFilter, payload.collectors || [], "All collectors");
-  setOptions(sourceFilter, payload.sources || [], "All sources");
+  const colorMap = createColorMap(payload.collectors || []);
+  renderLegend(payload.collectors || [], colorMap);
 
-  const cards = (payload.events || []).map(renderEvent);
-  timeline.replaceChildren(...cards);
-  emptyState.hidden = cards.length > 0;
-  if (cards.length === 0) {
+  const items = renderTimeline(payload.events || [], colorMap);
+  timeline.replaceChildren(...items);
+  emptyState.hidden = items.length > 0;
+  if (items.length === 0) {
     emptyState.querySelector("h2").textContent = "No collected data matched";
     emptyState.querySelector("p").textContent =
       payload.totalEvents > 0
-        ? "Try a broader search, collector, source, or limit."
+        ? "Refresh after more collected data arrives."
         : "Start a collector or point the server at a folder that contains JSONL events.";
   }
 }
 
-function renderEvent(event) {
+function createColorMap(collectors) {
+  const colorMap = new Map();
+  collectors.forEach((collector, index) => {
+    colorMap.set(collector, palette[index % palette.length]);
+  });
+  return colorMap;
+}
+
+function renderLegend(collectors, colorMap) {
+  const items = collectors.map((collector) => {
+    const item = document.createElement("span");
+    item.className = "legend-item";
+    item.style.setProperty("--event-color", colorMap.get(collector));
+
+    const swatch = document.createElement("span");
+    swatch.className = "legend-swatch";
+
+    const label = document.createElement("span");
+    label.textContent = collector;
+
+    item.append(swatch, label);
+    return item;
+  });
+  legend.replaceChildren(...items);
+}
+
+function markerKey(ms) {
+  if (!ms) {
+    return "unknown";
+  }
+  const date = new Date(ms);
+  date.setMinutes(0, 0, 0);
+  return String(date.getTime());
+}
+
+function renderTimeline(events, colorMap) {
+  const nodes = [];
+  let currentMarker = "";
+
+  for (const event of events) {
+    const nextMarker = markerKey(event.observedAt);
+    if (nextMarker !== currentMarker) {
+      currentMarker = nextMarker;
+      nodes.push(renderTimeMarker(event.observedAt));
+    }
+    nodes.push(renderEvent(event, colorMap));
+  }
+
+  return nodes;
+}
+
+function renderTimeMarker(ms) {
+  const item = document.createElement("li");
+  item.className = "time-marker";
+
+  const line = document.createElement("span");
+  const label = document.createElement("time");
+  label.textContent = formatMarker(ms);
+  if (ms) {
+    label.dateTime = new Date(ms).toISOString();
+  }
+
+  item.append(line, label);
+  return item;
+}
+
+function renderEvent(event, colorMap) {
   const node = template.content.firstElementChild.cloneNode(true);
   const title = node.querySelector("h2");
   const time = node.querySelector("time");
   const collector = node.querySelector(".collector-pill");
   const text = node.querySelector(".event-text");
-  const meta = node.querySelector(".meta-row");
-  const detailGrid = node.querySelector(".detail-grid");
-  const raw = node.querySelector("pre");
+  const kind = node.querySelector(".event-kind");
+  const color = colorMap.get(event.collectorId) || palette[0];
 
-  const relative = formatRelative(event.observedAt);
   title.textContent = event.title || "Untitled event";
-  time.textContent = relative ? `${formatDate(event.observedAt)} · ${relative}` : formatDate(event.observedAt);
+  time.textContent = formatShortTime(event.observedAt) || formatDate(event.observedAt);
   time.dateTime = event.observedAt ? new Date(event.observedAt).toISOString() : "";
   collector.textContent = event.collectorId;
-  text.textContent = truncate(event.text, 520);
-
-  const chips = [
-    event.sourceApp && `app: ${event.sourceApp}`,
-    event.sourceType && `source: ${event.sourceType}`,
-    event.subjectKind && `kind: ${event.subjectKind}`,
-    event.anchorType && `anchor: ${event.anchorType}`,
-    event.artifactCount ? `artifacts: ${event.artifactCount}` : "",
-    event.filePath,
-  ].filter(Boolean);
-  meta.replaceChildren(...chips.map((chip) => renderChip(chip)));
-
-  detailGrid.replaceChildren(
-    renderDetail("Event ID", event.id),
-    renderDetail("Collector", event.collectorId),
-    renderDetail("Source URI", event.sourceUri || "None"),
-    renderDetail("File", `${event.filePath}:${event.lineNumber}`),
-    renderDetail("Window", event.contextWindow || "None"),
-    renderDetail("Provenance", event.provenanceType || "None"),
-  );
-  raw.textContent = JSON.stringify(event.raw, null, 2);
+  text.textContent = truncate(event.text);
+  kind.textContent = [event.sourceApp, event.subjectKind].filter(Boolean).join(" / ");
+  node.style.setProperty("--event-color", color);
   return node;
 }
 
-function renderChip(text) {
-  const chip = document.createElement("span");
-  chip.className = "chip";
-  chip.textContent = text;
-  return chip;
-}
-
-function renderDetail(label, value) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "detail";
-
-  const key = document.createElement("b");
-  key.textContent = label;
-
-  const content = document.createElement("span");
-  content.textContent = value || "None";
-
-  wrapper.append(key, content);
-  return wrapper;
-}
-
-function scheduleLoad() {
-  clearTimeout(state.debounceTimer);
-  state.debounceTimer = window.setTimeout(loadEvents, 180);
-}
-
-searchInput.addEventListener("input", scheduleLoad);
-collectorFilter.addEventListener("change", loadEvents);
-sourceFilter.addEventListener("change", loadEvents);
-limitInput.addEventListener("change", loadEvents);
 refreshButton.addEventListener("click", loadEvents);
 
 loadEvents();

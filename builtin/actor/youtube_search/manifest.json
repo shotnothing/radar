@@ -12,10 +12,6 @@
   "trigger": {
     "polling_interval_seconds": 5,
     "filters": {
-      "app_patterns": [
-        "Google Chrome",
-        "com.google.Chrome"
-      ],
       "url_patterns": [
         "https://www.youtube.com/*",
         "https://youtube.com/*"

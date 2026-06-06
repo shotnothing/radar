@@ -180,7 +180,11 @@ Any background action should have:
 - Collector tests should write collected output under `RADAR_HOME`
   (default `~/.radar`) so humans and agents can inspect the same files after a
   run. Use synthetic source fixtures under `RADAR_HOME/test_sources/...` when a
-  test should not read real user data.
+  test should not read real user data. Do not use temporary directories for a
+  collector's `work_dir`; reset only the collector-specific folder under
+  `RADAR_HOME/collectors/...` when a test needs deterministic fresh output. Do
+  not force collector tests to `debug/work` from Makefile targets; let
+  `RADAR_HOME` resolve normally unless the caller explicitly sets it.
 - Prefer small adapters over cross-module imports.
 - Avoid adding global mutable state for collector or actor registration.
 - Document new collectors with required permissions, anchors, emitted observation shapes, and privacy risks.

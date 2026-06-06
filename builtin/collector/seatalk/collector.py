@@ -3,12 +3,10 @@ import importlib
 import json
 import os
 import re
-import sqlite3
 import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import quote
 
 import socketio
 
@@ -98,11 +96,6 @@ def local_user_id_from_db_path(path):
         return 0
 
 
-def sqlite_ro_uri(path):
-    raw_path = str(Path(path).expanduser().resolve())
-    return f"file:{quote(raw_path)}?mode=ro"
-
-
 def load_sqlcipher_module():
     for module_name in ("pysqlcipher3.dbapi2", "sqlcipher3"):
         try:
@@ -116,21 +109,16 @@ def quote_pragma_string(value):
     return str(value).replace("'", "''")
 
 
-def open_sqlite_readonly(path, sqlite_key=""):
-    if sqlite_key:
-        sqlcipher = load_sqlcipher_module()
-        if sqlcipher is None:
-            raise RuntimeError(
-                "SQLCipher support is unavailable; install pysqlcipher3 or pass a readable/decrypted SeaTalk DB"
-            )
-        connection = sqlcipher.connect(str(Path(path).expanduser().resolve()))
-        connection.row_factory = getattr(sqlcipher, "Row", sqlite3.Row)
-        connection.execute(f"PRAGMA key = '{quote_pragma_string(sqlite_key)}'")
-        connection.execute("PRAGMA query_only = ON")
-        return connection
-
-    connection = sqlite3.connect(sqlite_ro_uri(path), uri=True)
-    connection.row_factory = sqlite3.Row
+def open_sqlcipher_readonly(path, sqlite_key):
+    if not sqlite_key:
+        raise RuntimeError("SeaTalk SQLCipher key is required")
+    sqlcipher = load_sqlcipher_module()
+    if sqlcipher is None:
+        raise RuntimeError("SQLCipher support is required; install pysqlcipher3 or sqlcipher3")
+    connection = sqlcipher.connect(str(Path(path).expanduser().resolve()))
+    connection.row_factory = sqlcipher.Row
+    connection.execute(f"PRAGMA key = '{quote_pragma_string(sqlite_key)}'")
+    connection.execute("PRAGMA query_only = ON")
     return connection
 
 
@@ -157,13 +145,15 @@ def extract_key_prefix(resources_dir=None):
 def resolve_sqlcipher_key(args, db_path):
     if args.sqlite_key:
         return args.sqlite_key
-    if args.disable_sqlcipher:
-        return ""
     user_id = local_user_id_from_db_path(db_path)
     prefix = extract_key_prefix(args.seatalk_resources_dir)
     if not user_id or not prefix:
-        return ""
+        raise RuntimeError("could not derive SeaTalk SQLCipher key from app bundle")
     return f"{prefix}{user_id}"
+
+
+def open_seatalk_readonly(path, args):
+    return open_sqlcipher_readonly(path, resolve_sqlcipher_key(args, path))
 
 
 def load_json_mapping(path):
@@ -222,13 +212,13 @@ def conversation_name(sid, conversation_info=None):
 
 def user_summary(user_id, user_map, self_user_id):
     if user_id == self_user_id:
-        fallback = "me"
+        default_name = "me"
     else:
-        fallback = str(user_id) if user_id else ""
+        default_name = str(user_id) if user_id else ""
     info = user_map.get(user_id) or {}
     return {
         "user_id": user_id,
-        "name": str(info.get("name") or info.get("display_name") or fallback),
+        "name": str(info.get("name") or info.get("display_name") or default_name),
         "email": str(info.get("email") or info.get("mail") or ""),
         "is_self": bool(user_id and user_id == self_user_id),
     }
@@ -537,9 +527,8 @@ def output_path_for(work_dir, observed_at):
     day_dir = Path(work_dir) / datetime.fromtimestamp(observed_at / 1000).strftime(
         "%Y%m%d"
     )
-    artifacts_dir = day_dir / "artifacts"
-    artifacts_dir.mkdir(parents=True, exist_ok=True)
-    return artifacts_dir / f"{observed_at}.jsonl"
+    day_dir.mkdir(parents=True, exist_ok=True)
+    return day_dir / f"{observed_at}.jsonl"
 
 
 def write_events(work_dir, events):
@@ -621,15 +610,6 @@ def collect_events_from_connection(
     return seen_rows, events
 
 
-def should_retry_with_sqlcipher(error):
-    message = str(error).lower()
-    return (
-        "not a database" in message
-        or "file is encrypted" in message
-        or "malformed" in message
-    )
-
-
 def scan_sources(args, work_dir):
     checkpoint = load_checkpoint(work_dir)
     state = checkpoint.setdefault("seatalk", {})
@@ -681,7 +661,7 @@ def scan_sources(args, work_dir):
     errors = []
 
     try:
-        with open_sqlite_readonly(db_path) as connection:
+        with open_seatalk_readonly(db_path, args) as connection:
             seen_rows, events = collect_events_from_connection(
                 connection,
                 args,
@@ -694,28 +674,7 @@ def scan_sources(args, work_dir):
                 processed_ids=processed_ids,
             )
     except Exception as error:
-        if not should_retry_with_sqlcipher(error):
-            errors.append(str(error))
-        else:
-            sqlite_key = resolve_sqlcipher_key(args, db_path)
-            if not sqlite_key:
-                errors.append(str(error))
-            else:
-                try:
-                    with open_sqlite_readonly(db_path, sqlite_key=sqlite_key) as connection:
-                        seen_rows, events = collect_events_from_connection(
-                            connection,
-                            args,
-                            db_path=db_path,
-                            db_fingerprint=db_fingerprint,
-                            self_user_id=self_user_id,
-                            scan_after=scan_after,
-                            user_map=user_map,
-                            conversation_map=conversation_map,
-                            processed_ids=processed_ids,
-                        )
-                except Exception as retry_error:
-                    errors.append(str(retry_error))
+        errors.append(str(error))
 
     output_path = write_events(work_dir, events)
     all_seen_for_checkpoint = seen_rows
@@ -881,13 +840,7 @@ def parse_args():
     parser.add_argument(
         "--sqlite-key",
         default=os.environ.get("RADAR_SEATALK_SQLITE_KEY", ""),
-        help="Optional full SQLCipher key for encrypted SeaTalk SQLite files.",
-    )
-    parser.add_argument(
-        "--disable-sqlcipher",
-        action="store_true",
-        default=env_bool("RADAR_SEATALK_DISABLE_SQLCIPHER", False),
-        help="Disable encrypted DB retry and only use standard sqlite3.",
+        help="Optional full SQLCipher key. Defaults to Wingman-style app-prefix plus user ID derivation.",
     )
     parser.add_argument(
         "--self-user-id",

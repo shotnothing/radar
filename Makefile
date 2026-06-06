@@ -10,7 +10,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install run-coordinator package-chrome-extension test test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime test-coordinator-actor-api
+.PHONY: install run-coordinator package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
@@ -21,15 +21,30 @@ run-coordinator:
 package-chrome-extension:
 	$(PYTHON) -m extensions.package_radar_chrome
 
-test: test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime test-coordinator-actor-api
+actor-live-setup:
+	@echo "Live actor test setup:"
+	@echo "1. Package Radar's Chrome extension:"
+	@echo "   make package-chrome-extension"
+	@echo "2. Open Chrome extensions:"
+	@echo "   open -a 'Google Chrome' chrome://extensions"
+	@echo "3. Enable Developer mode and Load unpacked:"
+	@echo "   $(CURDIR)/dist/radar-extension"
+	@echo "4. Open YouTube in Chrome:"
+	@echo "   open -a 'Google Chrome' https://www.youtube.com/"
+	@echo "5. Run:"
+	@echo "   make test-actor-live"
+
+test: test-unit test-actor-live
+
+test-unit: test-sample-collector test-chat-transcript-collector test-seatalk-collector test-chrome-collector test-actor-runtime
 
 test-sample-collector:
 	$(PYTHON) -m py_compile debug/app.py builtin/collector/sample/collector.py debug/test_sample_collector.py
-	RADAR_HOME=$(RADAR_WORK_DIR) RADAR_DISABLE_CHROME_BRIDGE=1 $(PYTHON) debug/test_sample_collector.py
+	RADAR_DISABLE_CHROME_BRIDGE=1 $(PYTHON) debug/test_sample_collector.py
 
 test-chat-transcript-collector:
 	$(PYTHON) -m py_compile builtin/collector/chat_transcript/collector.py debug/test_chat_transcript_collector.py
-	RADAR_HOME=$(RADAR_WORK_DIR) $(PYTHON) debug/test_chat_transcript_collector.py
+	$(PYTHON) debug/test_chat_transcript_collector.py
 
 test-seatalk-collector:
 	$(PYTHON) -m py_compile builtin/collector/seatalk/collector.py debug/test_seatalk_collector.py
@@ -46,3 +61,5 @@ test-actor-runtime:
 test-coordinator-actor-api:
 	$(PYTHON) -m py_compile debug/app.py debug/test_coordinator_actor_api.py
 	$(PYTHON) debug/test_coordinator_actor_api.py
+
+test-actor-live: test-coordinator-actor-api

@@ -839,7 +839,7 @@ if __name__ == "__main__":
         try:
             chrome_bridge_server.start()
             print(
-                f"started chrome bridge ws on ws://127.0.0.1:{args.chrome_bridge_port}/wingman-chrome-bridge-ws",
+                f"started chrome bridge ws on ws://127.0.0.1:{args.chrome_bridge_port}/radar-chrome-bridge-ws",
                 flush=True,
             )
         except Exception as error:

@@ -10,7 +10,8 @@
     ]
   },
   "required_permissions": [
-    "filesystem_read_seatalk_app_support"
+    "filesystem_read_seatalk_app_support",
+    "filesystem_read_seatalk_app_bundle"
   ],
   "capabilities": [
     "seatalk_sqlite_main",

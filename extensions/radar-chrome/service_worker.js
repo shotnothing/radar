@@ -1,14 +1,33 @@
 const DEFAULT_COLLECTOR_URL = "http://127.0.0.1:47321/event";
+const DEFAULT_BRIDGE_URL = "ws://127.0.0.1:9223/radar-chrome-bridge-ws";
 const STATUS_KEY = "radar_status";
+const BRIDGE_RECONNECT_MS = 3000;
+
+let bridgeSocket = null;
+let bridgeReconnectTimer = null;
 
 async function getCollectorUrl() {
   const config = await chrome.storage.local.get({ collectorUrl: DEFAULT_COLLECTOR_URL });
   return config.collectorUrl;
 }
 
+async function getBridgeUrl() {
+  const config = await chrome.storage.local.get({ bridgeUrl: DEFAULT_BRIDGE_URL });
+  return config.bridgeUrl;
+}
+
 async function setStatus(status) {
   await chrome.storage.local.set({
     [STATUS_KEY]: {
+      ...status,
+      updatedAt: Date.now()
+    }
+  });
+}
+
+function setBridgeStatus(status) {
+  chrome.storage.local.set({
+    radar_bridge_status: {
       ...status,
       updatedAt: Date.now()
     }
@@ -68,8 +87,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const config = await chrome.storage.local.get({ collectorUrl: DEFAULT_COLLECTOR_URL });
-  await chrome.storage.local.set({ collectorUrl: config.collectorUrl });
+  const config = await chrome.storage.local.get({
+    collectorUrl: DEFAULT_COLLECTOR_URL,
+    bridgeUrl: DEFAULT_BRIDGE_URL
+  });
+  await chrome.storage.local.set({
+    collectorUrl: config.collectorUrl,
+    bridgeUrl: config.bridgeUrl
+  });
   await setStatus({
     ok: null,
     collectorUrl: config.collectorUrl,
@@ -77,3 +102,326 @@ chrome.runtime.onInstalled.addListener(async () => {
     lastError: null
   });
 });
+
+chrome.runtime.onStartup.addListener(() => {
+  connectBridge();
+});
+
+connectBridge();
+
+async function connectBridge() {
+  if (bridgeSocket && (bridgeSocket.readyState === WebSocket.OPEN || bridgeSocket.readyState === WebSocket.CONNECTING)) {
+    return;
+  }
+
+  const bridgeUrl = await getBridgeUrl();
+  try {
+    bridgeSocket = new WebSocket(bridgeUrl);
+  } catch (error) {
+    setBridgeStatus({ connected: false, bridgeUrl, lastError: String(error && error.message ? error.message : error) });
+    scheduleBridgeReconnect();
+    return;
+  }
+
+  bridgeSocket.onopen = () => {
+    setBridgeStatus({ connected: true, bridgeUrl, lastError: null });
+  };
+  bridgeSocket.onmessage = (event) => {
+    handleBridgeMessage(event.data);
+  };
+  bridgeSocket.onerror = () => {
+    setBridgeStatus({ connected: false, bridgeUrl, lastError: "websocket error" });
+  };
+  bridgeSocket.onclose = () => {
+    setBridgeStatus({ connected: false, bridgeUrl, lastError: "websocket closed" });
+    bridgeSocket = null;
+    scheduleBridgeReconnect();
+  };
+}
+
+function scheduleBridgeReconnect() {
+  if (bridgeReconnectTimer) {
+    return;
+  }
+  bridgeReconnectTimer = setTimeout(() => {
+    bridgeReconnectTimer = null;
+    connectBridge();
+  }, BRIDGE_RECONNECT_MS);
+}
+
+async function handleBridgeMessage(raw) {
+  let message;
+  try {
+    message = JSON.parse(raw);
+  } catch (_error) {
+    return;
+  }
+
+  if (!message || typeof message.id === "undefined" || !message.method) {
+    return;
+  }
+
+  try {
+    let result;
+    if (message.method === "ping") {
+      result = { ok: true };
+    } else if (message.method === "page_content") {
+      result = await getPageContent(firstParam(message.params));
+    } else if (message.method === "page_action") {
+      result = await performPageActions(firstParam(message.params));
+    } else {
+      throw new Error(`Unknown Radar bridge method: ${message.method}`);
+    }
+    sendBridgeMessage({
+      jsonrpc: "2.0",
+      id: message.id,
+      result
+    });
+  } catch (error) {
+    sendBridgeMessage({
+      jsonrpc: "2.0",
+      id: message.id,
+      error: {
+        code: -32000,
+        message: String(error && error.message ? error.message : error)
+      }
+    });
+  }
+}
+
+function firstParam(params) {
+  if (Array.isArray(params)) {
+    return params[0] || {};
+  }
+  return params || {};
+}
+
+function sendBridgeMessage(message) {
+  if (bridgeSocket && bridgeSocket.readyState === WebSocket.OPEN) {
+    bridgeSocket.send(JSON.stringify(message));
+  }
+}
+
+async function getActiveTab(tabId) {
+  if (tabId && tabId > 0) {
+    return chrome.tabs.get(tabId);
+  }
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tabs[0] || !tabs[0].id) {
+    throw new Error("No active tab found");
+  }
+  return tabs[0];
+}
+
+function canAccessTab(tab) {
+  return Boolean(tab && tab.url && !/^(chrome|chrome-extension|edge|devtools|about):/.test(tab.url));
+}
+
+async function getPageContent(request) {
+  const tab = await getActiveTab(request.tab_id);
+  if (!canAccessTab(tab)) {
+    return { error: "Cannot access this tab" };
+  }
+
+  const injection = await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: collectPageContent,
+    args: [request || {}]
+  });
+  const result = injection && injection[0] ? injection[0].result || {} : {};
+  return {
+    url: tab.url,
+    tab_id: tab.id,
+    ...result
+  };
+}
+
+function collectPageContent(request) {
+  const result = {};
+
+  if (request.include_html) {
+    result.html = document.documentElement.outerHTML;
+  }
+  if (request.include_text) {
+    result.text = document.body ? document.body.innerText : "";
+  }
+  if (request.include_selection) {
+    const selection = window.getSelection();
+    result.selection = selection ? selection.toString() : "";
+  }
+  if (request.include_metadata) {
+    const getMeta = (name) => {
+      const element = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+      return element ? element.getAttribute("content") || undefined : undefined;
+    };
+    result.metadata = {
+      title: document.title,
+      description: getMeta("description"),
+      canonical: document.querySelector('link[rel="canonical"]')?.href,
+      og_title: getMeta("og:title"),
+      og_description: getMeta("og:description"),
+      og_image: getMeta("og:image"),
+      og_type: getMeta("og:type"),
+      og_url: getMeta("og:url")
+    };
+  }
+  if (Array.isArray(request.selectors) && request.selectors.length > 0) {
+    result.selectors = {};
+    for (const query of request.selectors) {
+      try {
+        const read = (element) => {
+          if (!element) {
+            return null;
+          }
+          if (query.attribute) {
+            return element.getAttribute(query.attribute);
+          }
+          if (query.property) {
+            return element[query.property];
+          }
+          if (query.inner_html) {
+            return element.innerHTML;
+          }
+          if (query.outer_html) {
+            return element.outerHTML;
+          }
+          return element.textContent;
+        };
+        if (query.all) {
+          result.selectors[query.name] = Array.from(document.querySelectorAll(query.selector)).map(read);
+        } else {
+          result.selectors[query.name] = read(document.querySelector(query.selector));
+        }
+      } catch (error) {
+        result.selectors[query.name] = { error: String(error && error.message ? error.message : error) };
+      }
+    }
+  }
+  return result;
+}
+
+async function performPageActions(request) {
+  const tab = await getActiveTab(request.tab_id);
+  if (!canAccessTab(tab)) {
+    return { success: false, results: [], error: "Cannot access this tab" };
+  }
+
+  if (request.url_pattern && !globMatches(request.url_pattern, tab.url)) {
+    return {
+      success: false,
+      results: [],
+      error: `URL does not match pattern: ${request.url_pattern}`
+    };
+  }
+
+  const actions = Array.isArray(request.actions) ? request.actions : [];
+  const results = [];
+  for (const action of actions) {
+    try {
+      const injection = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: executePageAction,
+        args: [action]
+      });
+      const result = injection && injection[0] ? injection[0].result : null;
+      results.push(result || { type: action.type, success: false, error: "No result", element_found: false });
+      if (request.stop_on_error && (!result || !result.success)) {
+        break;
+      }
+      if (action.wait_ms && action.wait_ms > 0) {
+        await new Promise((resolve) => setTimeout(resolve, action.wait_ms));
+      }
+    } catch (error) {
+      results.push({
+        name: action.name,
+        type: action.type,
+        success: false,
+        error: String(error && error.message ? error.message : error),
+        element_found: false
+      });
+      if (request.stop_on_error) {
+        break;
+      }
+    }
+  }
+
+  return {
+    success: results.every((item) => item.success),
+    url: tab.url,
+    tab_id: tab.id,
+    results
+  };
+}
+
+function executePageAction(action) {
+  const result = {
+    name: action.name,
+    type: action.type,
+    success: false,
+    element_found: false
+  };
+
+  try {
+    if (action.type === "wait") {
+      result.success = true;
+      return result;
+    }
+    if (action.type === "script") {
+      result.error = "script page actions are not supported by the Radar extension bridge";
+      return result;
+    }
+    if (!action.selector) {
+      result.error = "Selector is required";
+      return result;
+    }
+
+    const element = document.querySelector(action.selector);
+    if (!element) {
+      result.error = `Element not found: ${action.selector}`;
+      return result;
+    }
+    result.element_found = true;
+    result.element_tag = element.tagName;
+
+    if (action.type === "focus") {
+      element.focus();
+      result.success = true;
+      return result;
+    }
+    if (action.type === "fill") {
+      if ("value" in element) {
+        if (action.clear !== false) {
+          element.value = "";
+        }
+        element.value = action.value || "";
+      } else if (element.isContentEditable) {
+        element.textContent = action.value || "";
+      } else {
+        result.error = "Element is not fillable";
+        return result;
+      }
+      if (action.trigger_input !== false) {
+        element.dispatchEvent(new Event("input", { bubbles: true }));
+        element.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      result.success = true;
+      return result;
+    }
+    if (action.type === "click") {
+      element.click();
+      result.success = true;
+      return result;
+    }
+
+    result.error = `Unsupported action type: ${action.type}`;
+    return result;
+  } catch (error) {
+    result.error = String(error && error.message ? error.message : error);
+    return result;
+  }
+}
+
+function globMatches(pattern, value) {
+  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+  return new RegExp(`^${escaped}$`).test(value || "");
+}

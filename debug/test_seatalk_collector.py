@@ -1,9 +1,8 @@
 import importlib.util
-import atexit
 import json
+import os
 import shutil
 import sqlite3
-import tempfile
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -92,9 +91,22 @@ def read_written_events(work_dir, started_at):
     return events
 
 
+def read_written_event_files(work_dir, started_at):
+    return sorted(
+        path
+        for path in Path(work_dir).glob("**/*.jsonl")
+        if path.stat().st_mtime >= started_at
+    )
+
+
 def require(condition, message):
     if not condition:
         raise RuntimeError(message)
+
+
+def resolve_radar_home():
+    configured = os.environ.get("RADAR_HOME", "~/.radar")
+    return Path(os.path.expandvars(configured)).expanduser().resolve()
 
 
 def make_args(db_path, user_map_path, conversation_map_path):
@@ -103,7 +115,6 @@ def make_args(db_path, user_map_path, conversation_map_path):
         seatalk_main_db=str(db_path),
         seatalk_resources_dir=str(db_path.parent),
         sqlite_key="",
-        disable_sqlcipher=True,
         self_user_id=0,
         user_map=str(user_map_path),
         conversation_map=str(conversation_map_path),
@@ -111,7 +122,7 @@ def make_args(db_path, user_map_path, conversation_map_path):
         initial_lookback_seconds=9999999999,
         batch_limit=100,
         context_message_limit=3,
-        force_all=False,
+        force_all=True,
         emit_empty_messages=False,
     )
 
@@ -123,12 +134,13 @@ def write_json(path, data):
 
 def main():
     collector = load_collector()
-    root = Path(tempfile.mkdtemp(prefix="radar-seatalk-collector-test-"))
-    atexit.register(shutil.rmtree, root, True)
+    radar_home = resolve_radar_home()
+    root = radar_home / "test_sources" / "seatalk"
     db_path = root / "main_123.sqlite"
-    work_dir = root / "work"
+    work_dir = radar_home / "collectors" / "seatalk_personal"
     user_map_path = root / "users.json"
     conversation_map_path = root / "conversations.json"
+    shutil.rmtree(work_dir, ignore_errors=True)
     if db_path.exists():
         db_path.unlink()
     create_fixture_db(db_path)
@@ -150,75 +162,94 @@ def main():
     )
 
     args = make_args(db_path, user_map_path, conversation_map_path)
+    original_opener = collector.open_seatalk_readonly
+
+    def open_fixture_db(path, _args):
+        connection = sqlite3.connect(path)
+        connection.row_factory = sqlite3.Row
+        return connection
+
+    collector.open_seatalk_readonly = open_fixture_db
     started_at = time.time()
-    first = collector.scan_sources(args, work_dir)
-    events = read_written_events(work_dir, started_at)
+    try:
+        first = collector.scan_sources(args, work_dir)
+        events = read_written_events(work_dir, started_at)
+        event_files = read_written_event_files(work_dir, started_at)
 
-    require(first["messages_seen"] == 3, f"expected 3 user rows: {first}")
-    require(first["events_written"] == 3, f"expected 3 written events: {first}")
-    require(len(events) == 3, f"unexpected event count: {len(events)}")
-    require(
-        {event["extra_data"]["seatalk"]["mid"] for event in events}
-        == {"m2", "m5", "d2"},
-        "collector should only emit self-authored messages",
-    )
+        require(first["messages_seen"] == 3, f"expected 3 user rows: {first}")
+        require(first["events_written"] == 3, f"expected 3 written events: {first}")
+        require(len(events) == 3, f"unexpected event count: {len(events)}")
+        require(event_files, "collector should write JSONL event files")
+        require(
+            all("artifacts" not in path.parts for path in event_files),
+            f"collected event JSONL must not be written under artifacts/: {event_files}",
+        )
+        require(
+            {event["extra_data"]["seatalk"]["mid"] for event in events}
+            == {"m2", "m5", "d2"},
+            "collector should only emit self-authored messages",
+        )
 
-    m2 = next(event for event in events if event["extra_data"]["seatalk"]["mid"] == "m2")
-    require(m2["subject"]["kind"] == "communication_user_message", "wrong subject kind")
-    require(m2["content"]["text"] == "I will check and update later.", "wrong text")
-    require(
-        m2["context"]["conversation_name"] == "Payments Infra",
-        "missing conversation name",
-    )
-    require(
-        m2["context"]["previous_messages"][0]["mid"] == "m1",
-        f"m2 should include previous message: {m2['context']}",
-    )
-    require(
-        m2["context"]["previous_messages"][0]["sender_email"] == "requester@example.com",
-        "previous sender should be resolved",
-    )
+        m2 = next(event for event in events if event["extra_data"]["seatalk"]["mid"] == "m2")
+        require(m2["subject"]["kind"] == "communication_user_message", "wrong subject kind")
+        require(m2["content"]["text"] == "I will check and update later.", "wrong text")
+        require(
+            m2["context"]["conversation_name"] == "Payments Infra",
+            "missing conversation name",
+        )
+        require(
+            m2["context"]["previous_messages"][0]["mid"] == "m1",
+            f"m2 should include previous message: {m2['context']}",
+        )
+        require(
+            m2["context"]["previous_messages"][0]["sender_email"] == "requester@example.com",
+            "previous sender should be resolved",
+        )
 
-    m5 = next(event for event in events if event["extra_data"]["seatalk"]["mid"] == "m5")
-    require(m5["extra_data"]["seatalk"]["is_thread_reply"], "m5 should be a thread reply")
-    require(
-        [item["mid"] for item in m5["context"]["previous_messages"]] == ["m1", "m4"],
-        f"thread context should stay in thread: {m5['context']}",
-    )
-    require(
-        m5["context"]["reply_to_message"]["mid"] == "m4",
-        "m5 should include exact reply target",
-    )
+        m5 = next(event for event in events if event["extra_data"]["seatalk"]["mid"] == "m5")
+        require(m5["extra_data"]["seatalk"]["is_thread_reply"], "m5 should be a thread reply")
+        require(
+            [item["mid"] for item in m5["context"]["previous_messages"]] == ["m1", "m4"],
+            f"thread context should stay in thread: {m5['context']}",
+        )
+        require(
+            m5["context"]["reply_to_message"]["mid"] == "m4",
+            "m5 should include exact reply target",
+        )
 
-    checkpoint = json.loads((work_dir / "state" / "checkpoint.json").read_text())
-    require(checkpoint["seatalk"]["self_user_id"] == 123, "self user id not checkpointed")
-    require(checkpoint["seatalk"]["last_seen_mid"] == "d2", "last seen mid not checkpointed")
+        checkpoint = json.loads((work_dir / "state" / "checkpoint.json").read_text())
+        require(checkpoint["seatalk"]["self_user_id"] == 123, "self user id not checkpointed")
+        require(checkpoint["seatalk"]["last_seen_mid"] == "d2", "last seen mid not checkpointed")
 
-    second = collector.scan_sources(args, work_dir)
-    require(second["events_written"] == 0, f"second scan should dedupe: {second}")
+        args.force_all = False
+        second = collector.scan_sources(args, work_dir)
+        require(second["events_written"] == 0, f"second scan should dedupe: {second}")
 
-    append_message(
-        db_path,
-        ("group-1", "m6", "", "", 222, text_payload("Please confirm."), "text", 107),
-    )
-    append_message(
-        db_path,
-        ("group-1", "m7", "", "", 123, text_payload("Confirmed from my side."), "text", 108),
-    )
-    third_started_at = time.time()
-    third = collector.scan_sources(args, work_dir)
-    third_events = read_written_events(work_dir, third_started_at)
-    require(third["events_written"] == 1, f"third scan should emit one new user message: {third}")
-    require(len(third_events) == 1, f"expected one third-scan event: {third_events}")
-    require(
-        third_events[0]["extra_data"]["seatalk"]["mid"] == "m7",
-        "new inbound message should only appear as context, not standalone",
-    )
-    require(
-        third_events[0]["context"]["previous_messages"][-1]["mid"] == "m6",
-        "new inbound row should be previous context for m7",
-    )
+        append_message(
+            db_path,
+            ("group-1", "m6", "", "", 222, text_payload("Please confirm."), "text", 107),
+        )
+        append_message(
+            db_path,
+            ("group-1", "m7", "", "", 123, text_payload("Confirmed from my side."), "text", 108),
+        )
+        third_started_at = time.time()
+        third = collector.scan_sources(args, work_dir)
+        third_events = read_written_events(work_dir, third_started_at)
+        require(third["events_written"] == 1, f"third scan should emit one new user message: {third}")
+        require(len(third_events) == 1, f"expected one third-scan event: {third_events}")
+        require(
+            third_events[0]["extra_data"]["seatalk"]["mid"] == "m7",
+            "new inbound message should only appear as context, not standalone",
+        )
+        require(
+            third_events[0]["context"]["previous_messages"][-1]["mid"] == "m6",
+            "new inbound row should be previous context for m7",
+        )
+    finally:
+        collector.open_seatalk_readonly = original_opener
 
+    print(f"RADAR_HOME: {radar_home}")
     print(f"fixture_db: {db_path}")
     print(f"work_dir: {work_dir}")
     print(f"initial_events: {len(events)}")

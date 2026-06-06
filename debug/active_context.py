@@ -102,9 +102,6 @@ class MacOSActiveContextReader:
             set frontProc to first application process whose frontmost is true
             set appName to name of frontProc
             set bundleId to ""
-            try
-                set bundleId to bundle identifier of frontProc
-            end try
             set windowTitle to ""
             try
                 set windowTitle to name of front window of frontProc
@@ -238,16 +235,9 @@ class MacOSActiveContextReader:
             set targetBundle to item 1 of argv
             set maxDepth to item 2 of argv as integer
             tell application "System Events"
-                if targetBundle is "" then
-                    set targetProc to first application process whose frontmost is true
-                else
-                    set targetProc to first application process whose bundle identifier is targetBundle
-                end if
+                set targetProc to first application process whose frontmost is true
                 set appName to name of targetProc
                 set bundleId to ""
-                try
-                    set bundleId to bundle identifier of targetProc
-                end try
                 set rootJson to my dumpNode(targetProc, 0, maxDepth)
                 return "{\"app_name\":\"" & my esc(appName) & "\",\"bundle_id\":\"" & my esc(bundleId) & "\",\"tree\":" & rootJson & "}"
             end tell
