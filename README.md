@@ -44,6 +44,74 @@ For coordinator-managed testing, run `make run-coordinator`. The debug
 coordinator reads `RADAR_COLLECTOR_META` and starts the configured collector
 process itself.
 
+## Chrome Collection
+
+Chrome collection has two pieces:
+
+- A local Python collector that registers with the debug coordinator and writes
+  JSONL events.
+- A Chrome extension that runs inside normal Chrome pages and sends browser
+  actions to the local collector at `http://127.0.0.1:47321/event`.
+
+Use a virtual environment for local development:
+
+```bash
+cd /Users/SIPSS0578/Desktop/Hackathon
+python3 -m venv /tmp/radar-venv
+/tmp/radar-venv/bin/python -m pip install -r requirements.txt
+```
+
+Build the dev extension package:
+
+```bash
+make PYTHON=/tmp/radar-venv/bin/python package-chrome-extension
+```
+
+This generates the unpacked extension folder:
+
+```text
+dist/radar-extension
+```
+
+Install it in your normal Chrome:
+
+1. Open `chrome://extensions`.
+2. Enable **Developer mode**.
+3. Click **Load unpacked**.
+4. Select `/Users/SIPSS0578/Desktop/Hackathon/dist/radar-extension`.
+
+Start collecting Chrome events:
+
+```bash
+PATH=/tmp/radar-venv/bin:$PATH \
+RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
+make PYTHON=/tmp/radar-venv/bin/python run-coordinator
+```
+
+Keep that process running. It starts the debug coordinator and launches the
+Chrome collector from `builtin/collector/chrome/meta.json`.
+
+Check that the Chrome collector is listening:
+
+```bash
+curl -s http://127.0.0.1:47321/health | /tmp/radar-venv/bin/python -m json.tool
+```
+
+Then open a regular `http://` or `https://` page in Chrome and click, focus,
+type, select, copy, paste, or submit a form. Recorded Chrome data is written to:
+
+```text
+debug/work/collectors/chrome_browser/YYYYMMDD/artifacts/*.jsonl
+```
+
+Inspect the latest records:
+
+```bash
+find debug/work/collectors/chrome_browser -type f -name '*.jsonl' -exec tail -n 3 {} \;
+```
+
+See `builtin/collector/chrome/README.md` for the full Chrome collector guide.
+
 ## Chat Transcript Collection
 
 The first production collector should be a file-backed chat transcript collector

@@ -18,7 +18,9 @@ python3 -m venv /tmp/radar-venv
 /tmp/radar-venv/bin/python -m pip install -r requirements.txt
 ```
 
-Build the installable Chrome extension:
+## Build Extension For Dev
+
+Build the unpacked extension used by Chrome Developer Mode:
 
 ```bash
 make PYTHON=/tmp/radar-venv/bin/python package-chrome-extension
@@ -29,15 +31,25 @@ This creates:
 - `dist/radar-extension/`: unpacked folder for local Chrome Developer Mode.
 - `dist/radar-extension.zip`: zip package for sharing or Chrome Web Store upload.
 
-Install `dist/radar-extension/` in your normal Chrome:
+The source app lives in `extensions/radar-chrome`. Do not load that source
+folder in Chrome during normal testing; load the generated `dist/radar-extension`
+folder so it matches the packaged output.
+
+## Install Extension For Dev
+
+Install the generated extension in your normal Chrome:
 
 1. Open `chrome://extensions`.
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
 4. Select `/Users/SIPSS0578/Desktop/Hackathon/dist/radar-extension`.
 
-Run the debug coordinator and let it launch the Chrome collector from
-`meta.json`:
+If you already installed an older unpacked Radar Extension from another path,
+remove it first, then load `dist/radar-extension`.
+
+## Start Collecting
+
+Run the debug coordinator and let it launch the Chrome collector from `meta.json`:
 
 ```bash
 PATH=/tmp/radar-venv/bin:$PATH \
@@ -48,6 +60,12 @@ make PYTHON=/tmp/radar-venv/bin/python run-coordinator
 Keep this process running while testing Chrome. The `PATH` prefix is important:
 the managed collector is launched as `python3`, so this makes it use the same
 virtual environment as the coordinator.
+
+The collector exposes the local extension event endpoint at:
+
+```text
+http://127.0.0.1:47321/event
+```
 
 ## Source Adapters
 
@@ -60,7 +78,7 @@ virtual environment as the coordinator.
   page navigation, clicks, focus, form submits, copy/paste, selection, and
   debounced input events, then forwards them to `http://127.0.0.1:47321/event`.
 
-## Test Collection
+## Test Collection Output
 
 Check that the collector event server is healthy:
 
