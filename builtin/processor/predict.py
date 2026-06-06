@@ -15,6 +15,7 @@ from pathlib import Path
 
 PROCESSOR_ID = "builtin.predict"
 PROTOCOL_VERSION = 1
+ESTDEC_ALGORITHM = "NativeEstDec"
 DEFAULT_RADAR_HOME = Path("~/.radar").expanduser()
 DEFAULT_STATE_DIR = DEFAULT_RADAR_HOME / "processors" / "builtin_predict"
 
@@ -237,46 +238,57 @@ class TransactionStore:
 
 
 @dataclass
-class EstDecConfig:
-    algorithm: str = "NativeEstDec"
+class PredictionConfig:
     min_support: float = 0.1
-    min_confidence: float = 0.25
-    min_transactions_before_prediction: int = 30
+    min_confidence: float = 0.5
+    min_transactions_before_prediction: int = 50
     min_pattern_decayed_count: float = 3.0
-    decay_rate: float = 0.05
-    max_items: int = 500
-    max_pattern_size: int = 3
+    decay_rate: float = 2.3e-7  # 5 events/sec, half-life of 1 week
+    max_items: int = 10000
+    max_pattern_size: int = 5
     max_transaction_items: int = 32
     max_candidates_per_transaction: int = 2000
-    prune_below_support: float = 0.02
+    prune_below_support: float = 0.01
     prune_every: int = 100
     min_count: float = 0.01
 
     @classmethod
     def from_env(cls):
+        defaults = cls()
         return cls(
-            algorithm=os.environ.get("RADAR_ESTDEC_ALGORITHM", "NativeEstDec"),
-            min_support=env_float("RADAR_ESTDEC_MIN_SUPPORT", 0.1),
-            min_confidence=env_float("RADAR_PREDICT_MIN_CONFIDENCE", 0.25),
+            min_support=env_float("RADAR_ESTDEC_MIN_SUPPORT", defaults.min_support),
+            min_confidence=env_float(
+                "RADAR_PREDICT_MIN_CONFIDENCE",
+                defaults.min_confidence,
+            ),
             min_transactions_before_prediction=env_int(
                 "RADAR_PREDICT_MIN_TRANSACTIONS",
-                30,
+                defaults.min_transactions_before_prediction,
             ),
             min_pattern_decayed_count=env_float(
                 "RADAR_PREDICT_MIN_PATTERN_DECAYED_COUNT",
-                3.0,
+                defaults.min_pattern_decayed_count,
             ),
-            decay_rate=env_float("RADAR_ESTDEC_DECAY_RATE", 0.05),
-            max_items=env_int("RADAR_ESTDEC_MAX_ITEMS", 500),
-            max_pattern_size=env_int("RADAR_ESTDEC_MAX_PATTERN_SIZE", 3),
-            max_transaction_items=env_int("RADAR_ESTDEC_MAX_TRANSACTION_ITEMS", 32),
+            decay_rate=env_float("RADAR_ESTDEC_DECAY_RATE", defaults.decay_rate),
+            max_items=env_int("RADAR_ESTDEC_MAX_ITEMS", defaults.max_items),
+            max_pattern_size=env_int(
+                "RADAR_ESTDEC_MAX_PATTERN_SIZE",
+                defaults.max_pattern_size,
+            ),
+            max_transaction_items=env_int(
+                "RADAR_ESTDEC_MAX_TRANSACTION_ITEMS",
+                defaults.max_transaction_items,
+            ),
             max_candidates_per_transaction=env_int(
                 "RADAR_ESTDEC_MAX_CANDIDATES_PER_TRANSACTION",
-                2000,
+                defaults.max_candidates_per_transaction,
             ),
-            prune_below_support=env_float("RADAR_ESTDEC_PRUNE_BELOW_SUPPORT", 0.02),
-            prune_every=env_int("RADAR_ESTDEC_PRUNE_EVERY", 100),
-            min_count=env_float("RADAR_ESTDEC_MIN_COUNT", 0.01),
+            prune_below_support=env_float(
+                "RADAR_ESTDEC_PRUNE_BELOW_SUPPORT",
+                defaults.prune_below_support,
+            ),
+            prune_every=env_int("RADAR_ESTDEC_PRUNE_EVERY", defaults.prune_every),
+            min_count=env_float("RADAR_ESTDEC_MIN_COUNT", defaults.min_count),
         )
 
 
@@ -406,14 +418,17 @@ class EstDecRunner:
 
 
 class PredictProcessor:
-    def __init__(self, state_dir=None, normalizer=None, estdec_config=None):
+    def __init__(self, state_dir=None, normalizer=None, prediction_config=None):
         self.state_dir = Path(state_dir or os.environ.get("RADAR_PREDICT_STATE_DIR", DEFAULT_STATE_DIR))
         self.dictionary_path = self.state_dir / "item_dictionary.json"
         self.model_path = self.state_dir / "estdec_model.json"
         self.stream_path = self.state_dir / "spmf_stream.txt"
         self.dictionary = ItemDictionary.load(self.dictionary_path)
         self.normalizer = normalizer or EventNormalizer()
-        self.estdec = EstDecRunner(estdec_config or EstDecConfig.from_env(), self.model_path)
+        self.estdec = EstDecRunner(
+            prediction_config or PredictionConfig.from_env(),
+            self.model_path,
+        )
 
     def reset(self):
         for path in (self.dictionary_path, self.model_path, self.stream_path):
@@ -514,7 +529,7 @@ class PredictProcessor:
             "payload": {
                 "algorithm": "estdec",
                 "implementation": "native_python",
-                "estdec_algorithm": self.estdec.config.algorithm,
+                "estdec_algorithm": ESTDEC_ALGORITHM,
                 "events_processed": len(encoded),
                 "transactions_appended": written,
                 "dictionary_size": len(self.dictionary.item_to_id),
