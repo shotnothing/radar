@@ -99,6 +99,7 @@ class ActorRuntime:
         actor_id: str,
         *,
         context_override: dict[str, Any] | None = None,
+        trigger_event: dict[str, Any] | None = None,
         ignore_filters: bool = False,
     ) -> dict[str, Any]:
         manifest = self.get_actor(actor_id)
@@ -106,20 +107,36 @@ class ActorRuntime:
             return {"available": False, "reason": "actor disabled"}
 
         context = context_override or self.context_provider()
+        if trigger_event is not None:
+            context = merge_event_context(context, trigger_event)
         trigger = manifest.get("trigger", {})
-        if not ignore_filters and not self._filters_match(trigger.get("filters", {}), context):
+        if not ignore_filters and not self._filters_match(
+            trigger.get("filters", {}),
+            context,
+            trigger_event=trigger_event,
+        ):
             return {
                 "available": False,
                 "reason": "filters did not match current context",
                 "filtered": True,
-                "input": self._build_should_trigger_input(actor_id, manifest, context),
+                "input": self._build_should_trigger_input(
+                    actor_id,
+                    manifest,
+                    context,
+                    trigger_event=trigger_event,
+                ),
             }
 
         script = trigger.get("should_trigger")
         if not isinstance(script, dict):
             return {"available": True, "reason": "no should_trigger script configured"}
 
-        input_payload = self._build_should_trigger_input(actor_id, manifest, context)
+        input_payload = self._build_should_trigger_input(
+            actor_id,
+            manifest,
+            context,
+            trigger_event=trigger_event,
+        )
         result = self._run_script(actor_id, script, input_payload)
         output = result.output
         self._apply_state_update(actor_id, output.get("state_update"))
@@ -133,6 +150,7 @@ class ActorRuntime:
                 action_context=ensure_dict(output.get("action_context")),
                 context=input_payload,
                 presentation=ensure_dict(output.get("presentation")),
+                trigger_event=trigger_event,
             )
             self.pending_actions[trigger_id] = request
             output["trigger_id"] = trigger_id
@@ -156,6 +174,7 @@ class ActorRuntime:
         action_context: dict[str, Any] | None = None,
         user_action: dict[str, Any] | None = None,
         context_override: dict[str, Any] | None = None,
+        trigger_event: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         manifest = self.get_actor(actor_id)
         request = self.pending_actions.get(trigger_id or "") if trigger_id else None
@@ -163,7 +182,10 @@ class ActorRuntime:
             context = self._build_should_trigger_input(
                 actor_id,
                 manifest,
-                context_override or self.context_provider(),
+                merge_event_context(context_override or self.context_provider(), trigger_event)
+                if trigger_event is not None
+                else context_override or self.context_provider(),
+                trigger_event=trigger_event,
             )
             trigger_id = trigger_id or str(uuid.uuid4())
             request = self._build_action_request(
@@ -174,6 +196,7 @@ class ActorRuntime:
                 context=context,
                 presentation={},
                 user_action=user_action,
+                trigger_event=trigger_event,
             )
 
         progress = {
@@ -210,11 +233,48 @@ class ActorRuntime:
             self.pending_actions.pop(trigger_id, None)
         return actor_result
 
+    def evaluate_event(
+        self,
+        trigger_event: dict[str, Any],
+        *,
+        context_override: dict[str, Any] | None = None,
+        run_automatic: bool = False,
+    ) -> list[dict[str, Any]]:
+        results: list[dict[str, Any]] = []
+        context = merge_event_context(context_override or self.context_provider(), trigger_event)
+        for actor_id, manifest in sorted(self.actors.items()):
+            if not manifest.get("enabled", True):
+                continue
+            if not actor_accepts_event(manifest):
+                continue
+            try:
+                output = self.should_trigger(
+                    actor_id,
+                    context_override=context,
+                    trigger_event=trigger_event,
+                )
+            except Exception as error:
+                results.append({"actor_id": actor_id, "ok": False, "error": str(error)})
+                continue
+
+            item: dict[str, Any] = {"actor_id": actor_id, "ok": True, "output": output}
+            activation_mode = ensure_dict(manifest.get("activation")).get("mode")
+            trigger_id = output.get("trigger_id") if isinstance(output, dict) else None
+            if run_automatic and output.get("available") and activation_mode == "automatic" and trigger_id:
+                item["run_output"] = self.run_action(
+                    actor_id,
+                    trigger_id=trigger_id,
+                    trigger_event=trigger_event,
+                )
+            results.append(item)
+        return results
+
     def _build_should_trigger_input(
         self,
         actor_id: str,
         manifest: dict[str, Any],
         context: dict[str, Any],
+        trigger_event: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         return {
             "timestamp": epoch_ms_now(),
@@ -225,6 +285,7 @@ class ActorRuntime:
             ),
             "active_context": ensure_dict(context.get("active_context")),
             "browser": ensure_dict(context.get("browser")),
+            "trigger_event": ensure_dict(trigger_event),
             "state": self._load_state(actor_id),
         }
 
@@ -238,6 +299,7 @@ class ActorRuntime:
         context: dict[str, Any],
         presentation: dict[str, Any],
         user_action: dict[str, Any] | None = None,
+        trigger_event: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         action = ensure_dict(manifest.get("action"))
         title = presentation.get("title") or manifest.get("title") or actor_id
@@ -266,6 +328,7 @@ class ActorRuntime:
                 },
                 "active_context": context.get("active_context", {}),
                 "browser": context.get("browser", {}),
+                "trigger_event": context.get("trigger_event", trigger_event or {}),
                 "action_context": action_context,
                 "state": self._load_state(actor_id),
             },
@@ -318,9 +381,16 @@ class ActorRuntime:
             exit_code=result.returncode,
         )
 
-    def _filters_match(self, filters: dict[str, Any], context: dict[str, Any]) -> bool:
+    def _filters_match(
+        self,
+        filters: dict[str, Any],
+        context: dict[str, Any],
+        *,
+        trigger_event: dict[str, Any] | None = None,
+    ) -> bool:
         if not filters:
             return True
+        trigger_event = trigger_event or ensure_dict(context.get("trigger_event"))
         active_context = ensure_dict(context.get("active_context"))
         browser = ensure_dict(context.get("browser"))
         active_tab = ensure_dict(browser.get("active_tab"))
@@ -339,6 +409,12 @@ class ActorRuntime:
         url = str(active_tab.get("url") or active_context.get("document_path") or "")
         url_patterns = filters.get("url_patterns") or []
         if url_patterns and not any(fnmatch.fnmatchcase(url, pattern) for pattern in url_patterns):
+            return False
+        event_patterns = filters.get("event_names") or filters.get("event_patterns") or []
+        event_name = event_name_from_trigger(trigger_event)
+        if event_patterns and not any(
+            fnmatch.fnmatchcase(event_name, pattern) for pattern in event_patterns
+        ):
             return False
         return True
 
@@ -388,6 +464,77 @@ class ActorRuntime:
 
 def ensure_dict(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
+
+
+def event_name_from_trigger(trigger_event: dict[str, Any] | None) -> str:
+    event = ensure_dict(trigger_event)
+    anchor = ensure_dict(event.get("anchor"))
+    for value in (
+        event.get("event_name"),
+        event.get("name"),
+        anchor.get("name"),
+    ):
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def actor_accepts_event(manifest: dict[str, Any]) -> bool:
+    filters = ensure_dict(ensure_dict(manifest.get("trigger")).get("filters"))
+    event_patterns = filters.get("event_names") or filters.get("event_patterns") or []
+    return bool(event_patterns)
+
+
+def merge_event_context(context: dict[str, Any], trigger_event: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(context or {})
+    active_context = dict(ensure_dict(merged.get("active_context")))
+    event_context = ensure_dict(trigger_event.get("context"))
+    source = ensure_dict(trigger_event.get("source"))
+    subject = ensure_dict(trigger_event.get("subject"))
+    anchor = ensure_dict(trigger_event.get("anchor"))
+    target = ensure_dict(anchor.get("target"))
+
+    field_sources = {
+        "app_name": (
+            event_context.get("active_app"),
+            source.get("app"),
+            target.get("app"),
+        ),
+        "bundle_id": (
+            source.get("bundle_id"),
+            target.get("bundle_id"),
+        ),
+        "window_title": (
+            event_context.get("active_window_title"),
+            target.get("window_title"),
+            subject.get("title"),
+        ),
+        "document_path": (
+            subject.get("document_path"),
+            subject.get("url"),
+            target.get("url"),
+        ),
+    }
+    for key, values in field_sources.items():
+        if active_context.get(key):
+            continue
+        for value in values:
+            if isinstance(value, str) and value.strip():
+                active_context[key] = value.strip()
+                break
+
+    signals = dict(ensure_dict(active_context.get("signals")))
+    signals.setdefault("trigger_event_name", event_name_from_trigger(trigger_event))
+    for key in ("element_role", "element_title", "url"):
+        value = target.get(key)
+        if isinstance(value, str) and value.strip():
+            signals.setdefault(key, value.strip())
+    if signals:
+        active_context["signals"] = signals
+
+    merged["active_context"] = active_context
+    merged["trigger_event"] = trigger_event
+    return merged
 
 
 def parse_last_json_object(stdout: str) -> dict[str, Any]:

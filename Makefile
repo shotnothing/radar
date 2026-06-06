@@ -10,13 +10,18 @@ RADAR_COLLECTOR_VIEWER_HOST ?= 127.0.0.1
 RADAR_COLLECTOR_VIEWER_PORT ?= 5174
 RADAR_COLLECTOR_VIEWER_DATA ?= $(RADAR_WORK_DIR)/collectors
 RADAR_DESKTOP_DIR ?= desktop
+SEATALK_THREAD_ICON_RIGHT ?= 239
+SEATALK_THREAD_ICON_TOP ?= 31
+SEATALK_THREAD_ROW_RIGHT ?= 320
+SEATALK_THREAD_ROW_TOP ?= 160
+SEATALK_THREAD_OPEN_DELAY ?= 0.8
 
 ifneq (,$(wildcard $(ENV_FILE)))
 include $(ENV_FILE)
 export
 endif
 
-.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-actor-live test-coordinator-actor-api
+.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup seatalk-ping-actor-live seatalk-ping-actor-open seatalk-ping-applescript-open test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-actor-live test-coordinator-actor-api axtree-debug
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -34,6 +39,10 @@ run-coordinator:
 # Run the local collector JSONL debug viewer.
 run-collector-viewer:
 	cd debug/collector_viewer && npm start -- --host $(RADAR_COLLECTOR_VIEWER_HOST) --port $(RADAR_COLLECTOR_VIEWER_PORT) --data $(abspath $(RADAR_COLLECTOR_VIEWER_DATA))
+
+# Print a target app's macOS Accessibility tree for actor development.
+axtree-debug:
+	$(PYTHON) debug/axtree_debugger.py --depth $(or $(RADAR_AXTREE_DEPTH),5) $(if $(RADAR_AXTREE_APP),--app "$(RADAR_AXTREE_APP)",) $(if $(RADAR_AXTREE_BUNDLE_ID),--bundle-id "$(RADAR_AXTREE_BUNDLE_ID)",)
 
 # Run the Radar Tauri desktop app in development mode.
 run-desktop:
@@ -56,6 +65,51 @@ actor-live-setup:
 	@echo "   open -a 'Google Chrome' https://www.youtube.com/"
 	@echo "5. Run:"
 	@echo "   make test-actor-live"
+
+# Run the SeaTalk @You thread actor live. Keep this process running, then click
+# the Radar conversation row in SeaTalk; the macOS click collector routes that
+# click event to the automatic actor.
+seatalk-ping-actor-live:
+	@echo "Starting Radar with the macOS click collector."
+	@echo "When SeaTalk opens, click the Radar conversation row that shows @You."
+	@echo "Stop this process with Ctrl-C after the actor opens the thread."
+	open -a SeaTalk
+	sleep 1
+	$(PYTHON) debug/seatalk_axtree_viewer.py --scope rows
+	@echo ""
+	@echo "AX snapshot printed above. Now click the Radar conversation row in SeaTalk."
+	SEATALK_THREAD_ICON_RIGHT=$(SEATALK_THREAD_ICON_RIGHT) \
+	SEATALK_THREAD_ICON_TOP=$(SEATALK_THREAD_ICON_TOP) \
+	SEATALK_THREAD_ROW_RIGHT=$(SEATALK_THREAD_ROW_RIGHT) \
+	SEATALK_THREAD_ROW_TOP=$(SEATALK_THREAD_ROW_TOP) \
+	SEATALK_THREAD_OPEN_DELAY=$(SEATALK_THREAD_OPEN_DELAY) \
+	RADAR_DISABLE_CHROME_BRIDGE=1 RADAR_MACOS_PROMPT_PERMISSIONS=1 $(PYTHON) debug/app.py --host $(RADAR_HOST) --port $(RADAR_PORT) --work-dir $(RADAR_WORK_DIR) --actor-path $(RADAR_ACTOR_PATH) --collector-meta builtin/collector/macos/meta.json --disable-chrome-bridge
+
+# Direct fallback: open the Radar @You thread immediately without waiting for a
+# click event.
+seatalk-ping-actor-open:
+	open -a SeaTalk
+	SEATALK_THREAD_ICON_RIGHT=$(SEATALK_THREAD_ICON_RIGHT) \
+	SEATALK_THREAD_ICON_TOP=$(SEATALK_THREAD_ICON_TOP) \
+	SEATALK_THREAD_ROW_RIGHT=$(SEATALK_THREAD_ROW_RIGHT) \
+	SEATALK_THREAD_ROW_TOP=$(SEATALK_THREAD_ROW_TOP) \
+	SEATALK_THREAD_OPEN_DELAY=$(SEATALK_THREAD_OPEN_DELAY) \
+	$(PYTHON) builtin/actor/seatalk_thread_ping/action.py
+
+# Standalone AppleScript fallback for SeaTalk: click the thread icon, then click
+# the visible @You thread row in the drawer. Override the offsets if your
+# SeaTalk window layout differs.
+seatalk-ping-applescript-open:
+	@echo "Opening SeaTalk thread drawer via AppleScript coordinate clicks."
+	@echo "Offsets: icon right=$(SEATALK_THREAD_ICON_RIGHT), icon top=$(SEATALK_THREAD_ICON_TOP), row right=$(SEATALK_THREAD_ROW_RIGHT), row top=$(SEATALK_THREAD_ROW_TOP)"
+	swiftc builtin/actor/seatalk_thread_ping/seatalk_ping_helper.swift -framework AppKit -framework ApplicationServices -framework CoreGraphics -o /private/tmp/radar_seatalk_ping_helper
+	SEATALK_THREAD_ICON_RIGHT=$(SEATALK_THREAD_ICON_RIGHT) \
+	SEATALK_THREAD_ICON_TOP=$(SEATALK_THREAD_ICON_TOP) \
+	SEATALK_THREAD_ROW_RIGHT=$(SEATALK_THREAD_ROW_RIGHT) \
+	SEATALK_THREAD_ROW_TOP=$(SEATALK_THREAD_ROW_TOP) \
+	SEATALK_THREAD_OPEN_DELAY=$(SEATALK_THREAD_OPEN_DELAY) \
+	SEATALK_CLICK_HELPER=/private/tmp/radar_seatalk_ping_helper \
+	osascript debug/seatalk_click_ping_thread.applescript
 
 # Run the full test suite, including live actor checks.
 test: test-unit test-actor-live

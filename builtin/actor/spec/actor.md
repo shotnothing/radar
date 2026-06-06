@@ -47,7 +47,8 @@ Field names must use snake_case.
         "polling_interval_seconds": 1,
         "filters": {
             "app_patterns": ["Cursor", "Code"],
-            "url_patterns": []
+            "url_patterns": [],
+            "event_names": []
         },
         "should_trigger": {
             "command": ["python3", "should_trigger.py"],
@@ -77,6 +78,10 @@ Recommended activation modes:
 `should_trigger` when the current app or URL cannot match. Pattern syntax is
 glob-style, where `*` matches any number of characters and `?` matches one
 character.
+
+`event_names` makes an actor event-triggered. For example, an actor with
+`"event_names": ["mouse_click"]` is skipped by normal polling and evaluated
+only when the coordinator receives a matching trigger event from a collector.
 
 ## Runtime Environment
 
@@ -187,6 +192,17 @@ Input:
             "domain": "example.com"
         }
     },
+    "trigger_event": {
+        "anchor": {
+            "type": "user_action",
+            "name": "mouse_click",
+            "target": {
+                "app": "SeaTalk",
+                "bundle_id": "com.seagroup.seatalkmac.enterprise",
+                "element_title": "@You"
+            }
+        }
+    },
     "state": {
         "last_available_at": 1780713500000,
         "last_action_at": 1780713400000,
@@ -263,6 +279,7 @@ sends the request only after the user chooses it in the desktop UI.
                 "domain": "example.com"
             }
         },
+        "trigger_event": {},
         "action_context": {
             "project_path": "/Users/example/project",
             "environment": "staging"

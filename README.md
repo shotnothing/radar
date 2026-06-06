@@ -169,3 +169,21 @@ process.
   processor results to actors, debug clients, and eventually desktop UI state.
 
 There is no separate coordinator layer outside the desktop/debug process.
+
+## AX Tree Debugging
+
+For actor development on macOS, print the Accessibility tree for the frontmost
+app or a specific app:
+
+```bash
+python3 debug/axtree_debugger.py --app Codex --depth 6
+python3 debug/axtree_debugger.py --bundle-id com.google.Chrome --depth 5 --json
+```
+
+If the debug coordinator is already running, query it without the actor API
+token:
+
+```bash
+python3 debug/axtree_debugger.py --server-url http://127.0.0.1:5000 --app Codex
+curl "http://127.0.0.1:5000/debug/accessibility/tree?app=Codex&depth=6"
+```

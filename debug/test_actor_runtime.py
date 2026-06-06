@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -117,6 +118,94 @@ class ActorRuntimeTest(unittest.TestCase):
             output = runtime.should_trigger("builtin.youtube_search_nab")
 
             self.assertFalse(output["available"])
+
+    def test_event_name_filter_requires_matching_trigger_event(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            actor_dir = root / "actors" / "click_actor"
+            actor_dir.mkdir(parents=True)
+            (actor_dir / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "actor_id": "test.click_actor",
+                        "enabled": True,
+                        "activation": {"mode": "manual"},
+                        "trigger": {
+                            "filters": {
+                                "event_names": ["mouse_click"],
+                                "app_patterns": ["SeaTalk"],
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            runtime = ActorRuntime(
+                actor_paths=[root / "actors"],
+                state_root=root / "state",
+                context_provider=lambda: {
+                    "active_context": {
+                        "app_name": "SeaTalk",
+                        "bundle_id": "com.seagroup.seatalkmac.enterprise",
+                    }
+                },
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            polled = runtime.should_trigger("test.click_actor")
+            clicked = runtime.should_trigger(
+                "test.click_actor",
+                trigger_event={"anchor": {"name": "mouse_click", "type": "user_action"}},
+            )
+
+            self.assertFalse(polled["available"])
+            self.assertTrue(polled["filtered"])
+            self.assertTrue(clicked["available"])
+
+    def test_evaluate_event_skips_poll_only_actors(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            actors = root / "actors"
+            poll_actor = actors / "poll_actor"
+            event_actor = actors / "event_actor"
+            poll_actor.mkdir(parents=True)
+            event_actor.mkdir(parents=True)
+            (poll_actor / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "actor_id": "test.poll_actor",
+                        "enabled": True,
+                        "activation": {"mode": "manual"},
+                        "trigger": {"filters": {}},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (event_actor / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "actor_id": "test.event_actor",
+                        "enabled": True,
+                        "activation": {"mode": "manual"},
+                        "trigger": {"filters": {"event_names": ["mouse_click"]}},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            runtime = ActorRuntime(
+                actor_paths=[actors],
+                state_root=root / "state",
+                context_provider=lambda: {"active_context": {"app_name": "SeaTalk"}},
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            outputs = runtime.evaluate_event({"anchor": {"name": "mouse_click"}})
+
+            self.assertEqual([item["actor_id"] for item in outputs], ["test.event_actor"])
 
     def test_codex_skill_actor_finds_repo_skill_from_axtree(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

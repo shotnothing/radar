@@ -9,8 +9,9 @@ import platform
 import shutil
 import subprocess
 import threading
+import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from builtin.collector.chrome.coordinator import CoordinatorClient
 from builtin.collector.chrome.storage import JsonlObservationStore
@@ -39,6 +40,7 @@ class MacOSActivityCollectorRuntime:
         helper_command: list[str] | None = None,
         compile_helper: bool = True,
         prompt_permissions: bool = False,
+        event_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> None:
         self.collector_id = collector_id
         self.store = JsonlObservationStore(work_dir, split_ms=split_ms)
@@ -46,6 +48,7 @@ class MacOSActivityCollectorRuntime:
         self.helper_command = helper_command
         self.compile_helper = compile_helper
         self.prompt_permissions = prompt_permissions
+        self.event_callback = event_callback
         self.lock = threading.Lock()
         self.stored_count = 0
         self.last_observation_at: int | None = None
@@ -208,6 +211,8 @@ class MacOSActivityCollectorRuntime:
             self.last_observation_at = observation["time"]["observed_at"]
             self.last_file = str(path)
             self.last_error = None
+        if self.event_callback is not None:
+            self.event_callback(observation)
         return observation
 
     def status_payload(self) -> dict[str, Any]:
@@ -273,6 +278,7 @@ def run(args: argparse.Namespace) -> None:
         split_ms=args.file_split_ms,
         compile_helper=args.compile_helper,
         prompt_permissions=args.prompt_permissions,
+        event_callback=make_actor_event_callback(args.coordinator_url),
     )
     runtime.start()
     coordinator.start_heartbeat_loop(runtime.status_payload, args.heartbeat_interval)
@@ -324,6 +330,37 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=env_bool("RADAR_MACOS_PROMPT_PERMISSIONS", False),
     )
     return parser
+
+
+def make_actor_event_callback(coordinator_url: str) -> Callable[[dict[str, Any]], None]:
+    url = f"{coordinator_url.rstrip('/')}/debug/actors/evaluate_event"
+
+    def callback(observation: dict[str, Any]) -> None:
+        anchor = observation.get("anchor") if isinstance(observation, dict) else {}
+        if not isinstance(anchor, dict) or anchor.get("type") != "user_action":
+            return
+        threading.Thread(
+            target=post_actor_event,
+            args=(url, observation),
+            daemon=True,
+        ).start()
+
+    return callback
+
+
+def post_actor_event(url: str, observation: dict[str, Any]) -> None:
+    payload = json.dumps({"event": observation, "run_automatic": True}).encode("utf-8")
+    request = urllib.request.Request(
+        url,
+        data=payload,
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=2):
+            pass
+    except Exception:
+        pass
 
 
 def env_int(name: str, default: int) -> int:

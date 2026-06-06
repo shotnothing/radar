@@ -13,14 +13,14 @@ import eventlet
 
 eventlet.monkey_patch()
 
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from flask_socketio import SocketIO, emit, join_room
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from debug.active_context import MacOSActiveContextReader
+from debug.active_context import MacOSActiveContextReader, render_accessibility_tree
 from debug.actor_runtime import ActorRuntime
 from debug.chrome_bridge import ChromeBridgeServer
 
@@ -399,6 +399,7 @@ def debug_actor_should_trigger(actor_id):
         output = actor_runtime.should_trigger(
             actor_id,
             context_override=payload.get("context"),
+            trigger_event=payload.get("trigger_event") or payload.get("event"),
             ignore_filters=bool(payload.get("ignore_filters")),
         )
     except Exception as error:
@@ -421,6 +422,7 @@ def debug_actor_run(actor_id):
             action_context=payload.get("action_context"),
             user_action=payload.get("user_action"),
             context_override=payload.get("context"),
+            trigger_event=payload.get("trigger_event") or payload.get("event"),
         )
     except Exception as error:
         return jsonify({"ok": False, "error": str(error)}), 500
@@ -428,11 +430,91 @@ def debug_actor_run(actor_id):
     return jsonify({"ok": True, "output": output})
 
 
+@app.post("/debug/actors/evaluate_event")
+@app.post("/api/actors/evaluate_event")
+def debug_actors_evaluate_event():
+    if request.path.startswith("/api/") and not api_authorized():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    if actor_runtime is None:
+        return jsonify({"ok": False, "error": "actor runtime not started"}), 503
+    payload = request_json(default={})
+    trigger_event = payload.get("trigger_event") or payload.get("event")
+    if not isinstance(trigger_event, dict):
+        return jsonify({"ok": False, "error": "missing trigger_event"}), 400
+    try:
+        outputs = actor_runtime.evaluate_event(
+            trigger_event,
+            context_override=payload.get("context"),
+            run_automatic=bool(payload.get("run_automatic")),
+        )
+    except Exception as error:
+        return jsonify({"ok": False, "error": str(error)}), 500
+    event_name = (
+        (trigger_event.get("anchor") or {}).get("name")
+        or trigger_event.get("event_name")
+        or trigger_event.get("name")
+        or "event"
+    )
+    for item in outputs:
+        output = item.get("output") if isinstance(item.get("output"), dict) else {}
+        if item.get("error"):
+            print(
+                f"actor event {event_name}: {item.get('actor_id')} error: {item.get('error')}",
+                flush=True,
+            )
+        elif output.get("available"):
+            print(
+                f"actor event {event_name}: {item.get('actor_id')} available: "
+                f"{output.get('reason', '')}",
+                flush=True,
+            )
+        elif item.get("actor_id") == "builtin.seatalk_open_ping_thread":
+            print(
+                f"actor event {event_name}: {item.get('actor_id')} unavailable: "
+                f"{output.get('reason', '')}",
+                flush=True,
+            )
+        if item.get("run_output"):
+            run_output = item["run_output"]
+            status = run_output.get("status", "unknown")
+            summary = ((run_output.get("payload") or {}).get("summary") or "").strip()
+            print(
+                f"actor event {event_name}: {item.get('actor_id')} run {status}: {summary}",
+                flush=True,
+            )
+            socketio.emit("debug:actor_result", item["run_output"], room="debug_clients")
+    return jsonify({"ok": True, "outputs": outputs})
+
+
 @app.get("/api/context/current")
 def api_context_current():
     if not api_authorized():
         return jsonify({"success": False, "error": "unauthorized"}), 401
     return jsonify({"success": True, **current_context_snapshot()})
+
+
+@app.post("/debug/accessibility/query")
+def debug_accessibility_query():
+    payload = request_json(default={})
+    return jsonify(
+        active_context_reader.read_accessibility(
+            bundle_id=payload.get("bundle_id", ""),
+            app_name=payload.get("app_name") or payload.get("app", ""),
+            mode=payload.get("mode", "tree"),
+            max_depth=int(payload.get("max_depth", 3) or 3),
+        )
+    )
+
+
+@app.get("/debug/accessibility/tree")
+def debug_accessibility_tree():
+    output = active_context_reader.read_accessibility(
+        bundle_id=request.args.get("bundle_id", ""),
+        app_name=request.args.get("app_name", "") or request.args.get("app", ""),
+        mode=request.args.get("mode", "tree"),
+        max_depth=int(request.args.get("max_depth", request.args.get("depth", 3)) or 3),
+    )
+    return Response(render_accessibility_tree(output), mimetype="text/plain")
 
 
 @app.post("/api/accessibility/query")
@@ -443,6 +525,7 @@ def api_accessibility_query():
     return jsonify(
         active_context_reader.read_accessibility(
             bundle_id=payload.get("bundle_id", ""),
+            app_name=payload.get("app_name") or payload.get("app", ""),
             mode=payload.get("mode", "tree"),
             max_depth=int(payload.get("max_depth", 3) or 3),
         )

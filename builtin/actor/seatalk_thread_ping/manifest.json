@@ -1,0 +1,38 @@
+{
+  "actor_id": "builtin.seatalk_open_ping_thread",
+  "version": "1.0.0",
+  "enabled": true,
+  "title": "Open SeaTalk ping thread",
+  "description": "When SeaTalk shows the Radar chat with an @You mention, open the mentioned thread.",
+  "activation": {
+    "mode": "automatic",
+    "priority": "normal",
+    "button_label": "Open thread"
+  },
+  "trigger": {
+    "polling_interval_seconds": 1,
+    "filters": {
+      "event_names": [
+        "mouse_click"
+      ],
+      "app_patterns": [
+        "SeaTalk",
+        "com.seagroup.seatalkmac.enterprise"
+      ]
+    },
+    "should_trigger": {
+      "command": [
+        "python3",
+        "should_trigger.py"
+      ],
+      "timeout_seconds": 20
+    }
+  },
+  "action": {
+    "command": [
+      "python3",
+      "action.py"
+    ],
+    "timeout_seconds": 30
+  }
+}
