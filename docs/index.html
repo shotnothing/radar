@@ -228,14 +228,21 @@
 
       .demo-stage {
         position: relative;
-        min-height: 482px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 520px;
       }
 
       .radar-visual {
-        position: absolute;
-        inset: 3% 0 auto auto;
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(245px, 0.92fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 14px;
         width: min(100%, 630px);
-        height: 482px;
+        height: 520px;
+        padding: 22px;
         border-radius: 30px;
         border: 1px solid rgba(255, 255, 255, 0.12);
         background:
@@ -260,6 +267,7 @@
           transparent 360deg
         );
         animation: sweep 6s linear infinite;
+        z-index: 0;
       }
 
       .radar-visual::after {
@@ -269,6 +277,7 @@
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 24px;
         pointer-events: none;
+        z-index: 0;
       }
 
       @keyframes sweep {
@@ -280,18 +289,20 @@
       .mock-window,
       .suggestion-card,
       .pipeline-card {
-        position: absolute;
+        position: relative;
         z-index: 2;
         border: 1px solid rgba(255, 255, 255, 0.16);
         background: rgba(10, 16, 27, 0.86);
-        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
         backdrop-filter: blur(18px);
       }
 
       .mock-window {
-        left: 34px;
-        top: 36px;
-        width: min(86%, 470px);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
         border-radius: 22px;
         overflow: hidden;
       }
@@ -321,7 +332,11 @@
       }
 
       .browser-body {
-        padding: 18px;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 0;
+        padding: 14px;
       }
 
       .url-row,
@@ -337,17 +352,26 @@
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.08);
         color: var(--muted);
-        font-size: 13px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .url-row span:last-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .event-list {
         display: grid;
-        gap: 10px;
-        margin-top: 18px;
+        flex: 1;
+        align-content: stretch;
+        gap: 8px;
+        margin-top: 12px;
       }
 
       .event-row {
-        padding: 13px;
+        padding: 10px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 14px;
         background: rgba(255, 255, 255, 0.055);
@@ -356,10 +380,10 @@
       .event-icon {
         display: grid;
         place-items: center;
-        flex: 0 0 34px;
-        width: 34px;
-        height: 34px;
-        border-radius: 12px;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 11px;
         background: rgba(84, 215, 255, 0.15);
         color: var(--cyan);
         font-weight: 850;
@@ -367,23 +391,25 @@
 
       .event-copy strong {
         display: block;
-        font-size: 14px;
+        font-size: 13px;
       }
 
       .event-copy span {
         display: block;
         margin-top: 2px;
         color: var(--muted);
-        font-size: 12px;
+        font-size: 11px;
       }
 
       .suggestion-card {
-        right: 28px;
-        top: 238px;
-        width: min(88%, 390px);
-        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        padding: 18px;
         border-radius: 22px;
-        z-index: 4;
       }
 
       .suggestion-top {
@@ -392,7 +418,7 @@
         justify-content: space-between;
         gap: 14px;
         color: var(--mint);
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 800;
       }
 
@@ -402,24 +428,24 @@
 
       .suggestion-card h3 {
         margin-top: 14px;
-        font-size: 24px;
+        font-size: 22px;
         line-height: 1.1;
       }
 
       .suggestion-card p {
         margin-top: 10px;
         color: var(--soft);
-        font-size: 14px;
+        font-size: 13px;
       }
 
       .choice-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 10px;
         margin-top: 18px;
       }
 
       .choice-row button {
-        flex: 1;
         min-height: 42px;
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 12px;
@@ -436,12 +462,11 @@
       }
 
       .pipeline-card {
-        left: 42px;
-        bottom: 26px;
-        width: min(78%, 430px);
-        padding: 18px;
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        padding: 16px;
         border-radius: 20px;
-        z-index: 3;
       }
 
       .pipeline-title {
@@ -455,11 +480,11 @@
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 8px;
-        margin-top: 12px;
+        margin-top: 10px;
       }
 
       .pipeline-step {
-        min-height: 72px;
+        min-height: 62px;
         padding: 10px;
         border-radius: 14px;
         background: rgba(255, 255, 255, 0.075);
@@ -721,13 +746,23 @@
         }
 
         .demo-stage {
-          min-height: 650px;
+          justify-content: center;
+          min-height: auto;
         }
 
         .radar-visual {
-          left: 0;
-          right: 0;
+          grid-template-columns: 1fr;
+          height: auto;
           margin: auto;
+        }
+
+        .mock-window,
+        .suggestion-card {
+          height: auto;
+        }
+
+        .choice-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .feature-grid,
@@ -870,22 +905,22 @@
                       <div class="event-row">
                         <div class="event-icon">1</div>
                         <div class="event-copy">
-                          <strong>User completes a repeated workflow</strong>
-                          <span>Radar captures the meaningful steps while filtering noisy UI events.</span>
+                          <strong>Observe work</strong>
+                          <span>User completes a task once.</span>
                         </div>
                       </div>
                       <div class="event-row">
                         <div class="event-icon">2</div>
                         <div class="event-copy">
-                          <strong>Agent compresses the pattern</strong>
-                          <span>Actions become reusable workflow knowledge instead of one-off logs.</span>
+                          <strong>Learn pattern</strong>
+                          <span>Radar filters noise and stores the workflow.</span>
                         </div>
                       </div>
                       <div class="event-row">
                         <div class="event-icon">3</div>
                         <div class="event-copy">
-                          <strong>LLM turns it into the next suggestion</strong>
-                          <span>The side panel explains what the user can do faster now.</span>
+                          <strong>Suggest next step</strong>
+                          <span>LLM explains what can be done faster.</span>
                         </div>
                       </div>
                     </div>
@@ -897,10 +932,10 @@
                     <span>Proactive AI suggestion</span>
                     <span class="confidence">91% confidence</span>
                   </div>
-                  <h3>Turn this repo update into a reusable workflow.</h3>
+                  <h3>Make this a reusable skill.</h3>
                   <p>
-                    Radar learned the steps from the user's work and can suggest the
-                    same pattern next time, or let an agent execute it directly.
+                    Radar learned the steps from the user's work. Next time, it can
+                    suggest the workflow or let an agent run it directly.
                   </p>
                   <div class="choice-row">
                     <button type="button">Use suggestion</button>
