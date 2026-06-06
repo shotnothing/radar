@@ -2,7 +2,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Layers2, Sparkles } from "lucide-react";
+import {
+  Bell,
+  Bot,
+  Chrome,
+  Cpu,
+  FileText,
+  Layers2,
+  MessageCircle,
+  Settings2,
+  Sparkles,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 function App() {
   const windowLabel = useMemo(() => getCurrentWindow().label, []);
@@ -30,6 +43,112 @@ type Suggestion = {
   body: string;
   primary_action: string;
 };
+
+type SettingsSection = "collector" | "processor" | "actor";
+
+type ModuleConfig = {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  icon: LucideIcon;
+  defaultEnabled: boolean;
+};
+
+const settingsTabs: Array<{
+  id: SettingsSection;
+  label: string;
+  icon: LucideIcon;
+}> = [
+  { id: "collector", label: "collector", icon: Settings2 },
+  { id: "processor", label: "processor", icon: Cpu },
+  { id: "actor", label: "actor", icon: Bot },
+];
+
+const settingsCopy: Record<
+  SettingsSection,
+  { title: string; description: string; empty: string }
+> = {
+  collector: {
+    title: "collector",
+    description: "Local sources that collect activity signals.",
+    empty: "No collectors configured.",
+  },
+  processor: {
+    title: "processor",
+    description: "Pipelines that turn collected signals into intent.",
+    empty: "No processors configured.",
+  },
+  actor: {
+    title: "actor",
+    description: "Actions that can be triggered after intent is detected.",
+    empty: "No actors configured yet.",
+  },
+};
+
+const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
+  collector: [
+    {
+      id: "collector.chrome",
+      name: "Chrome",
+      description: "Browser activity, page context, and active tab changes.",
+      status: "chrome.browser",
+      icon: Chrome,
+      defaultEnabled: true,
+    },
+    {
+      id: "collector.seatalk",
+      name: "SeaTalk",
+      description: "Conversation activity and message context.",
+      status: "seatalk.chat",
+      icon: MessageCircle,
+      defaultEnabled: false,
+    },
+    {
+      id: "collector.chat_transcript",
+      name: "Chat Transcript",
+      description: "Local Codex and Claude transcript files.",
+      status: "chat.transcript",
+      icon: FileText,
+      defaultEnabled: true,
+    },
+  ],
+  processor: [
+    {
+      id: "processor.intent",
+      name: "Intent Analyzer",
+      description: "Detects repeated actions and likely next steps.",
+      status: "intent.analyzer",
+      icon: Workflow,
+      defaultEnabled: true,
+    },
+    {
+      id: "processor.context",
+      name: "Context Summarizer",
+      description: "Builds compact summaries from recent collected events.",
+      status: "context.summarizer",
+      icon: FileText,
+      defaultEnabled: true,
+    },
+    {
+      id: "processor.recommendation",
+      name: "Recommendation Ranker",
+      description: "Scores suggestions before they reach the popup.",
+      status: "recommendation.ranker",
+      icon: Bell,
+      defaultEnabled: false,
+    },
+  ],
+  actor: [],
+};
+
+function getInitialModuleState() {
+  return Object.fromEntries(
+    Object.values(moduleCatalog)
+      .flat()
+      .map((item) => [item.id, item.defaultEnabled])
+  );
+}
 
 function AssistantWindow() {
   const [currentSuggestion, setCurrentSuggestion] = useState<Suggestion | null>(
@@ -167,6 +286,12 @@ function AssistantWindow() {
 }
 
 function SettingsWindow() {
+  const [activeSection, setActiveSection] =
+    useState<SettingsSection>("collector");
+  const [enabledModules, setEnabledModules] = useState<Record<string, boolean>>(
+    getInitialModuleState
+  );
+
   useEffect(() => {
     const window = getCurrentWindow();
     const unlisten = window.onCloseRequested(async (event) => {
@@ -179,8 +304,90 @@ function SettingsWindow() {
     };
   }, []);
 
+  const activeCopy = settingsCopy[activeSection];
+  const activeItems = moduleCatalog[activeSection];
+
   return (
-    <Card className="settings-window" role="main" aria-label="Radar settings" />
+    <Card className="settings-window" role="main" aria-label="Radar settings">
+      <aside className="settings-sidebar" aria-label="Settings sections">
+        <div className="settings-brand">
+          <span className="settings-brand-mark" aria-hidden="true">
+            <Sparkles size={14} strokeWidth={2.2} />
+          </span>
+          <span>Radar</span>
+        </div>
+
+        <nav className="settings-tabs">
+          {settingsTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.id === activeSection;
+
+            return (
+              <Button
+                key={tab.id}
+                type="button"
+                variant="ghost"
+                aria-pressed={isActive}
+                className={`settings-tab ${isActive ? "settings-tab--active" : ""}`}
+                onClick={() => setActiveSection(tab.id)}
+              >
+                <Icon size={15} strokeWidth={2.2} />
+                <span>{tab.label}</span>
+              </Button>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <main className="settings-content">
+        <header className="settings-content-header">
+          <div>
+            <h1>{activeCopy.title}</h1>
+            <p>{activeCopy.description}</p>
+          </div>
+        </header>
+
+        {activeItems.length > 0 ? (
+          <section className="module-list" aria-label={`${activeCopy.title} list`}>
+            {activeItems.map((item) => {
+              const Icon = item.icon;
+              const enabled = enabledModules[item.id] ?? false;
+
+              return (
+                <article className="module-row" key={item.id}>
+                  <div className="module-icon" aria-hidden="true">
+                    <Icon size={17} strokeWidth={2.1} />
+                  </div>
+                  <div className="module-copy">
+                    <div className="module-title-row">
+                      <h2>{item.name}</h2>
+                      <span className="module-status">{item.status}</span>
+                    </div>
+                    <p>{item.description}</p>
+                  </div>
+                  <Switch
+                    checked={enabled}
+                    onCheckedChange={(checked) =>
+                      setEnabledModules((current) => ({
+                        ...current,
+                        [item.id]: checked,
+                      }))
+                    }
+                    aria-label={`${enabled ? "Disable" : "Enable"} ${item.name}`}
+                    className="module-switch"
+                  />
+                </article>
+              );
+            })}
+          </section>
+        ) : (
+          <section className="settings-empty" aria-label="Empty settings section">
+            <Bot size={22} strokeWidth={1.9} />
+            <p>{activeCopy.empty}</p>
+          </section>
+        )}
+      </main>
+    </Card>
   );
 }
 

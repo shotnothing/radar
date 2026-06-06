@@ -4,3 +4,4 @@ eventlet
 python-socketio
 requests
 websocket-client
+requests
