@@ -771,6 +771,95 @@
         font-size: 13px;
       }
 
+      .architecture-detail {
+        margin-top: 18px;
+        padding: 20px;
+        border: 1px solid rgba(84, 215, 255, 0.2);
+        border-radius: 24px;
+        background:
+          linear-gradient(135deg, rgba(84, 215, 255, 0.08), rgba(70, 240, 176, 0.045)),
+          rgba(255, 255, 255, 0.045);
+      }
+
+      .diagram-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      .diagram-title-row span:first-child {
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .diagram-title-row span:last-child {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .service-diagram-wrap {
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .service-diagram {
+        display: block;
+        width: 100%;
+        min-width: 940px;
+        height: auto;
+      }
+
+      .diagram-node {
+        fill: rgba(9, 11, 16, 0.72);
+        stroke: rgba(255, 255, 255, 0.16);
+        stroke-width: 1.5;
+      }
+
+      .diagram-node--core {
+        fill: rgba(70, 240, 176, 0.1);
+        stroke: rgba(70, 240, 176, 0.56);
+      }
+
+      .diagram-node--action {
+        fill: rgba(84, 215, 255, 0.1);
+        stroke: rgba(84, 215, 255, 0.48);
+      }
+
+      .diagram-arrow {
+        fill: none;
+        stroke: rgba(84, 215, 255, 0.78);
+        stroke-width: 2;
+        marker-end: url(#arrow-cyan);
+      }
+
+      .diagram-arrow--feedback {
+        stroke: rgba(70, 240, 176, 0.85);
+        marker-end: url(#arrow-mint);
+      }
+
+      .diagram-title {
+        fill: var(--text);
+        font-size: 17px;
+        font-weight: 850;
+      }
+
+      .diagram-subtitle,
+      .diagram-edge-label {
+        fill: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .diagram-edge-label {
+        fill: #dff7ff;
+      }
+
       .closing {
         padding-bottom: 110px;
       }
@@ -881,6 +970,23 @@
         .architecture,
         .guide-tabs {
           grid-template-columns: 1fr;
+        }
+
+        .architecture-detail {
+          padding: 16px;
+        }
+
+        .diagram-title-row {
+          display: block;
+        }
+
+        .diagram-title-row span:last-child {
+          display: block;
+          margin-top: 6px;
+        }
+
+        .service-diagram {
+          min-width: 780px;
         }
 
         .demo-stage {
@@ -1222,6 +1328,103 @@ make PYTHON=/tmp/radar-venv/bin/python run-coordinator</code></pre>
               <h3>Reusable skill</h3>
               <p>Accepted actions receive a priority boost and can become reusable workflows.</p>
             </article>
+          </div>
+
+          <div class="architecture-detail" aria-label="Detailed Radar system architecture">
+            <div class="diagram-title-row">
+              <span>Service interaction diagram</span>
+              <span>signals -> suggestions -> actions -> feedback</span>
+            </div>
+
+            <div class="service-diagram-wrap">
+              <svg class="service-diagram" viewBox="0 0 1120 500" role="img" aria-labelledby="service-diagram-title service-diagram-desc">
+                <title id="service-diagram-title">Radar service interaction diagram</title>
+                <desc id="service-diagram-desc">Chrome extension and collectors send signals into the local coordinator. The coordinator routes work folders to storage and processors. Processors call the LLM layer, the desktop UI presents suggestions, actors run controlled actions, and feedback improves future ranking.</desc>
+                <defs>
+                  <marker id="arrow-cyan" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                    <path d="M0 0 L10 5 L0 10 Z" fill="#54d7ff" />
+                  </marker>
+                  <marker id="arrow-mint" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                    <path d="M0 0 L10 5 L0 10 Z" fill="#46f0b0" />
+                  </marker>
+                </defs>
+
+                <path class="diagram-arrow" d="M200 95 C240 95 245 138 285 138" />
+                <path class="diagram-arrow" d="M200 215 C240 215 245 172 285 172" />
+                <path class="diagram-arrow" d="M475 132 C510 132 520 95 555 95" />
+                <path class="diagram-arrow" d="M475 172 C510 172 520 220 555 220" />
+                <path class="diagram-arrow" d="M640 132 L640 180" />
+                <path class="diagram-arrow" d="M725 220 L825 220" />
+                <path class="diagram-arrow" d="M912 260 C912 302 780 348 725 362" />
+                <path class="diagram-arrow" d="M725 374 L825 374" />
+                <path class="diagram-arrow diagram-arrow--feedback" d="M555 374 L475 374" />
+                <path class="diagram-arrow diagram-arrow--feedback" d="M380 330 C420 278 500 244 555 238" />
+                <path class="diagram-arrow diagram-arrow--feedback" d="M1000 402 C900 466 320 468 115 258" />
+
+                <text class="diagram-edge-label" x="220" y="84">page events</text>
+                <text class="diagram-edge-label" x="216" y="232">collector health</text>
+                <text class="diagram-edge-label" x="500" y="116">work dirs</text>
+                <text class="diagram-edge-label" x="746" y="207">candidate</text>
+                <text class="diagram-edge-label" x="748" y="359">accept</text>
+                <text class="diagram-edge-label" x="488" y="359">feedback</text>
+                <text class="diagram-edge-label" x="710" y="462">controlled app/browser action</text>
+
+                <g transform="translate(30 58)">
+                  <rect class="diagram-node" width="170" height="74" rx="18" />
+                  <text class="diagram-title" x="18" y="31">Chrome Extension</text>
+                  <text class="diagram-subtitle" x="18" y="54">DOM + page events</text>
+                </g>
+
+                <g transform="translate(30 178)">
+                  <rect class="diagram-node" width="170" height="74" rx="18" />
+                  <text class="diagram-title" x="18" y="31">Collectors</text>
+                  <text class="diagram-subtitle" x="18" y="54">SeaTalk, Google, macOS</text>
+                </g>
+
+                <g transform="translate(285 105)">
+                  <rect class="diagram-node diagram-node--core" width="190" height="100" rx="20" />
+                  <text class="diagram-title" x="22" y="38">Coordinator</text>
+                  <text class="diagram-subtitle" x="22" y="62">Socket.IO registry</text>
+                  <text class="diagram-subtitle" x="22" y="80">module control</text>
+                </g>
+
+                <g transform="translate(555 58)">
+                  <rect class="diagram-node" width="170" height="74" rx="18" />
+                  <text class="diagram-title" x="18" y="31">Local Storage</text>
+                  <text class="diagram-subtitle" x="18" y="54">JSONL + artifacts</text>
+                </g>
+
+                <g transform="translate(555 180)">
+                  <rect class="diagram-node diagram-node--core" width="170" height="80" rx="18" />
+                  <text class="diagram-title" x="18" y="32">Processors</text>
+                  <text class="diagram-subtitle" x="18" y="55">normalize + predict</text>
+                </g>
+
+                <g transform="translate(825 180)">
+                  <rect class="diagram-node" width="170" height="80" rx="18" />
+                  <text class="diagram-title" x="18" y="32">LLM Layer</text>
+                  <text class="diagram-subtitle" x="18" y="55">explain next action</text>
+                </g>
+
+                <g transform="translate(555 334)">
+                  <rect class="diagram-node diagram-node--action" width="170" height="80" rx="18" />
+                  <text class="diagram-title" x="18" y="32">Desktop UI</text>
+                  <text class="diagram-subtitle" x="18" y="55">suggestion + controls</text>
+                </g>
+
+                <g transform="translate(825 334)">
+                  <rect class="diagram-node diagram-node--action" width="170" height="80" rx="18" />
+                  <text class="diagram-title" x="18" y="32">Actor Runtime</text>
+                  <text class="diagram-subtitle" x="18" y="55">scripts + browser bridge</text>
+                </g>
+
+                <g transform="translate(285 334)">
+                  <rect class="diagram-node" width="190" height="80" rx="18" />
+                  <text class="diagram-title" x="22" y="32">Feedback Store</text>
+                  <text class="diagram-subtitle" x="22" y="55">priority + reusable skills</text>
+                </g>
+              </svg>
+            </div>
           </div>
         </section>
 
