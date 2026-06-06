@@ -39,6 +39,14 @@ def read_written_events(work_dir, started_at):
     return events
 
 
+def read_written_event_files(work_dir, started_at):
+    return sorted(
+        path
+        for path in Path(work_dir).glob("**/*.jsonl")
+        if path.stat().st_mtime >= started_at
+    )
+
+
 def require(condition, message):
     if not condition:
         raise RuntimeError(message)
@@ -153,9 +161,19 @@ def test_mail_collector():
         started_at = time.time()
         first = collector.scan_sources(args, work_dir)
         events = read_written_events(work_dir, started_at)
+        event_files = read_written_event_files(work_dir, started_at)
         require(first["messages_seen"] == 2, f"expected two seen messages: {first}")
         require(first["events_written"] == 2, f"expected two written messages: {first}")
         require(len(events) == 2, f"unexpected mail event count: {len(events)}")
+        require(event_files, "mail collector should write JSONL event files")
+        require(
+            all("artifacts" not in path.parts for path in event_files),
+            f"mail JSONL must not be written under artifacts/: {event_files}",
+        )
+        require(
+            all(path.parent.parent == work_dir for path in event_files),
+            f"mail JSONL should be directly under RADAR_HOME collector day folders: {event_files}",
+        )
         require(
             FakeGoogleApiClient.calls[0]["endpoint"] == "/api/google_gmail/users/me/messages",
             f"wrong mail endpoint: {FakeGoogleApiClient.calls}",
@@ -167,7 +185,10 @@ def test_mail_collector():
 
         first_event = next(event for event in events if event["extra_data"]["google_mail"]["id"] == "m1")
         require(first_event["subject"]["kind"] == "communication_user_email", "wrong mail kind")
-        require(first_event["content"]["text"] == "Can you confirm the launch date?", "wrong mail body")
+        require(
+            first_event["content"]["text"].strip() == "Can you confirm the launch date?",
+            f"wrong mail body: {first_event['content']['text']!r}",
+        )
         require(first_event["context"]["account_email"] == "me@example.com", "missing account email")
         require("you@example.com" in first_event["context"]["to"][0]["email"], "missing recipient")
         require(first_event["provenance"]["source_uri"] == "gmail://message/m1", "missing mail source URI")
@@ -220,9 +241,19 @@ def test_calendar_collector():
         started_at = time.time()
         first = collector.scan_sources(args, work_dir)
         events = read_written_events(work_dir, started_at)
+        event_files = read_written_event_files(work_dir, started_at)
         require(first["events_seen"] == 2, f"expected two seen calendar events: {first}")
         require(first["events_written"] == 1, f"expected one organized event: {first}")
         require(len(events) == 1, f"unexpected calendar event count: {len(events)}")
+        require(event_files, "calendar collector should write JSONL event files")
+        require(
+            all("artifacts" not in path.parts for path in event_files),
+            f"calendar JSONL must not be written under artifacts/: {event_files}",
+        )
+        require(
+            all(path.parent.parent == work_dir for path in event_files),
+            f"calendar JSONL should be directly under RADAR_HOME collector day folders: {event_files}",
+        )
         require(
             FakeGoogleApiClient.calls[0]["endpoint"] == "/api/google_calendar/calendars/primary/events",
             f"wrong calendar endpoint: {FakeGoogleApiClient.calls}",

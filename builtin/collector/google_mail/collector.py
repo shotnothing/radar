@@ -100,7 +100,7 @@ def message_sent_at_ms(message):
 
 
 def message_text(message):
-    body = first_value(message, "body", "text", "plain_text", "snippet")
+    body = first_value(message, "body", "text", "plain_text")
     if isinstance(body, dict):
         body = first_value(body, "text", "plain", "value")
     if body:
@@ -109,7 +109,7 @@ def message_text(message):
     decoded = decode_payload_text(payload)
     if decoded:
         return decoded
-    return str(body or "")
+    return str(first_value(message, "snippet", default=""))
 
 
 def source_uri(message, msg_id):
