@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
@@ -38,10 +39,12 @@ function App() {
 }
 
 type Suggestion = {
-  id: number;
+  id: number | string;
   title: string;
   body: string;
   primary_action: string;
+  actor_id?: string;
+  trigger_id?: string;
 };
 
 type SettingsSection = "collector" | "processor" | "actor";
@@ -139,7 +142,16 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       defaultEnabled: false,
     },
   ],
-  actor: [],
+  actor: [
+    {
+      id: "actor.youtube_search_nab",
+      name: "YouTube Search NAB",
+      description: "Fills the active YouTube search box with NAB.",
+      status: "builtin.youtube_search_nab",
+      icon: Workflow,
+      defaultEnabled: true,
+    },
+  ],
 };
 
 function getInitialModuleState() {
@@ -197,7 +209,20 @@ function AssistantWindow() {
     setCurrentSuggestion(suggestion);
   }
 
-  async function completeCurrent() {
+  async function completeCurrent(runActor = false) {
+    const suggestion = currentSuggestionRef.current;
+    if (suggestion?.actor_id && suggestion.trigger_id) {
+      try {
+        await invoke("complete_actor_suggestion", {
+          actorId: suggestion.actor_id,
+          triggerId: suggestion.trigger_id,
+          run: runActor,
+        });
+      } catch (error) {
+        console.error("Failed to complete actor suggestion:", error);
+      }
+    }
+
     const [nextSuggestion, ...remainingSuggestions] = queueRef.current;
     queueRef.current = remainingSuggestions;
     setQueue(remainingSuggestions);
@@ -267,7 +292,7 @@ function AssistantWindow() {
             variant="ghost"
             size="sm"
             className="h-7 rounded-[9px] px-2.5 text-xs text-slate-600 hover:bg-white/65 hover:text-slate-900"
-            onClick={completeCurrent}
+            onClick={() => void completeCurrent(false)}
           >
             忽略
           </Button>
@@ -275,7 +300,7 @@ function AssistantWindow() {
             type="button"
             size="sm"
             className="h-7 rounded-[9px] bg-slate-950 px-2.5 text-xs text-white shadow-sm hover:bg-slate-800"
-            onClick={completeCurrent}
+            onClick={() => void completeCurrent(true)}
           >
             {currentSuggestion.primary_action}
           </Button>
