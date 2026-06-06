@@ -4,8 +4,4 @@
 .idea
 .cursor
 .wingman
-__pycache__/
-*.py[cod]
-.pytest_cache/
-
 /log
