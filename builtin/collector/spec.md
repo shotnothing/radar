@@ -1,27 +1,50 @@
-// ======================================================
-// Core Concept
-// ======================================================
-//
-// Collector -> Observation -> NormalizedAction -> PredictedNextAction
-//           -> UserSuggestion -> UserFeedback
-//
-// Collector decides WHEN to capture using Anchors.
-// Processor decides WHAT is useful, normalizes noisy input,
-// predicts the likely next action, and learns from user feedback.
-//
-// Example:
-// - Every 5s
-// - User clicked
-// - URL changed
-// - SeaTalk message received
-// - Active app changed
-// - File modified
-//
-// Each capture produces an Observation.
-// Each useful observation can produce one or more NormalizedActions.
-//
-// ======================================================
+# Built-in Collector Spec
 
+This spec defines the data contracts for collecting user activity, converting it
+into stable actions, predicting the likely next action, and learning from user
+feedback.
+
+## Pipeline
+
+Collectors capture raw state. Processors normalize that raw state into actions,
+rank possible next actions, explain the best options in plain English, and learn
+from the user's selection or dismissal.
+
+```mermaid
+flowchart LR
+  A["Collector"] --> B["Observation"]
+  B --> C["NormalizedAction"]
+  C --> D["PredictedNextAction"]
+  D --> E["UserSuggestion"]
+  E --> F["UserFeedback"]
+  F --> G["LearnedActionPattern"]
+```
+
+## Responsibility Split
+
+- **Collector** decides when to capture using anchors.
+- **Observation** stores what was captured from macOS, browser, SeaTalk, or other sources.
+- **NormalizedAction** converts noisy source data into stable user actions.
+- **PredictionProcessor** ranks expected next actions using history and fuzzy similarity.
+- **UserSuggestion** presents predicted actions in user-readable English.
+- **UserFeedback** records whether the user selected, dismissed, corrected, or edited the suggestion.
+- **LearnedActionPattern** boosts actions the user repeatedly accepts.
+
+## Capture Triggers
+
+Common anchors include:
+
+- Every fixed interval, for example every 5 seconds.
+- User clicked, typed, copied, pasted, or submitted something.
+- Browser URL changed.
+- SeaTalk message received.
+- Active app or active window changed.
+- File or clipboard content changed.
+- Processor requested another snapshot.
+
+## Shared Types
+
+```ts
 export type JsonValue =
   | string
   | number
@@ -37,11 +60,14 @@ export type ConfidenceScore = number;
 
 // Higher values make an action more likely to be suggested again.
 export type PriorityScore = number;
+```
 
-// ======================================================
-// Collector
-// ======================================================
+## Collector Contract
 
+Collectors emit observations into an event sink. They should not perform
+prediction themselves.
+
+```ts
 export interface Collector {
   id: string;
 
@@ -99,11 +125,15 @@ export interface CollectorHealth {
 
   lastSuccessfulCollectionAt?: ISODateTimeString;
 }
+```
 
-// ======================================================
-// Anchor
-// ======================================================
+## Anchors
 
+An anchor explains why a capture happened. For example, an anchor can represent a
+mouse click, URL change, interval tick, app switch, or processor-requested
+refresh.
+
+```ts
 export interface Anchor {
   id: string;
 
@@ -158,11 +188,14 @@ export interface AnchorConfig {
     eventNames?: string[];
   };
 }
+```
 
-// ======================================================
-// Observation
-// ======================================================
+## Observation Model
 
+An observation is a raw capture. It keeps source-specific data, privacy metadata,
+and extraction quality so downstream processors can decide what to trust.
+
+```ts
 export interface Observation {
   id: string;
 
@@ -172,10 +205,10 @@ export interface Observation {
 
   time: TimeInfo;
 
-  // WHY this observation was captured
+  // WHY this observation was captured.
   anchor: Anchor;
 
-  // WHAT was captured
+  // WHAT was captured.
   subject: SubjectInfo;
 
   content: ContentInfo;
@@ -184,18 +217,18 @@ export interface Observation {
 
   artifacts?: ArtifactRef[];
 
-  // source-specific payload
+  // Source-specific payload, for example AXTree or browser extension data.
   extraData?: Record<string, JsonValue>;
 
   privacy: PrivacyInfo;
 
   quality: QualityInfo;
 }
+```
 
-// ======================================================
-// Source
-// ======================================================
+### Observation Fields
 
+```ts
 export interface SourceInfo {
   type:
     | "macos"
@@ -216,10 +249,6 @@ export interface SourceInfo {
   workspaceId?: string;
 }
 
-// ======================================================
-// Time
-// ======================================================
-
 export interface TimeInfo {
   observedAt: ISODateTimeString;
 
@@ -227,10 +256,6 @@ export interface TimeInfo {
 
   durationMs?: number;
 }
-
-// ======================================================
-// Subject
-// ======================================================
 
 export interface SubjectInfo {
   kind:
@@ -255,10 +280,6 @@ export interface SubjectInfo {
   threadId?: string;
 }
 
-// ======================================================
-// Content
-// ======================================================
-
 export interface ContentInfo {
   text?: string;
 
@@ -268,10 +289,6 @@ export interface ContentInfo {
 
   metadata?: Record<string, JsonValue>;
 }
-
-// ======================================================
-// Context
-// ======================================================
 
 export interface ContextInfo {
   activeApp?: string;
@@ -297,10 +314,6 @@ export interface ContextInfo {
 
   nearbyEvents?: string[];
 }
-
-// ======================================================
-// Artifacts
-// ======================================================
 
 export interface ArtifactRef {
   id: string;
@@ -347,10 +360,6 @@ export interface ArtifactRef {
   };
 }
 
-// ======================================================
-// Privacy
-// ======================================================
-
 export interface PrivacyInfo {
   sensitivity: "low" | "medium" | "high";
 
@@ -381,10 +390,6 @@ export interface PrivacyInfo {
   permissionScope: string[];
 }
 
-// ======================================================
-// Quality
-// ======================================================
-
 export interface QualityInfo {
   confidence: ConfidenceScore;
 
@@ -397,16 +402,14 @@ export interface QualityInfo {
     | "filesystem"
     | "ocr";
 }
+```
 
-// ======================================================
-// Normalized Action
-// ======================================================
-//
-// Observations are raw and source-specific. NormalizedActions
-// are stable events that fuzzy matching and prediction can use.
-//
-// ======================================================
+## Normalized Action Layer
 
+Observations are raw and source-specific. Normalized actions are stable events
+that fuzzy matching and prediction can compare across time.
+
+```ts
 export type ActionApp =
   | "seatalk"
   | "browser"
@@ -501,11 +504,14 @@ export interface ActionInput {
 
   metadata?: Record<string, JsonValue>;
 }
+```
 
-// ======================================================
-// Action Sequence
-// ======================================================
+## Action Sequences
 
+A sequence groups recent normalized actions from a session. Prediction uses this
+history to understand what the user is likely doing now.
+
+```ts
 export interface ActionSequence {
   id: string;
 
@@ -541,11 +547,14 @@ export interface NormalizedActionRef {
 
   targetSummary?: string;
 }
+```
 
-// ======================================================
-// Prediction
-// ======================================================
+## Prediction Layer
 
+The prediction layer accepts recent observations or normalized actions, returns a
+ranked candidate set, and records user feedback after suggestions are shown.
+
+```ts
 export interface PredictionProcessor {
   id: string;
 
@@ -664,11 +673,14 @@ export interface ModelInfo {
 
   provider?: string;
 }
+```
 
-// ======================================================
-// User Suggestion
-// ======================================================
+## User Suggestions
 
+A suggestion is the user-facing form of a prediction set. The English text can be
+generated by an AI model so the user can quickly understand the next action.
+
+```ts
 export interface SuggestionOptions {
   locale?: string;
 
@@ -711,11 +723,14 @@ export interface UserSuggestion {
 
   expiresAt?: ISODateTimeString;
 }
+```
 
-// ======================================================
-// User Feedback and Learning
-// ======================================================
+## Feedback and Learning
 
+Feedback updates future priority. Repeatedly selected actions should become more
+likely to appear next time; repeatedly dismissed actions should be downgraded.
+
+```ts
 export interface UserFeedback {
   id: string;
 
@@ -761,11 +776,15 @@ export interface LearnedActionPattern {
 
   metadata?: Record<string, JsonValue>;
 }
+```
 
-// ======================================================
-// Optional: macOS AXTree payload
-// ======================================================
+## macOS AXTree Payload
 
+The AXTree payload is optional source-specific data. It can be stored in
+`Observation.extraData.axtree` when the macOS collector captures accessibility
+state.
+
+```ts
 export interface AXTreeSnapshot {
   app: string;
 
@@ -818,3 +837,4 @@ export interface AXNode {
 
   children?: AXNode[];
 }
+```
