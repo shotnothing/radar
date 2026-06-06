@@ -415,6 +415,15 @@ class PredictProcessor:
         self.normalizer = normalizer or EventNormalizer()
         self.estdec = EstDecRunner(estdec_config or EstDecConfig.from_env(), self.model_path)
 
+    def reset(self):
+        for path in (self.dictionary_path, self.model_path, self.stream_path):
+            try:
+                path.unlink()
+            except FileNotFoundError:
+                pass
+        self.dictionary = ItemDictionary()
+        self.estdec = EstDecRunner(self.estdec.config, self.model_path)
+
     def process_payloads(self, payloads, input_ref="payloads"):
         encoded = []
         for index, payload in enumerate(payloads, start=1):

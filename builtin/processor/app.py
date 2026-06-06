@@ -98,7 +98,10 @@ def scan_loop(args):
     runtime["engine"] = engine
 
     if args.tail_existing:
-        if args.reset or not engine.checkpoint_path.exists():
+        if args.reset:
+            engine.reset()
+            mark_existing_collector_files_seen(engine)
+        elif not engine.checkpoint_path.exists():
             mark_existing_collector_files_seen(engine)
     elif args.replay_existing or args.reset:
         engine.reset()

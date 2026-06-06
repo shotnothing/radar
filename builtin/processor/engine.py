@@ -211,6 +211,12 @@ class ProcessorEngine:
 
     def reset(self):
         self.checkpoint = {"version": 1, "files": {}}
+        for path in (self.normalized_log_path, self.last_result_path):
+            try:
+                path.unlink()
+            except FileNotFoundError:
+                pass
+        self.predict.reset()
         write_json_atomic(self.checkpoint_path, self.checkpoint)
 
     def scan_once(self):

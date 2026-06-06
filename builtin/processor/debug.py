@@ -25,6 +25,28 @@ from builtin.processor.engine import (
 DEFAULT_DEBUG_STATE_DIR = REPO_ROOT / "debug" / "work" / "processors" / "predict_debug"
 
 
+def purge_debug_state_files(args):
+    state_dir = Path(args.state_dir)
+    predict_state_dir = Path(args.predict_state_dir) if args.predict_state_dir else state_dir / "predict"
+    paths = [
+        state_dir / "checkpoint.json",
+        state_dir / "normalized_events.jsonl",
+        state_dir / "last_result.json",
+        predict_state_dir / "item_dictionary.json",
+        predict_state_dir / "estdec_model.json",
+        predict_state_dir / "spmf_stream.txt",
+    ]
+    removed = []
+    for path in paths:
+        for candidate in (path, path.with_suffix(f"{path.suffix}.tmp")):
+            try:
+                candidate.unlink()
+            except FileNotFoundError:
+                continue
+            removed.append(str(candidate))
+    return removed
+
+
 def mark_existing_collector_files_seen(engine):
     engine.checkpoint = {"version": 1, "files": {}, "updated_at": utc_timestamp()}
     for path in iter_collector_jsonl_files(engine.collectors_root):
@@ -81,6 +103,7 @@ def print_prediction(scan_result, args):
 
 def run(args):
     apply_predict_config_overrides(args)
+    purged_paths = purge_debug_state_files(args) if args.purge_state else []
     engine = ProcessorEngine(
         collectors_root=args.collectors_root,
         normalizers_root=args.normalizers_root,
@@ -90,7 +113,10 @@ def run(args):
 
     if args.replay_existing:
         engine.reset()
-    elif args.reset or not engine.checkpoint_path.exists():
+    elif args.reset:
+        engine.reset()
+        mark_existing_collector_files_seen(engine)
+    elif not engine.checkpoint_path.exists():
         mark_existing_collector_files_seen(engine)
 
     if args.print_started:
@@ -102,6 +128,8 @@ def run(args):
                     "normalizers_root": str(engine.normalizers_root),
                     "state_dir": str(engine.state_dir),
                     "mode": "replay_existing" if args.replay_existing else "tail",
+                    "purged_state": bool(args.purge_state),
+                    "purged_path_count": len(purged_paths),
                 },
                 ensure_ascii=True,
                 sort_keys=True,
@@ -189,6 +217,16 @@ def parse_args():
         "--reset",
         action="store_true",
         help="Reset debug offsets, then tail from the current end of existing collector files.",
+    )
+    parser.add_argument(
+        "--purge-state",
+        "--clean-slate",
+        dest="purge_state",
+        action="store_true",
+        help=(
+            "Delete previous debug processor state before starting. "
+            "This clears the checkpoint, normalized log, last result, and predict model files."
+        ),
     )
     parser.add_argument(
         "--replay-existing",
