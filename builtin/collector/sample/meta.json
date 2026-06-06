@@ -1,0 +1,27 @@
+{
+  "collector_id": "builtin.sample",
+  "display_name": "Sample Collector",
+  "description": "Writes one synthetic collected data event for debug and integration testing.",
+  "protocol_version": 1,
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "builtin/collector/sample/collector.py"
+    ]
+  },
+  "required_permissions": [],
+  "capabilities": [
+    "sample_event",
+    "jsonl_writer",
+    "heartbeat"
+  ],
+  "emits": [
+    "collected_data.sample_event"
+  ],
+  "default_config": {
+    "coordinator_url": "http://localhost:5000",
+    "duration_seconds": 10,
+    "heartbeat_interval_seconds": 2,
+    "sample_text": "Sample collected data from the Radar debug collector."
+  }
+}
