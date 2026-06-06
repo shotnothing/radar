@@ -5,3 +5,6 @@
 .cursor
 .wingman
 /log
+__pycache__/
+*.pyc
+debug/work/

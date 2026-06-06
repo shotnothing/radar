@@ -6,27 +6,26 @@ This file is for agents and humans working in parallel. Keep changes scoped, res
 
 ## Product Shape
 
-Radar has three layers:
+Radar has three project areas:
 
-- `desktop`: macOS UI for showing suggestions, controls, permissions, history, and feedback.
-- `engine`: Python runtime that coordinates collectors, processors, actors, storage, policies, and desktop communication.
+- `desktop`: future Wails macOS app. Keep this empty until the Wails shell is
+  introduced.
+- `debug`: lightweight Python Socket.IO harness for local development and
+  manual management of collectors, processors, and actors.
 - `builtin`: first-party collectors, processors, and actors shipped with Radar.
 
-Radar must work in two modes:
-
-- Engine-only mode: runs as a CLI or background process without the desktop app.
-- Desktop mode: runs with the macOS app and can display options, request feedback, and offer automation controls.
-
-The desktop app is an interface and capability surface. It should not be the only place where core behavior lives.
+The desktop process will be the production coordinator. Until Wails exists, the
+debug harness owns the same local Socket.IO contract so module work can proceed.
 
 ## Current Repository Map
 
-- `radar/desktop/`: desktop app shell and UI surfaces.
-- `radar/engine/`: Python coordination process.
+- `radar/desktop/`: future Wails desktop app. Leave empty for now.
+- `radar/debug/`: Python debug harness for running the Socket.IO coordinator.
 - `radar/builtin/collector/`: built-in collector contracts and implementations.
-- `radar/builtin/collector/meta_json_spec.md`: collector discovery and
-  independent-run metadata contract.
+- `radar/builtin/collector/spec/`: collector contracts, event shapes, and
+  Socket.IO registration expectations.
 - `radar/builtin/processor/`: built-in processors for filtering, normalization, prediction, and learning.
+- `radar/builtin/actor/`: built-in actors for safe user-visible suggestions and approved automations.
 - `radar/.agents/`: coordination notes for concurrent agents.
 
 ## Core Data Flow
@@ -40,45 +39,63 @@ Collector -> Observation -> NormalizedAction -> PredictedNextAction
 
 Collectors decide when and what to capture. Processors decide what is useful, normalize raw events, infer patterns, and learn from feedback. Actors decide how to safely offer or execute a candidate action.
 
-Use `radar/builtin/collector/spec.md` as the current source of truth for the event and prediction shapes until formal package-level schemas exist.
-Use `radar/builtin/collector/meta_json_spec.md` as the source of truth for
-collector `meta.json` files used to discover and run collectors individually.
+The coordinator process hosts the Socket.IO server, assigns collectors a local
+work folder during registration, and manages module lifecycle. Collectors write
+their own collected data into that folder. Processors work from
+coordinator-provided folder or file references and return normalized actions,
+predictions, suggestions, or feedback-learning results to the coordinator.
+Actors receive eligible action requests from the coordinator and return execution
+status.
+
+Use `radar/builtin/collector/spec/collected_data.md` as the current source of
+truth for collected event shapes until formal package-level schemas exist. Use
+`radar/builtin/collector/spec/collector.md` as the source of truth for
+collector metadata and Socket.IO registration.
 
 ## Module Responsibilities
 
 ### Desktop
 
-Desktop should:
+Desktop should eventually:
 
+- Stay empty until the Wails shell is introduced.
+- Own lifecycle management for collectors, processors, and actors.
+- Host the local Socket.IO server used by collectors, processors,
+  and actors.
+- Route folder and file references through filtering, normalization, prediction,
+  suggestion, feedback, and storage.
+- Enforce privacy, permission, retention, and automation policies.
 - Display suggestions and automation choices.
 - Let the user approve, dismiss, edit, pause, or disable suggestions.
 - Show collector health, permission state, and recent activity summaries.
 - Request macOS permissions through user-visible flows.
-- Send user feedback to the engine.
+- Persist user feedback and route it to processors.
 
 Desktop should avoid:
 
 - Owning collector logic.
 - Owning prediction or learning logic.
-- Executing automation without an engine policy decision.
+- Executing automation without a desktop policy decision.
 - Treating UI state as the system of record for user preferences or learned patterns.
 
-### Engine
+### Debug
 
-Engine should:
+Debug should:
 
-- Own lifecycle management for collectors, processors, and actors.
-- Route observations through filtering, normalization, prediction, suggestion, feedback, and storage.
-- Enforce privacy, permission, retention, and automation policies.
-- Provide a CLI-compatible control surface.
-- Provide a desktop-compatible API or IPC surface.
-- Degrade gracefully when desktop is unavailable.
+- Provide a small Python Socket.IO coordinator for local development.
+- Register and list collectors, processors, and actors.
+- Assign collector work folders.
+- Route folder and file references to processors.
+- Route processor action requests to actors and processor results to debug
+  clients.
+- Stay light and disposable; production behavior belongs in the future Wails
+  desktop process.
 
-Engine should avoid:
+Debug should avoid:
 
-- Depending on desktop-only APIs for core behavior.
-- Storing raw content unless privacy policy explicitly allows it.
-- Running actor automation without a policy check and traceable reason.
+- Becoming a production runtime.
+- Owning macOS UI or permission flows.
+- Adding heavy framework dependencies.
 
 ### Builtin
 
@@ -92,19 +109,27 @@ Builtin should avoid:
 
 - App-specific assumptions leaking into shared schemas.
 - Collector implementations directly invoking actors.
-- Processor implementations bypassing engine privacy policy.
+- Processor implementations bypassing coordinator privacy policy.
 
 ## Contracts
 
 Prefer explicit contracts between modules.
 
-- Collectors emit `Observation`.
+- Collectors produce `Observation` records on disk.
 - Collectors include `meta.json` metadata with a stable ID, runtime command,
   permissions, capabilities, anchors, emitted shapes, and default config.
+- Collectors connect to the coordinator Socket.IO server and emit
+  `collector:register` and `collector:heartbeat`.
+- Collector registration returns a `work_dir`; collectors write collected JSONL
+  and artifacts there without streaming collected data through Socket.IO.
 - Processors produce `NormalizedAction`, `PredictionSet`, and `UserSuggestion`.
-- Actors consume approved or eligible `PredictedNextAction` values and return execution status.
-- Desktop sends feedback as `UserFeedback`.
-- Engine owns persistence, policy checks, and routing.
+- Processors connect to the coordinator Socket.IO server and emit
+  `processor:register`, `processor:heartbeat`, and `processor:result`.
+- Actors consume approved or eligible `PredictedNextAction` values and emit
+  `actor:register`, `actor:heartbeat`, and `actor:result`.
+- Desktop records feedback as `UserFeedback` and routes it to processors.
+- The coordinator owns persistence, policy checks, Socket.IO routing, and
+  lifecycle. Today this is `debug/`; later this is `desktop/`.
 
 When adding new fields:
 
@@ -148,7 +173,7 @@ Any background action should have:
 
 ## Development Guidelines
 
-- Keep engine APIs usable without the desktop app.
+- Keep Socket.IO coordination APIs explicit and versionable.
 - Keep app-specific collector code behind collector boundaries.
 - Keep schemas stable and versionable.
 - Add tests around shared contracts, privacy policy, and routing behavior as soon as implementation lands.
@@ -171,7 +196,7 @@ Multiple agents may edit this repository at the same time.
 
 These need explicit decisions before implementation hardens:
 
-- Engine IPC protocol for desktop communication.
+- Socket.IO authentication, authorization, and transport hardening.
 - Local storage format and encryption strategy.
 - Schema versioning and migration strategy.
 - Collector permission model and user-facing permission copy.
@@ -181,10 +206,10 @@ These need explicit decisions before implementation hardens:
 
 ## Suggested First Milestones
 
-1. Define engine plugin interfaces for collectors, processors, and actors.
-2. Define durable schema modules based on `builtin/collector/spec.md`.
-3. Build engine-only ingestion and normalization loop.
+1. Define coordinator Socket.IO contracts for collectors, processors, and actors.
+2. Define durable schema modules based on `builtin/collector/spec/`.
+3. Build debug-hosted ingestion and normalization routing.
 4. Add a macOS active-app or active-window collector.
 5. Add a processor that creates simple pattern-based suggestions.
-6. Add desktop UI for suggestion display, feedback, and pause controls.
+6. Introduce the Wails desktop shell.
 7. Add an actor that only prepares actions until approval and audit flows are ready.
