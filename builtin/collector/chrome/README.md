@@ -7,28 +7,47 @@ The collector uses Socket.IO only for registration, heartbeat, configuration,
 pause, and resume control. It does not stream collected event payloads to the
 coordinator.
 
-## Run
+## Quick Start
 
-Start the debug coordinator:
-
-```bash
-python3 debug/app.py --work-dir debug/work
-```
-
-Start the collector:
+Use a virtual environment on macOS. Homebrew Python may reject global `pip`
+installs.
 
 ```bash
-python3 -m builtin.collector.chrome.cli \
-  --coordinator-url http://127.0.0.1:5000 \
-  --event-host 127.0.0.1 \
-  --event-port 47321
+cd /Users/SIPSS0578/Desktop/Hackathon
+python3 -m venv /tmp/radar-venv
+/tmp/radar-venv/bin/python -m pip install -r requirements.txt
 ```
 
-Or let the debug coordinator launch it from `meta.json`:
+Build the installable Chrome extension:
 
 ```bash
-python3 debug/app.py --collector-meta builtin/collector/chrome/meta.json
+make PYTHON=/tmp/radar-venv/bin/python package-chrome-extension
 ```
+
+This creates:
+
+- `dist/radar-extension/`: unpacked folder for local Chrome Developer Mode.
+- `dist/radar-extension.zip`: zip package for sharing or Chrome Web Store upload.
+
+Install `dist/radar-extension/` in your normal Chrome:
+
+1. Open `chrome://extensions`.
+2. Enable **Developer mode**.
+3. Choose **Load unpacked**.
+4. Select `/Users/SIPSS0578/Desktop/Hackathon/dist/radar-extension`.
+
+Run the debug coordinator and let it launch the Chrome collector from
+`meta.json`:
+
+```bash
+PATH=/tmp/radar-venv/bin:$PATH \
+RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
+make PYTHON=/tmp/radar-venv/bin/python run-coordinator
+```
+
+Keep this process running while testing Chrome. The `PATH` prefix is important:
+the managed collector is launched as `python3`, so this makes it use the same
+virtual environment as the coordinator.
 
 ## Source Adapters
 
@@ -41,26 +60,36 @@ python3 debug/app.py --collector-meta builtin/collector/chrome/meta.json
   page navigation, clicks, focus, form submits, copy/paste, selection, and
   debounced input events, then forwards them to `http://127.0.0.1:47321/event`.
 
-## Install Extension
+## Test Collection
 
-Build the install artifacts:
+Check that the collector event server is healthy:
 
 ```bash
-make package-chrome-extension
+curl -s http://127.0.0.1:47321/health | /tmp/radar-venv/bin/python -m json.tool
 ```
 
-This creates:
+Open a regular `http://` or `https://` page in Chrome, then click, focus an
+input, type, select text, copy, paste, or submit a form. Do not test on
+`chrome://` pages; Chrome extensions do not inject content scripts there.
 
-- `dist/radar-extension/`: unpacked folder for local Chrome Developer Mode.
-- `dist/radar-extension.zip`: zip package for sharing or Chrome Web Store upload.
+Input events are debounced by the extension, so wait about one second after
+typing before checking output.
 
-1. Open `chrome://extensions`.
-2. Enable **Developer mode**.
-3. Choose **Load unpacked**.
-4. Select `dist/radar-extension`.
+Find recorded Chrome data:
 
-The collector must be running for extension events to be stored. The extension
-popup shows the local collector endpoint and latest delivery status.
+```bash
+find debug/work/collectors/chrome_browser -type f -name '*.jsonl' -print
+```
+
+Inspect the latest events:
+
+```bash
+find debug/work/collectors/chrome_browser -type f -name '*.jsonl' -exec tail -n 3 {} \;
+```
+
+If you run the coordinator with another work directory, replace `debug/work`
+with that directory. For example, `--work-dir ~/.radar` stores under
+`~/.radar/collectors/chrome_browser`.
 
 ## Example Event
 
@@ -90,8 +119,23 @@ popup shows the local collector endpoint and latest delivery status.
 Collected data follows `builtin/collector/spec/collected_data.md`:
 
 ```text
-{work_dir}/
-  yyyymmdd/
+{work_dir}/collectors/chrome_browser/
+  YYYYMMDD/
     artifacts/
-      <file_timestamp_ms>.jsonl
+      <bucket_ms>.jsonl
 ```
+
+With the default Makefile settings, `work_dir` is `debug/work`.
+
+## Troubleshooting
+
+- No JSONL files: make sure the coordinator command is still running and
+  `curl http://127.0.0.1:47321/health` returns JSON.
+- Extension delivery errors: open the **Radar Extension** popup and confirm the
+  endpoint is `http://127.0.0.1:47321/event`.
+- No page events: reload the page after installing the extension, and test on a
+  regular `http://` or `https://` page.
+- `ModuleNotFoundError`: install dependencies in a virtual environment and run
+  the coordinator with `PATH=/tmp/radar-venv/bin:$PATH`.
+- Port `47321` already in use: stop the old collector process or run the Chrome
+  collector with another `--event-port` and update the extension popup endpoint.
