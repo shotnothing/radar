@@ -1,6 +1,9 @@
 import importlib.util
+import atexit
 import json
+import shutil
 import sqlite3
+import tempfile
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -98,6 +101,9 @@ def make_args(db_path, user_map_path, conversation_map_path):
     return SimpleNamespace(
         seatalk_root=str(db_path.parent),
         seatalk_main_db=str(db_path),
+        seatalk_resources_dir=str(db_path.parent),
+        sqlite_key="",
+        disable_sqlcipher=True,
         self_user_id=0,
         user_map=str(user_map_path),
         conversation_map=str(conversation_map_path),
@@ -117,7 +123,8 @@ def write_json(path, data):
 
 def main():
     collector = load_collector()
-    root = REPO_ROOT / ".tmp" / "seatalk_collector_test"
+    root = Path(tempfile.mkdtemp(prefix="radar-seatalk-collector-test-"))
+    atexit.register(shutil.rmtree, root, True)
     db_path = root / "main_123.sqlite"
     work_dir = root / "work"
     user_map_path = root / "users.json"

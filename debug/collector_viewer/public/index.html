@@ -25,32 +25,12 @@
         </div>
       </header>
 
-      <section class="controls" aria-label="Timeline filters">
-        <label>
-          <span>Search</span>
-          <input id="search" type="search" placeholder="Text, source, file, action" />
-        </label>
-        <label>
-          <span>Collector</span>
-          <select id="collector-filter">
-            <option value="">All collectors</option>
-          </select>
-        </label>
-        <label>
-          <span>Source</span>
-          <select id="source-filter">
-            <option value="">All sources</option>
-          </select>
-        </label>
-        <label>
-          <span>Limit</span>
-          <input id="limit" type="number" min="1" max="5000" step="50" value="500" />
-        </label>
+      <section class="timeline-tools" aria-label="Timeline tools">
+        <div id="legend" class="legend"></div>
         <button id="refresh" type="button">Refresh</button>
       </section>
 
       <section class="status-row">
-        <div id="data-root" class="path"></div>
         <div id="parse-errors" class="parse-errors"></div>
       </section>
 
@@ -75,15 +55,12 @@
               <time></time>
               <h2></h2>
             </div>
-            <span class="collector-pill"></span>
           </header>
           <p class="event-text"></p>
-          <div class="meta-row"></div>
-          <details>
-            <summary>Event details</summary>
-            <div class="detail-grid"></div>
-            <pre></pre>
-          </details>
+          <div class="event-footer">
+            <span class="collector-pill"></span>
+            <span class="event-kind"></span>
+          </div>
         </article>
       </li>
     </template>

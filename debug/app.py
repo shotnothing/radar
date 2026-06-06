@@ -521,7 +521,55 @@ def api_view_open():
 
 
 def current_context_snapshot():
-    return active_context_reader.read_current()
+    snapshot = active_context_reader.read_current()
+    bridge_tab = read_chrome_bridge_active_tab()
+    if bridge_tab is not None:
+        snapshot["browser"] = {
+            "connected": True,
+            "active_tab": bridge_tab,
+        }
+        active_context = snapshot.setdefault("active_context", {})
+        signals = active_context.setdefault("signals", {})
+        active_context["document_path"] = active_context.get("document_path") or bridge_tab.get("url", "")
+        signals["url"] = bridge_tab.get("url", "")
+        signals["browser_title"] = bridge_tab.get("title", "")
+        signals["browser_domain"] = bridge_tab.get("domain", "")
+    return snapshot
+
+
+def read_chrome_bridge_active_tab():
+    if chrome_bridge_server is None or not chrome_bridge_server.status().get("connected"):
+        return None
+    try:
+        result = chrome_bridge_server.invoke(
+            "page_content",
+            [
+                {
+                    "include_metadata": True,
+                }
+            ],
+            timeout_seconds=2,
+        )
+    except Exception:
+        return None
+    if not isinstance(result, dict):
+        return None
+    url = result.get("url")
+    if not isinstance(url, str) or not url:
+        return None
+    metadata = result.get("metadata") if isinstance(result.get("metadata"), dict) else {}
+    title = metadata.get("title") or ""
+    return {
+        "url": url,
+        "title": title,
+        "domain": domain_from_url(url),
+    }
+
+
+def domain_from_url(url):
+    if "://" not in url:
+        return ""
+    return url.split("://", 1)[1].split("/", 1)[0]
 
 
 def request_json(default=None):

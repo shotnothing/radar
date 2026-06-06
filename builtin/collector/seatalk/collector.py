@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import json
 import os
 import re
@@ -15,6 +16,7 @@ import socketio
 COLLECTOR_ID = "seatalk.personal"
 DISPLAY_NAME = "SeaTalk Personal Collector"
 DEFAULT_SEATALK_ROOT = Path.home() / "Library" / "Application Support" / "SeaTalk"
+DEFAULT_SEATALK_RESOURCES = Path("/Applications/SeaTalk.app/Contents/Resources")
 PROCESSED_ID_LIMIT = 10000
 
 
@@ -101,10 +103,67 @@ def sqlite_ro_uri(path):
     return f"file:{quote(raw_path)}?mode=ro"
 
 
-def open_sqlite_readonly(path):
+def load_sqlcipher_module():
+    for module_name in ("pysqlcipher3.dbapi2", "sqlcipher3"):
+        try:
+            return importlib.import_module(module_name)
+        except ImportError:
+            continue
+    return None
+
+
+def quote_pragma_string(value):
+    return str(value).replace("'", "''")
+
+
+def open_sqlite_readonly(path, sqlite_key=""):
+    if sqlite_key:
+        sqlcipher = load_sqlcipher_module()
+        if sqlcipher is None:
+            raise RuntimeError(
+                "SQLCipher support is unavailable; install pysqlcipher3 or pass a readable/decrypted SeaTalk DB"
+            )
+        connection = sqlcipher.connect(str(Path(path).expanduser().resolve()))
+        connection.row_factory = getattr(sqlcipher, "Row", sqlite3.Row)
+        connection.execute(f"PRAGMA key = '{quote_pragma_string(sqlite_key)}'")
+        connection.execute("PRAGMA query_only = ON")
+        return connection
+
     connection = sqlite3.connect(sqlite_ro_uri(path), uri=True)
     connection.row_factory = sqlite3.Row
     return connection
+
+
+def extract_key_prefix(resources_dir=None):
+    resources = Path(resources_dir or DEFAULT_SEATALK_RESOURCES).expanduser()
+    if not resources.exists():
+        return ""
+    for entry in sorted(resources.iterdir()):
+        name = entry.name
+        if not entry.is_file():
+            continue
+        if not name.endswith("_bundle.asar") or name.endswith(".unpacked"):
+            continue
+        try:
+            data = entry.read_bytes()
+        except OSError:
+            continue
+        match = re.search(rb"key='([0-9a-f]+)", data)
+        if match:
+            return match.group(1).decode("ascii")
+    return ""
+
+
+def resolve_sqlcipher_key(args, db_path):
+    if args.sqlite_key:
+        return args.sqlite_key
+    if args.disable_sqlcipher:
+        return ""
+    user_id = local_user_id_from_db_path(db_path)
+    prefix = extract_key_prefix(args.seatalk_resources_dir)
+    if not user_id or not prefix:
+        return ""
+    return f"{prefix}{user_id}"
 
 
 def load_json_mapping(path):
@@ -513,6 +572,64 @@ def resolve_db_path(args):
     return discover_main_db(args.seatalk_root)
 
 
+def collect_events_from_connection(
+    connection,
+    args,
+    *,
+    db_path,
+    db_fingerprint,
+    self_user_id,
+    scan_after,
+    user_map,
+    conversation_map,
+    processed_ids,
+):
+    events = []
+    seen_rows = []
+    rows = fetch_new_user_messages(
+        connection,
+        self_user_id,
+        scan_after,
+        int(args.batch_limit),
+    )
+    for row in rows:
+        seen_rows.append(row)
+        msg_id = seatalk_message_id(row)
+        if not args.force_all and msg_id in processed_ids:
+            continue
+        text = prettify_content(row["c"])
+        if not text and not args.emit_empty_messages:
+            continue
+        previous_rows = fetch_previous_messages(
+            connection,
+            row,
+            int(args.context_message_limit),
+        )
+        reply_to_row = fetch_reply_to_message(connection, row)
+        events.append(
+            build_user_message_event(
+                row,
+                db_path=db_path,
+                db_fingerprint=db_fingerprint,
+                self_user_id=self_user_id,
+                user_map=user_map,
+                conversation_map=conversation_map,
+                previous_rows=previous_rows,
+                reply_to_row=reply_to_row,
+            )
+        )
+    return seen_rows, events
+
+
+def should_retry_with_sqlcipher(error):
+    message = str(error).lower()
+    return (
+        "not a database" in message
+        or "file is encrypted" in message
+        or "malformed" in message
+    )
+
+
 def scan_sources(args, work_dir):
     checkpoint = load_checkpoint(work_dir)
     state = checkpoint.setdefault("seatalk", {})
@@ -565,40 +682,40 @@ def scan_sources(args, work_dir):
 
     try:
         with open_sqlite_readonly(db_path) as connection:
-            rows = fetch_new_user_messages(
+            seen_rows, events = collect_events_from_connection(
                 connection,
-                self_user_id,
-                scan_after,
-                int(args.batch_limit),
+                args,
+                db_path=db_path,
+                db_fingerprint=db_fingerprint,
+                self_user_id=self_user_id,
+                scan_after=scan_after,
+                user_map=user_map,
+                conversation_map=conversation_map,
+                processed_ids=processed_ids,
             )
-            for row in rows:
-                seen_rows.append(row)
-                msg_id = seatalk_message_id(row)
-                if not args.force_all and msg_id in processed_ids:
-                    continue
-                text = prettify_content(row["c"])
-                if not text and not args.emit_empty_messages:
-                    continue
-                previous_rows = fetch_previous_messages(
-                    connection,
-                    row,
-                    int(args.context_message_limit),
-                )
-                reply_to_row = fetch_reply_to_message(connection, row)
-                events.append(
-                    build_user_message_event(
-                        row,
-                        db_path=db_path,
-                        db_fingerprint=db_fingerprint,
-                        self_user_id=self_user_id,
-                        user_map=user_map,
-                        conversation_map=conversation_map,
-                        previous_rows=previous_rows,
-                        reply_to_row=reply_to_row,
-                    )
-                )
     except Exception as error:
-        errors.append(str(error))
+        if not should_retry_with_sqlcipher(error):
+            errors.append(str(error))
+        else:
+            sqlite_key = resolve_sqlcipher_key(args, db_path)
+            if not sqlite_key:
+                errors.append(str(error))
+            else:
+                try:
+                    with open_sqlite_readonly(db_path, sqlite_key=sqlite_key) as connection:
+                        seen_rows, events = collect_events_from_connection(
+                            connection,
+                            args,
+                            db_path=db_path,
+                            db_fingerprint=db_fingerprint,
+                            self_user_id=self_user_id,
+                            scan_after=scan_after,
+                            user_map=user_map,
+                            conversation_map=conversation_map,
+                            processed_ids=processed_ids,
+                        )
+                except Exception as retry_error:
+                    errors.append(str(retry_error))
 
     output_path = write_events(work_dir, events)
     all_seen_for_checkpoint = seen_rows
@@ -753,6 +870,24 @@ def parse_args():
         "--seatalk-main-db",
         default=os.environ.get("RADAR_SEATALK_MAIN_DB", ""),
         help="Path to main_<user_id>.sqlite. Defaults to discovery under seatalk-root.",
+    )
+    parser.add_argument(
+        "--seatalk-resources-dir",
+        default=os.environ.get(
+            "RADAR_SEATALK_RESOURCES_DIR", str(DEFAULT_SEATALK_RESOURCES)
+        ),
+        help="SeaTalk app Resources directory used to derive the SQLCipher key prefix.",
+    )
+    parser.add_argument(
+        "--sqlite-key",
+        default=os.environ.get("RADAR_SEATALK_SQLITE_KEY", ""),
+        help="Optional full SQLCipher key for encrypted SeaTalk SQLite files.",
+    )
+    parser.add_argument(
+        "--disable-sqlcipher",
+        action="store_true",
+        default=env_bool("RADAR_SEATALK_DISABLE_SQLCIPHER", False),
+        help="Disable encrypted DB retry and only use standard sqlite3.",
     )
     parser.add_argument(
         "--self-user-id",

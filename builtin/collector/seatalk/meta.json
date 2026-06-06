@@ -25,6 +25,7 @@
   ],
   "default_config": {
     "seatalk_main_db": "~/Library/Application Support/SeaTalk/main_<user_id>.sqlite",
+    "seatalk_resources_dir": "/Applications/SeaTalk.app/Contents/Resources",
     "scan_interval_seconds": 60,
     "context_message_limit": 3,
     "checkpoint_lookback_seconds": 300,

@@ -33,13 +33,17 @@ select {
 }
 
 .shell {
+  display: flex;
+  flex-direction: column;
   width: min(1180px, calc(100vw - 32px));
+  height: 100vh;
   margin: 0 auto;
   padding: 28px 0 40px;
 }
 
 .topbar {
   display: flex;
+  flex: 0 0 auto;
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
@@ -86,6 +90,7 @@ h1 {
 
 .controls {
   display: grid;
+  flex: 0 0 auto;
   grid-template-columns: minmax(220px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr) 112px auto;
   gap: 12px;
   align-items: end;
@@ -143,6 +148,7 @@ button:hover {
 
 .status-row {
   display: flex;
+  flex: 0 0 auto;
   justify-content: space-between;
   gap: 16px;
   margin: 14px 2px 8px;
@@ -164,8 +170,8 @@ button:hover {
 
 .timeline-shell {
   position: relative;
-  min-height: 420px;
-  max-height: calc(100vh - 230px);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: auto;
   padding: 8px 4px 24px 0;
   scrollbar-color: var(--accent) transparent;
@@ -352,6 +358,7 @@ pre {
 @media (max-width: 820px) {
   .shell {
     width: min(100vw - 20px, 680px);
+    height: auto;
     padding-top: 16px;
   }
 

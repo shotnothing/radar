@@ -32,6 +32,10 @@ main_<local_user_id>.sqlite
 
 The collector should treat the root and database path as configurable. Missing
 SeaTalk storage is not fatal; the collector should report it in heartbeat status.
+SeaTalk's production database may be encrypted. Wingman's reader derives the
+SQLCipher key from the app bundle key prefix plus the local user ID. The Radar
+collector should use a SQLCipher-capable Python module when available, or accept
+a readable/decrypted fixture DB for tests.
 
 ## Collector Identity
 
@@ -58,6 +62,7 @@ Recommended `meta.json` fields:
     "emits": ["collected_data.communication_user_message"],
     "default_config": {
         "scan_interval_seconds": 60,
+        "seatalk_resources_dir": "/Applications/SeaTalk.app/Contents/Resources",
         "context_message_limit": 3,
         "checkpoint_lookback_seconds": 300,
         "initial_lookback_seconds": 86400
