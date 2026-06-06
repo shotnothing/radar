@@ -9,7 +9,7 @@ from pathlib import Path
 
 COLLECTOR_ID = "chrome.browser"
 SEPARATOR = "::"
-DEFAULT_ACTION_BLACKLIST = {"element_focus"}
+DEFAULT_ACTION_BLACKLIST = {"element_focus", "text_selection"}
 
 
 def get_path(value, *path):
