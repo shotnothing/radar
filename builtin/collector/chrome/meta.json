@@ -1,0 +1,40 @@
+{
+  "id": "chrome.extension",
+  "name": "Chrome Collector",
+  "description": "Collects Chrome tab, navigation, and browser user-action observations.",
+  "runtime": {
+    "type": "python",
+    "command": "python3 -m builtin.collector.chrome.cli"
+  },
+  "source": {
+    "type": "browser",
+    "app": "Google Chrome",
+    "bundleId": "com.google.Chrome"
+  },
+  "health": {
+    "url": "http://127.0.0.1:47321/health"
+  },
+  "ingest": {
+    "url": "http://127.0.0.1:47321/event"
+  },
+  "permissions": [
+    "chrome.tabs",
+    "chrome.activeTab",
+    "chrome.webNavigation",
+    "macos.automation.google_chrome"
+  ],
+  "anchors": [
+    "time_interval",
+    "user_action",
+    "content_change",
+    "state_change"
+  ],
+  "emits": [
+    "Observation"
+  ],
+  "privacy": {
+    "redactPII": true,
+    "storeRaw": true,
+    "retentionDays": 7
+  }
+}
