@@ -12,6 +12,7 @@ use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
 const ACTOR_API_PORT: u16 = 47322;
 const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
+const PROCESSOR_APP_PORT: u16 = 5060;
 const PROXY_API_PORT: u16 = 8888;
 const ACTOR_MONITOR_TICK: Duration = Duration::from_secs(1);
 const CHROME_BRIDGE_PORT: u16 = 9223;
@@ -39,6 +40,7 @@ struct ActorRuntimeHandle {
 
 struct ActorRuntimeInner {
     child: Mutex<Option<Child>>,
+    processor_child: Mutex<Option<Child>>,
     inflight_actors: Mutex<HashSet<String>>,
     cooldown_until: Mutex<HashMap<String, Instant>>,
     last_polled_at: Mutex<HashMap<String, Instant>>,
@@ -48,6 +50,7 @@ struct ActorRuntimeInner {
 struct MonitoringStatus {
     running: bool,
     api_url: String,
+    processor_url: String,
     chrome_bridge_url: String,
     work_dir: String,
 }
@@ -57,6 +60,7 @@ impl ActorRuntimeHandle {
         Self {
             inner: Arc::new(ActorRuntimeInner {
                 child: Mutex::new(None),
+                processor_child: Mutex::new(None),
                 inflight_actors: Mutex::new(HashSet::new()),
                 cooldown_until: Mutex::new(HashMap::new()),
                 last_polled_at: Mutex::new(HashMap::new()),
@@ -82,6 +86,7 @@ impl ActorRuntimeHandle {
 
     fn start(&self, collector_meta: &str) -> MonitoringStatus {
         start_actor_runtime_process(self, collector_meta);
+        start_processor_app_process(self);
         self.status()
     }
 
@@ -237,6 +242,7 @@ pub fn run() {
             let actor_runtime = app.state::<ActorRuntimeHandle>().inner().clone();
             let collector_meta = default_collector_meta();
             start_actor_runtime_process(&actor_runtime, &collector_meta);
+            start_processor_app_process(&actor_runtime);
             start_actor_monitor(app.handle().clone(), Arc::downgrade(&actor_runtime.inner));
             start_proxy_api_server();
 
@@ -532,6 +538,10 @@ fn actor_api_url() -> String {
     format!("http://127.0.0.1:{ACTOR_API_PORT}")
 }
 
+fn processor_app_url() -> String {
+    format!("http://127.0.0.1:{PROCESSOR_APP_PORT}")
+}
+
 fn start_proxy_api_server() {
     std::thread::spawn(move || {
         let address = format!("127.0.0.1:{PROXY_API_PORT}");
@@ -819,6 +829,7 @@ fn monitoring_status(runtime: &ActorRuntimeHandle) -> MonitoringStatus {
     MonitoringStatus {
         running: actor_runtime_is_running(runtime),
         api_url: actor_api_url(),
+        processor_url: processor_app_url(),
         chrome_bridge_url: chrome_bridge_url(),
         work_dir: radar_home().display().to_string(),
     }
@@ -1243,6 +1254,14 @@ fn radar_repo_root() -> Option<PathBuf> {
         .map(|path| path.to_path_buf())
 }
 
+fn python_executable(repo_root: &std::path::Path) -> PathBuf {
+    let venv_python = repo_root.join(".venv").join("bin").join("python");
+    if venv_python.exists() {
+        return venv_python;
+    }
+    PathBuf::from("python3")
+}
+
 fn start_actor_runtime_process(runtime: &ActorRuntimeHandle, collector_meta: &str) {
     if actor_runtime_is_running(runtime) {
         return;
@@ -1263,7 +1282,7 @@ fn start_actor_runtime_process(runtime: &ActorRuntimeHandle, collector_meta: &st
     }
 
     let home = radar_home();
-    let child = Command::new("python3")
+    let child = Command::new(python_executable(&repo_root))
         .arg("debug/app.py")
         .arg("--host")
         .arg("127.0.0.1")
@@ -1293,12 +1312,64 @@ fn start_actor_runtime_process(runtime: &ActorRuntimeHandle, collector_meta: &st
     }
 }
 
+fn start_processor_app_process(runtime: &ActorRuntimeHandle) {
+    if processor_app_is_running(runtime) {
+        return;
+    }
+
+    let Some(repo_root) = radar_repo_root() else {
+        eprintln!("radar processor app: could not resolve repo root");
+        return;
+    };
+
+    let mut child_slot = match runtime.inner.processor_child.lock() {
+        Ok(slot) => slot,
+        Err(_) => return,
+    };
+
+    if child_slot.is_some() {
+        return;
+    }
+
+    let home = radar_home();
+    let child = Command::new(python_executable(&repo_root))
+        .arg("builtin/processor/app.py")
+        .arg("--host")
+        .arg("127.0.0.1")
+        .arg("--port")
+        .arg(PROCESSOR_APP_PORT.to_string())
+        .current_dir(&repo_root)
+        .env("RADAR_HOME", &home)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn();
+
+    match child {
+        Ok(process) => {
+            *child_slot = Some(process);
+        }
+        Err(error) => {
+            eprintln!("radar processor app: failed to start processor app: {error}");
+        }
+    }
+}
+
 fn stop_actor_runtime_process(runtime: &ActorRuntimeHandle) {
     stop_actor_runtime_inner(runtime.inner.as_ref());
 }
 
 fn stop_actor_runtime_inner(runtime: &ActorRuntimeInner) {
     let child = match runtime.child.lock() {
+        Ok(mut child_slot) => child_slot.take(),
+        Err(_) => None,
+    };
+
+    if let Some(mut process) = child {
+        let _ = process.kill();
+        let _ = process.wait();
+    }
+
+    let child = match runtime.processor_child.lock() {
         Ok(mut child_slot) => child_slot.take(),
         Err(_) => None,
     };
@@ -1321,6 +1392,27 @@ fn stop_actor_runtime_inner(runtime: &ActorRuntimeInner) {
 
 fn actor_runtime_is_running(runtime: &ActorRuntimeHandle) -> bool {
     let mut child_slot = match runtime.inner.child.lock() {
+        Ok(slot) => slot,
+        Err(_) => return false,
+    };
+
+    let should_clear = match child_slot.as_mut() {
+        Some(process) => match process.try_wait() {
+            Ok(Some(_)) | Err(_) => true,
+            Ok(None) => return true,
+        },
+        None => false,
+    };
+
+    if should_clear {
+        *child_slot = None;
+    }
+
+    false
+}
+
+fn processor_app_is_running(runtime: &ActorRuntimeHandle) -> bool {
+    let mut child_slot = match runtime.inner.processor_child.lock() {
         Ok(slot) => slot,
         Err(_) => return false,
     };

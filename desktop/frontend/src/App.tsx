@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { io } from "socket.io-client";
 import {
   Bell,
   Bot,
@@ -45,6 +46,25 @@ type Suggestion = {
   trigger_id?: string;
 };
 
+type PredictionPattern = {
+  items?: unknown[];
+  support?: number;
+  decayed_count?: number;
+};
+
+type ProcessorPredictionEvent = {
+  id?: string;
+  prediction_id?: string;
+  confidence?: number;
+  transactions_seen?: number;
+  patterns?: PredictionPattern[];
+  payload?: {
+    confidence?: number;
+    transactions_seen?: number;
+    patterns?: PredictionPattern[];
+  };
+};
+
 type SettingsSection = "collector" | "processor" | "actor" | "connection";
 
 type ModuleConfig = {
@@ -66,9 +86,13 @@ type GoogleConnectionStatus = {
 type MonitoringStatus = {
   running: boolean;
   api_url: string;
+  processor_url: string;
   chrome_bridge_url: string;
   work_dir: string;
 };
+
+const PROCESSOR_APP_URL =
+  import.meta.env.VITE_RADAR_PROCESSOR_APP_URL || "http://127.0.0.1:5060";
 
 const settingsTabs: Array<{
   id: SettingsSection;
@@ -197,6 +221,64 @@ function getInitialModuleState() {
   );
 }
 
+function formatPercent(value: number | undefined) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "0%";
+  }
+  return `${Math.round(value * 100)}%`;
+}
+
+function compactPayloadLabel(value: unknown) {
+  const text = String(value ?? "").trim();
+  if (!text) {
+    return "unknown action";
+  }
+  return text.length > 120 ? `${text.slice(0, 117)}...` : text;
+}
+
+function patternLabel(pattern: PredictionPattern) {
+  const items = pattern.items ?? [];
+  if (items.length === 0) {
+    return "unknown action";
+  }
+  return items.map(compactPayloadLabel).join(" -> ");
+}
+
+function processorPredictionToSuggestion(
+  prediction: ProcessorPredictionEvent
+): Suggestion {
+  const payload = prediction.payload ?? {};
+  const confidence = prediction.confidence ?? payload.confidence ?? 0;
+  const transactionsSeen =
+    prediction.transactions_seen ?? payload.transactions_seen ?? 0;
+  const patterns = prediction.patterns ?? payload.patterns ?? [];
+  const patternLines = patterns.slice(0, 3).map((pattern, index) => {
+    const support = formatPercent(pattern.support);
+    const count =
+      typeof pattern.decayed_count === "number"
+        ? `, count ${pattern.decayed_count.toFixed(2)}`
+        : "";
+    return `${index + 1}. ${patternLabel(pattern)} (${support}${count})`;
+  });
+
+  const body = [
+    `Confidence ${formatPercent(confidence)} from ${transactionsSeen.toLocaleString()} learned events.`,
+    patternLines.length > 0
+      ? `Top matches:\n\n${patternLines.join("\n")}`
+      : "No pattern details were included.",
+  ].join("\n\n");
+
+  return {
+    id:
+      prediction.prediction_id ??
+      prediction.id ??
+      `processor-prediction-${Date.now()}`,
+    title: "Suggested next action",
+    body,
+    primary_action: "Got it",
+  };
+}
+
 function AssistantWindow() {
   const [currentSuggestion, setCurrentSuggestion] = useState<Suggestion | null>(
     null
@@ -205,29 +287,53 @@ function AssistantWindow() {
   const currentSuggestionRef = useRef<Suggestion | null>(null);
   const queueRef = useRef<Suggestion[]>([]);
 
+  async function enqueueSuggestion(suggestion: Suggestion) {
+    const window = getCurrentWindow();
+
+    if (currentSuggestionRef.current) {
+      setQueue((pending) => {
+        const nextQueue = [...pending, suggestion];
+        queueRef.current = nextQueue;
+        return nextQueue;
+      });
+    } else {
+      activateSuggestion(suggestion);
+    }
+
+    await window.show();
+  }
+
   useEffect(() => {
     const unlisten = listen<Suggestion>(
       "radar://mock-suggestion",
       async (event) => {
-        const suggestion = event.payload;
-        const window = getCurrentWindow();
-
-        if (currentSuggestionRef.current) {
-          setQueue((pending) => {
-            const nextQueue = [...pending, suggestion];
-            queueRef.current = nextQueue;
-            return nextQueue;
-          });
-        } else {
-          activateSuggestion(suggestion);
-        }
-
-        await window.show();
+        await enqueueSuggestion(event.payload);
       }
     );
 
     return () => {
       void unlisten.then((dispose) => dispose());
+    };
+  }, []);
+
+  useEffect(() => {
+    const socket = io(PROCESSOR_APP_URL, {
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+    });
+
+    socket.on("prediction_generated", async (prediction: ProcessorPredictionEvent) => {
+      await enqueueSuggestion(processorPredictionToSuggestion(prediction));
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Failed to connect to processor app:", error.message);
+    });
+
+    return () => {
+      socket.disconnect();
     };
   }, []);
 
