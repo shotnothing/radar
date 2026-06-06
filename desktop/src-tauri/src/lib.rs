@@ -1,7 +1,7 @@
 use std::{
     collections::{HashMap, HashSet},
     io::{Read, Write},
-    net::TcpListener,
+    net::{TcpListener, TcpStream},
     path::PathBuf,
     process::{Child, Command, Stdio},
     sync::{Arc, Mutex, Weak},
@@ -12,15 +12,19 @@ use tauri::{Emitter, Manager};
 
 const ACTOR_API_PORT: u16 = 47322;
 const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
+const PROXY_API_PORT: u16 = 8888;
 const ACTOR_MONITOR_TICK: Duration = Duration::from_secs(1);
 const DEFAULT_ACTOR_POLL_INTERVAL_SECONDS: u64 = 10;
 const DEFAULT_ACTOR_SUGGESTION_COOLDOWN_SECONDS: u64 = 45;
 const GOOGLE_OAUTH_AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_OAUTH_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
+const CALENDAR_API_BASE_URL: &str = "https://www.googleapis.com/calendar/v3";
+const CALENDAR_READONLY_SCOPE: &str = "https://www.googleapis.com/auth/calendar.readonly";
+const GMAIL_API_BASE_URL: &str = "https://gmail.googleapis.com/gmail/v1";
 const GMAIL_PROFILE_URL: &str = "https://gmail.googleapis.com/gmail/v1/users/me/profile";
 const GMAIL_READONLY_SCOPE: &str = "https://www.googleapis.com/auth/gmail.readonly";
 const GOOGLE_CONNECTION_SCOPES: &str =
-    "openid email https://www.googleapis.com/auth/gmail.readonly";
+    "openid email https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly";
 const GOOGLE_OAUTH_TIMEOUT: Duration = Duration::from_secs(180);
 
 #[derive(Clone)]
@@ -207,6 +211,7 @@ pub fn run() {
             let actor_runtime = app.state::<ActorRuntimeHandle>().inner().clone();
             start_actor_runtime_process(&actor_runtime);
             start_actor_monitor(app.handle().clone(), Arc::downgrade(&actor_runtime.inner));
+            start_proxy_api_server();
 
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -315,7 +320,7 @@ fn connect_google_account() -> Result<GoogleConnectionStatus, String> {
     let authorization_code = wait_for_google_oauth_code(listener, &state)?;
     let token = exchange_google_oauth_code(&config, &redirect_uri, &authorization_code)?;
     let scopes = google_token_scopes(token.scope.as_deref());
-    ensure_gmail_scope_granted(&scopes)?;
+    ensure_required_google_scopes_granted(&scopes)?;
     let profile = fetch_gmail_profile(&token.access_token)?;
 
     let connection = GoogleConnection {
@@ -461,6 +466,285 @@ fn actor_api_url() -> String {
     format!("http://127.0.0.1:{ACTOR_API_PORT}")
 }
 
+fn start_proxy_api_server() {
+    std::thread::spawn(move || {
+        let address = format!("127.0.0.1:{PROXY_API_PORT}");
+        let listener = match TcpListener::bind(&address) {
+            Ok(listener) => listener,
+            Err(error) => {
+                eprintln!("radar proxy api: failed to bind {address}: {error}");
+                return;
+            }
+        };
+        let client = reqwest::blocking::Client::new();
+
+        for stream in listener.incoming() {
+            match stream {
+                Ok(stream) => {
+                    let client = client.clone();
+                    std::thread::spawn(move || handle_proxy_api_connection(stream, client));
+                }
+                Err(error) => {
+                    eprintln!("radar proxy api: failed to accept connection: {error}");
+                }
+            }
+        }
+    });
+}
+
+struct ProxyHttpRequest {
+    method: String,
+    target: String,
+    headers: HashMap<String, String>,
+    body: Vec<u8>,
+}
+
+fn handle_proxy_api_connection(mut stream: TcpStream, client: reqwest::blocking::Client) {
+    let _ = stream.set_read_timeout(Some(Duration::from_secs(8)));
+    let _ = stream.set_write_timeout(Some(Duration::from_secs(8)));
+
+    match read_proxy_http_request(&mut stream)
+        .and_then(|request| proxy_api_response(&client, request))
+    {
+        Ok(response) => {
+            let _ = stream.write_all(&response);
+        }
+        Err(error) => {
+            let response = proxy_json_response(
+                500,
+                serde_json::json!({
+                    "ok": false,
+                    "error": error,
+                })
+                .to_string()
+                .as_bytes(),
+            );
+            let _ = stream.write_all(&response);
+        }
+    }
+}
+
+fn read_proxy_http_request(stream: &mut TcpStream) -> Result<ProxyHttpRequest, String> {
+    let mut buffer = Vec::new();
+    let header_end = loop {
+        let mut chunk = [0_u8; 4096];
+        let size = stream
+            .read(&mut chunk)
+            .map_err(|error| format!("failed to read proxy request: {error}"))?;
+        if size == 0 {
+            return Err("proxy request was empty".to_string());
+        }
+        buffer.extend_from_slice(&chunk[..size]);
+
+        if let Some(index) = find_header_end(&buffer) {
+            break index;
+        }
+        if buffer.len() > 64 * 1024 {
+            return Err("proxy request headers are too large".to_string());
+        }
+    };
+
+    let header_bytes = &buffer[..header_end];
+    let header_text = String::from_utf8_lossy(header_bytes);
+    let mut lines = header_text.split("\r\n");
+    let request_line = lines
+        .next()
+        .ok_or_else(|| "proxy request line is missing".to_string())?;
+    let mut request_parts = request_line.split_whitespace();
+    let method = request_parts
+        .next()
+        .ok_or_else(|| "proxy request method is missing".to_string())?
+        .to_string();
+    let target = request_parts
+        .next()
+        .ok_or_else(|| "proxy request target is missing".to_string())?
+        .to_string();
+
+    let mut headers = HashMap::new();
+    for line in lines {
+        if line.is_empty() {
+            continue;
+        }
+        if let Some((name, value)) = line.split_once(':') {
+            headers.insert(name.trim().to_ascii_lowercase(), value.trim().to_string());
+        }
+    }
+
+    let content_length = headers
+        .get("content-length")
+        .and_then(|value| value.parse::<usize>().ok())
+        .unwrap_or(0);
+    let body_start = header_end + 4;
+    let mut body = buffer.get(body_start..).unwrap_or_default().to_vec();
+
+    while body.len() < content_length {
+        let mut chunk = vec![0_u8; content_length - body.len()];
+        let size = stream
+            .read(&mut chunk)
+            .map_err(|error| format!("failed to read proxy request body: {error}"))?;
+        if size == 0 {
+            break;
+        }
+        body.extend_from_slice(&chunk[..size]);
+    }
+    body.truncate(content_length);
+
+    Ok(ProxyHttpRequest {
+        method,
+        target,
+        headers,
+        body,
+    })
+}
+
+fn find_header_end(buffer: &[u8]) -> Option<usize> {
+    buffer.windows(4).position(|window| window == b"\r\n\r\n")
+}
+
+fn proxy_api_response(
+    client: &reqwest::blocking::Client,
+    request: ProxyHttpRequest,
+) -> Result<Vec<u8>, String> {
+    if request.method.eq_ignore_ascii_case("OPTIONS") {
+        return Ok(proxy_empty_response(204));
+    }
+
+    if request.target.starts_with("/api/google_gmail") {
+        return proxy_google_api_response(
+            client,
+            request,
+            "/api/google_gmail",
+            GMAIL_API_BASE_URL,
+            GMAIL_READONLY_SCOPE,
+            "Gmail",
+        );
+    }
+
+    if request.target.starts_with("/api/google_calendar") {
+        return proxy_google_api_response(
+            client,
+            request,
+            "/api/google_calendar",
+            CALENDAR_API_BASE_URL,
+            CALENDAR_READONLY_SCOPE,
+            "Google Calendar",
+        );
+    }
+
+    Ok(proxy_json_response(
+        404,
+        br#"{"ok":false,"error":"unknown proxy api"}"#,
+    ))
+}
+
+fn proxy_google_api_response(
+    client: &reqwest::blocking::Client,
+    request: ProxyHttpRequest,
+    local_prefix: &str,
+    upstream_base_url: &str,
+    required_scope: &str,
+    api_label: &str,
+) -> Result<Vec<u8>, String> {
+    let upstream_url =
+        match google_api_upstream_url(&request.target, local_prefix, upstream_base_url) {
+            Ok(url) => url,
+            Err(error) => {
+                return Ok(proxy_json_response(
+                    400,
+                    serde_json::json!({
+                        "ok": false,
+                        "error": error,
+                    })
+                    .to_string()
+                    .as_bytes(),
+                ));
+            }
+        };
+    let access_token = google_access_token_for_proxy(required_scope, api_label)?;
+    let method = reqwest::Method::from_bytes(request.method.as_bytes())
+        .map_err(|error| format!("unsupported proxy method: {error}"))?;
+
+    let mut builder = client
+        .request(method, upstream_url)
+        .bearer_auth(access_token);
+    if let Some(content_type) = request.headers.get("content-type") {
+        builder = builder.header(reqwest::header::CONTENT_TYPE, content_type);
+    }
+    if let Some(accept) = request.headers.get("accept") {
+        builder = builder.header(reqwest::header::ACCEPT, accept);
+    }
+    if !request.body.is_empty() {
+        builder = builder.body(request.body);
+    }
+
+    let response = builder
+        .send()
+        .map_err(|error| format!("failed to call {api_label} API: {error}"))?;
+    let status = response.status().as_u16();
+    let content_type = response
+        .headers()
+        .get(reqwest::header::CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .unwrap_or("application/json")
+        .to_string();
+    let body = response
+        .bytes()
+        .map_err(|error| format!("failed to read {api_label} API response: {error}"))?;
+
+    Ok(proxy_response(status, &content_type, body.as_ref()))
+}
+
+fn google_api_upstream_url(
+    target: &str,
+    local_prefix: &str,
+    upstream_base_url: &str,
+) -> Result<String, String> {
+    let suffix = target
+        .strip_prefix(&format!("{local_prefix}/"))
+        .or_else(|| target.strip_prefix(local_prefix))
+        .unwrap_or_default()
+        .trim_start_matches('/');
+
+    if suffix.is_empty() {
+        return Err(format!("missing Google API path after {local_prefix}/"));
+    }
+
+    Ok(format!("{upstream_base_url}/{suffix}"))
+}
+
+fn proxy_empty_response(status: u16) -> Vec<u8> {
+    proxy_response(status, "text/plain", &[])
+}
+
+fn proxy_json_response(status: u16, body: &[u8]) -> Vec<u8> {
+    proxy_response(status, "application/json", body)
+}
+
+fn proxy_response(status: u16, content_type: &str, body: &[u8]) -> Vec<u8> {
+    let reason = match status {
+        200 => "OK",
+        201 => "Created",
+        204 => "No Content",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        403 => "Forbidden",
+        404 => "Not Found",
+        405 => "Method Not Allowed",
+        429 => "Too Many Requests",
+        500 => "Internal Server Error",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        _ => "OK",
+    };
+    let headers = format!(
+        "HTTP/1.1 {status} {reason}\r\nContent-Type: {content_type}\r\nContent-Length: {}\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Accept\r\nConnection: close\r\n\r\n",
+        body.len()
+    );
+    let mut response = headers.into_bytes();
+    response.extend_from_slice(body);
+    response
+}
+
 fn radar_home() -> PathBuf {
     if let Some(value) = std::env::var_os("RADAR_HOME") {
         return PathBuf::from(value);
@@ -493,14 +777,23 @@ fn google_token_scopes(scope: Option<&str>) -> Vec<String> {
         .collect()
 }
 
-fn ensure_gmail_scope_granted(scopes: &[String]) -> Result<(), String> {
-    if scopes.iter().any(|scope| scope == GMAIL_READONLY_SCOPE) {
+fn ensure_google_scope_granted(
+    scopes: &[String],
+    required_scope: &str,
+    api_label: &str,
+) -> Result<(), String> {
+    if scopes.iter().any(|scope| scope == required_scope) {
         return Ok(());
     }
 
     Err(format!(
-        "Google account connected, but Gmail read-only permission was not granted. Add {GMAIL_READONLY_SCOPE} to your Google OAuth consent screen scopes, make sure the Gmail API is enabled, then connect again."
+        "Google account connected, but {api_label} permission was not granted. Add {required_scope} to your Google OAuth consent screen scopes, make sure the {api_label} API is enabled, then connect again."
     ))
+}
+
+fn ensure_required_google_scopes_granted(scopes: &[String]) -> Result<(), String> {
+    ensure_google_scope_granted(scopes, GMAIL_READONLY_SCOPE, "Gmail")?;
+    ensure_google_scope_granted(scopes, CALENDAR_READONLY_SCOPE, "Google Calendar")
 }
 
 fn google_oauth_config() -> Result<GoogleOAuthConfig, String> {
@@ -736,6 +1029,78 @@ fn fetch_gmail_profile(access_token: &str) -> Result<GmailProfileResponse, Strin
     response
         .json::<GmailProfileResponse>()
         .map_err(|error| format!("failed to parse Gmail profile: {error}"))
+}
+
+fn google_access_token_for_proxy(required_scope: &str, api_label: &str) -> Result<String, String> {
+    let Some(mut connection) = read_google_connection()? else {
+        return Err("Google account is not connected".to_string());
+    };
+
+    ensure_google_scope_granted(&connection.scopes, required_scope, api_label)?;
+
+    let expires_soon = connection
+        .expires_at
+        .map(|expires_at| expires_at <= current_unix_seconds() + 60)
+        .unwrap_or(false);
+
+    if expires_soon {
+        refresh_google_connection_token(&mut connection, required_scope, api_label)?;
+        write_google_connection(&connection)?;
+    }
+
+    Ok(connection.access_token)
+}
+
+fn refresh_google_connection_token(
+    connection: &mut GoogleConnection,
+    required_scope: &str,
+    api_label: &str,
+) -> Result<(), String> {
+    let refresh_token = connection.refresh_token.clone().ok_or_else(|| {
+        "Google access token expired and no refresh token is available".to_string()
+    })?;
+    let config = google_oauth_config()?;
+    let mut form = vec![
+        ("client_id", config.client_id.as_str()),
+        ("grant_type", "refresh_token"),
+        ("refresh_token", refresh_token.as_str()),
+    ];
+
+    if let Some(secret) = config.client_secret.as_deref() {
+        form.push(("client_secret", secret));
+    }
+
+    let response = reqwest::blocking::Client::new()
+        .post(GOOGLE_OAUTH_TOKEN_URL)
+        .form(&form)
+        .send()
+        .map_err(|error| format!("failed to refresh Google token: {error}"))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let body = response.text().unwrap_or_default();
+        return Err(format!(
+            "Google token refresh failed with HTTP {status}: {body}"
+        ));
+    }
+
+    let token = response
+        .json::<GoogleTokenResponse>()
+        .map_err(|error| format!("failed to parse Google token refresh response: {error}"))?;
+    connection.access_token = token.access_token;
+    connection.expires_at = token
+        .expires_in
+        .map(|seconds| current_unix_seconds() + seconds);
+
+    if let Some(refresh_token) = token.refresh_token {
+        connection.refresh_token = Some(refresh_token);
+    }
+    if token.scope.is_some() {
+        connection.scopes = google_token_scopes(token.scope.as_deref());
+        ensure_google_scope_granted(&connection.scopes, required_scope, api_label)?;
+    }
+
+    Ok(())
 }
 
 fn read_google_connection() -> Result<Option<GoogleConnection>, String> {
