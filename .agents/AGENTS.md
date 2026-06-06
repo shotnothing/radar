@@ -24,6 +24,8 @@ The desktop app is an interface and capability surface. It should not be the onl
 - `radar/desktop/`: desktop app shell and UI surfaces.
 - `radar/engine/`: Python coordination process.
 - `radar/builtin/collector/`: built-in collector contracts and implementations.
+- `radar/builtin/collector/meta_json_spec.md`: collector discovery and
+  independent-run metadata contract.
 - `radar/builtin/processor/`: built-in processors for filtering, normalization, prediction, and learning.
 - `radar/.agents/`: coordination notes for concurrent agents.
 
@@ -39,6 +41,8 @@ Collector -> Observation -> NormalizedAction -> PredictedNextAction
 Collectors decide when and what to capture. Processors decide what is useful, normalize raw events, infer patterns, and learn from feedback. Actors decide how to safely offer or execute a candidate action.
 
 Use `radar/builtin/collector/spec.md` as the current source of truth for the event and prediction shapes until formal package-level schemas exist.
+Use `radar/builtin/collector/meta_json_spec.md` as the source of truth for
+collector `meta.json` files used to discover and run collectors individually.
 
 ## Module Responsibilities
 
@@ -95,6 +99,8 @@ Builtin should avoid:
 Prefer explicit contracts between modules.
 
 - Collectors emit `Observation`.
+- Collectors include `meta.json` metadata with a stable ID, runtime command,
+  permissions, capabilities, anchors, emitted shapes, and default config.
 - Processors produce `NormalizedAction`, `PredictionSet`, and `UserSuggestion`.
 - Actors consume approved or eligible `PredictedNextAction` values and return execution status.
 - Desktop sends feedback as `UserFeedback`.
