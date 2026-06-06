@@ -266,6 +266,8 @@ class ActorRuntimeTest(unittest.TestCase):
             self.assertIn("danger-full-access", args)
             self.assertIn("exec", args)
             self.assertGreater(args.index("exec"), args.index("danger-full-access"))
+            self.assertIn("--ignore-user-config", args)
+            self.assertGreater(args.index("--ignore-user-config"), args.index("exec"))
             self.assertIn("Do not type a reply body and do not click Send.", args[-1])
             self.assertIn(payload["action_context"]["url"], args[-1])
 

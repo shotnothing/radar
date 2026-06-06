@@ -106,7 +106,9 @@ def run_codex_reply_action(url: str) -> dict[str, Any]:
 def main() -> None:
     payload = json.load(sys.stdin)
     action_context = payload.get("action_context") or {}
-    url = str(action_context.get("url") or "")
+    browser = payload.get("browser") or {}
+    active_tab = browser.get("active_tab") or {}
+    url = str(action_context.get("url") or active_tab.get("url") or "")
     log_context = {
         "trigger_id": payload.get("trigger_id", ""),
         "url": url,
