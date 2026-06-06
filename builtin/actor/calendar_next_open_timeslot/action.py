@@ -6,13 +6,55 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import traceback
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 
 DEFAULT_TIMEOUT_SECONDS = 300
+DEFAULT_LOG_FILE_NAME = "action.log"
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def action_log_path() -> Path:
+    configured = os.environ.get("RADAR_CALENDAR_ACTION_LOG", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    actor_dir = os.environ.get("RADAR_ACTOR_DIR", "").strip()
+    root = Path(actor_dir).expanduser() if actor_dir else Path(__file__).resolve().parent
+    return root / DEFAULT_LOG_FILE_NAME
+
+
+def append_action_log(event: str, fields: dict[str, Any] | None = None) -> None:
+    entry = {
+        "timestamp": utc_now(),
+        "event": event,
+        **(fields or {}),
+    }
+    try:
+        path = action_log_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(entry, ensure_ascii=True, sort_keys=True) + "\n")
+    except Exception:
+        pass
+
+
+def log_context_from_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    action_context = payload.get("action_context") or {}
+    browser = payload.get("browser") or {}
+    active_tab = browser.get("active_tab") or {}
+    return {
+        "trigger_id": payload.get("trigger_id", ""),
+        "url": action_context.get("url") or active_tab.get("url") or "",
+        "title": active_tab.get("title") or "",
+    }
 
 
 def build_prompt(payload: dict[str, Any]) -> str:
@@ -163,21 +205,48 @@ def post_view(markdown: str) -> dict[str, Any] | None:
 
 def main() -> None:
     payload = json.load(sys.stdin)
-    prompt = build_prompt(payload)
-    result = run_codex(prompt)
-    if result.get("answer"):
-        result["view_result"] = post_view(str(result["answer"]))
+    log_context = log_context_from_payload(payload)
+    append_action_log("triggered", log_context)
+    try:
+        prompt = build_prompt(payload)
+        result = run_codex(prompt)
+        if result.get("answer"):
+            result["view_result"] = post_view(str(result["answer"]))
 
-    print(
-        json.dumps(
+        output = {
+            "success": bool(result.get("success")),
+            "message": result.get("message", ""),
+            "answer": result.get("answer", ""),
+            "codex_result": result,
+        }
+        append_action_log(
+            "completed",
             {
-                "success": bool(result.get("success")),
-                "message": result.get("message", ""),
-                "answer": result.get("answer", ""),
-                "codex_result": result,
-            }
+                **log_context,
+                "success": output["success"],
+                "message": output["message"],
+                "exit_code": result.get("exit_code"),
+                "error": result.get("error", "") or result.get("stderr", ""),
+            },
         )
-    )
+    except Exception as error:
+        output = {
+            "success": False,
+            "message": "Calendar open timeslot action failed.",
+            "answer": "",
+            "error": str(error),
+        }
+        append_action_log(
+            "error",
+            {
+                **log_context,
+                "success": False,
+                "error": str(error),
+                "traceback": traceback.format_exc(),
+            },
+        )
+
+    print(json.dumps(output))
 
 
 if __name__ == "__main__":

@@ -3,11 +3,8 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
-<<<<<<< Updated upstream
-=======
 import stat
 import subprocess
->>>>>>> Stashed changes
 import tempfile
 import unittest
 from pathlib import Path
@@ -221,6 +218,7 @@ class ActorRuntimeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             fake_codex = Path(tmp) / "codex"
             captured_args = Path(tmp) / "args.json"
+            log_path = Path(tmp) / "gmail_reply_action.log"
             fake_codex.write_text(
                 "\n".join(
                     [
@@ -240,6 +238,7 @@ class ActorRuntimeTest(unittest.TestCase):
             }
             env = os.environ.copy()
             env["RADAR_CODEX_BIN"] = str(fake_codex)
+            env["RADAR_GMAIL_REPLY_ACTION_LOG"] = str(log_path)
             result = subprocess.run(
                 ["python3", "builtin/actor/gmail_reply_email/action.py"],
                 input=json.dumps(payload),
@@ -261,6 +260,15 @@ class ActorRuntimeTest(unittest.TestCase):
             self.assertIn("danger-full-access", args)
             self.assertIn("Do not type a reply body and do not click Send.", args[-1])
             self.assertIn(payload["action_context"]["url"], args[-1])
+
+            log_entries = [
+                json.loads(line)
+                for line in log_path.read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual([entry["event"] for entry in log_entries], ["triggered", "completed"])
+            self.assertEqual(log_entries[0]["url"], payload["action_context"]["url"])
+            self.assertTrue(log_entries[1]["success"])
+            self.assertEqual(log_entries[1]["returncode"], 0)
 
     def test_calendar_actor_should_trigger_on_calendar_week_view(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -306,6 +314,7 @@ class ActorRuntimeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             fake_codex = Path(tmp) / "codex"
             captured_args = Path(tmp) / "args.json"
+            log_path = Path(tmp) / "calendar_action.log"
             fake_codex.write_text(
                 "\n".join(
                     [
@@ -334,6 +343,7 @@ class ActorRuntimeTest(unittest.TestCase):
             env = os.environ.copy()
             env["RADAR_CODEX_BIN"] = str(fake_codex)
             env["RADAR_API_URL"] = ""
+            env["RADAR_CALENDAR_ACTION_LOG"] = str(log_path)
             result = subprocess.run(
                 ["python3", "builtin/actor/calendar_next_open_timeslot/action.py"],
                 input=json.dumps(payload),
@@ -358,6 +368,15 @@ class ActorRuntimeTest(unittest.TestCase):
             self.assertIn("find my next open timeslot", args[-1])
             self.assertIn("Do not create, edit, delete", args[-1])
             self.assertIn(payload["action_context"]["url"], args[-1])
+
+            log_entries = [
+                json.loads(line)
+                for line in log_path.read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual([entry["event"] for entry in log_entries], ["triggered", "completed"])
+            self.assertEqual(log_entries[0]["url"], payload["action_context"]["url"])
+            self.assertTrue(log_entries[1]["success"])
+            self.assertEqual(log_entries[1]["exit_code"], 0)
 
     def test_event_name_filter_requires_matching_trigger_event(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

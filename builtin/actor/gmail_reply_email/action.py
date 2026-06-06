@@ -4,10 +4,42 @@ import json
 import os
 import subprocess
 import sys
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 
 DEFAULT_CODEX_TIMEOUT_SECONDS = 120
+DEFAULT_LOG_FILE_NAME = "action.log"
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def action_log_path() -> Path:
+    configured = os.environ.get("RADAR_GMAIL_REPLY_ACTION_LOG", "").strip()
+    if configured:
+        return Path(configured).expanduser()
+    actor_dir = os.environ.get("RADAR_ACTOR_DIR", "").strip()
+    root = Path(actor_dir).expanduser() if actor_dir else Path(__file__).resolve().parent
+    return root / DEFAULT_LOG_FILE_NAME
+
+
+def append_action_log(event: str, fields: dict[str, Any] | None = None) -> None:
+    entry = {
+        "timestamp": utc_now(),
+        "event": event,
+        **(fields or {}),
+    }
+    try:
+        path = action_log_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(entry, ensure_ascii=True, sort_keys=True) + "\n")
+    except Exception:
+        pass
 
 
 def build_codex_prompt(url: str) -> str:
@@ -75,17 +107,46 @@ def main() -> None:
     payload = json.load(sys.stdin)
     action_context = payload.get("action_context") or {}
     url = str(action_context.get("url") or "")
-    result = run_codex_reply_action(url)
-    success = bool(result.get("success"))
-    print(
-        json.dumps(
+    log_context = {
+        "trigger_id": payload.get("trigger_id", ""),
+        "url": url,
+    }
+    append_action_log("triggered", log_context)
+    try:
+        result = run_codex_reply_action(url)
+        success = bool(result.get("success"))
+        output = {
+            "success": success,
+            "message": "Opened Gmail reply editor." if success else "Failed to open Gmail reply editor.",
+            "codex_result": result,
+        }
+        append_action_log(
+            "completed",
             {
+                **log_context,
                 "success": success,
-                "message": "Opened Gmail reply editor." if success else "Failed to open Gmail reply editor.",
-                "codex_result": result,
-            }
+                "message": output["message"],
+                "returncode": result.get("returncode"),
+                "error": result.get("stderr", ""),
+            },
         )
-    )
+    except Exception as error:
+        output = {
+            "success": False,
+            "message": "Gmail reply action failed.",
+            "error": str(error),
+        }
+        append_action_log(
+            "error",
+            {
+                **log_context,
+                "success": False,
+                "error": str(error),
+                "traceback": traceback.format_exc(),
+            },
+        )
+
+    print(json.dumps(output))
 
 
 if __name__ == "__main__":
