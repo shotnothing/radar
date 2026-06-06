@@ -3,7 +3,6 @@ import os
 import socket
 import subprocess
 import sys
-import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -38,10 +37,21 @@ def wait_for_state(port, predicate, timeout, description):
     raise RuntimeError(f"timed out waiting for {description}; last_state={last_state}")
 
 
-def find_jsonl(radar_home):
-    files = sorted(Path(radar_home).glob("collectors/builtin_sample/**/*.jsonl"))
+def resolve_radar_home():
+    configured = os.environ.get("RADAR_HOME", "~/.radar")
+    return Path(os.path.expandvars(configured)).expanduser().resolve()
+
+
+def find_jsonl(radar_home, started_at):
+    files = sorted(
+        path
+        for path in Path(radar_home).glob("collectors/builtin_sample/**/*.jsonl")
+        if path.stat().st_mtime >= started_at
+    )
     if not files:
-        raise RuntimeError(f"sample collector did not write JSONL under {radar_home}")
+        raise RuntimeError(
+            f"sample collector did not write new JSONL under RADAR_HOME={radar_home}"
+        )
     return files[-1]
 
 
@@ -72,62 +82,65 @@ def terminate(process):
 
 def main():
     port = free_port()
-    with tempfile.TemporaryDirectory(prefix="radar-sample-test-") as radar_home:
-        env = os.environ.copy()
-        env["RADAR_HOME"] = radar_home
-        env["RADAR_HOST"] = "127.0.0.1"
-        env["RADAR_PORT"] = str(port)
-        env["RADAR_COORDINATOR_URL"] = f"http://127.0.0.1:{port}"
-        env["RADAR_SAMPLE_COLLECTOR_DURATION"] = "3"
-        env["RADAR_SAMPLE_COLLECTOR_HEARTBEAT_INTERVAL"] = "1"
+    radar_home = resolve_radar_home()
+    started_at = time.time()
 
-        process = subprocess.Popen(
-            [
-                sys.executable,
-                "debug/app.py",
-                "--host",
-                "127.0.0.1",
-                "--port",
-                str(port),
-                "--collector-meta",
-                "builtin/collector/sample/meta.json",
-            ],
-            cwd=REPO_ROOT,
-            env=env,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+    env = os.environ.copy()
+    env["RADAR_HOME"] = str(radar_home)
+    env["RADAR_HOST"] = "127.0.0.1"
+    env["RADAR_PORT"] = str(port)
+    env["RADAR_COORDINATOR_URL"] = f"http://127.0.0.1:{port}"
+    env["RADAR_SAMPLE_COLLECTOR_DURATION"] = "3"
+    env["RADAR_SAMPLE_COLLECTOR_HEARTBEAT_INTERVAL"] = "1"
+
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "debug/app.py",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--collector-meta",
+            "builtin/collector/sample/meta.json",
+        ],
+        cwd=REPO_ROOT,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    try:
+        wait_for_state(port, lambda state: True, 10, "debug coordinator")
+        registered = wait_for_state(
+            port,
+            lambda state: any(
+                entry["id"] == "builtin.sample" for entry in state["collector"]
+            ),
+            10,
+            "sample collector registration",
         )
-
-        try:
-            wait_for_state(port, lambda state: True, 10, "debug coordinator")
-            registered = wait_for_state(
-                port,
-                lambda state: any(
-                    entry["id"] == "builtin.sample" for entry in state["collector"]
-                ),
-                10,
-                "sample collector registration",
-            )
-            work_dir = registered["collector"][0]["work_dir"]
-            sample_path = find_jsonl(radar_home)
-            event = validate_jsonl(sample_path)
-            wait_for_state(
-                port,
-                lambda state: not state["collector"],
-                10,
-                "sample collector shutdown",
-            )
-            print(f"registered collector: builtin.sample")
-            print(f"collector work_dir: {work_dir}")
-            print(f"sample jsonl: {sample_path}")
-            print(f"sample event id: {event['id']}")
-        finally:
-            terminate(process)
-            output = process.stdout.read() if process.stdout else ""
-            if process.returncode not in (0, -15, None):
-                print(output)
-                raise RuntimeError(f"debug coordinator exited with {process.returncode}")
+        work_dir = registered["collector"][0]["work_dir"]
+        sample_path = find_jsonl(radar_home, started_at)
+        event = validate_jsonl(sample_path)
+        wait_for_state(
+            port,
+            lambda state: not state["collector"],
+            10,
+            "sample collector shutdown",
+        )
+        print(f"RADAR_HOME: {radar_home}")
+        print(f"registered collector: builtin.sample")
+        print(f"collector work_dir: {work_dir}")
+        print(f"sample jsonl: {sample_path}")
+        print(f"sample event id: {event['id']}")
+    finally:
+        terminate(process)
+        output = process.stdout.read() if process.stdout else ""
+        if process.returncode not in (0, -15, None):
+            print(output)
+            raise RuntimeError(f"debug coordinator exited with {process.returncode}")
 
 
 if __name__ == "__main__":
