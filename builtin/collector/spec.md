@@ -2,20 +2,23 @@
 // Core Concept
 // ======================================================
 //
-// Collector -> Observation
+// Collector -> Observation -> NormalizedAction -> PredictedNextAction
+//           -> UserSuggestion -> UserFeedback
 //
 // Collector decides WHEN to capture using Anchors.
-// Processor decides WHAT is useful.
+// Processor decides WHAT is useful, normalizes noisy input,
+// predicts the likely next action, and learns from user feedback.
 //
 // Example:
 // - Every 5s
 // - User clicked
 // - URL changed
-// - Telegram message received
+// - SeaTalk message received
 // - Active app changed
 // - File modified
 //
 // Each capture produces an Observation.
+// Each useful observation can produce one or more NormalizedActions.
 //
 // ======================================================
 
@@ -26,6 +29,14 @@ export type JsonValue =
   | null
   | JsonValue[]
   | { [key: string]: JsonValue };
+
+export type ISODateTimeString = string;
+
+// 0.0 to 1.0.
+export type ConfidenceScore = number;
+
+// Higher values make an action more likely to be suggested again.
+export type PriorityScore = number;
 
 // ======================================================
 // Collector
@@ -86,7 +97,7 @@ export interface CollectorHealth {
 
   message?: string;
 
-  lastSuccessfulCollectionAt?: string;
+  lastSuccessfulCollectionAt?: ISODateTimeString;
 }
 
 // ======================================================
@@ -108,7 +119,7 @@ export interface Anchor {
 
   name: string;
 
-  occurredAt: string;
+  occurredAt: ISODateTimeString;
 
   target?: {
     app?: string;
@@ -210,9 +221,9 @@ export interface SourceInfo {
 // ======================================================
 
 export interface TimeInfo {
-  observedAt: string;
+  observedAt: ISODateTimeString;
 
-  eventTime?: string;
+  eventTime?: ISODateTimeString;
 
   durationMs?: number;
 }
@@ -277,7 +288,12 @@ export interface ContextInfo {
     | "sent"
     | "received"
     | "opened"
-    | "closed";
+    | "closed"
+    | "searched"
+    | "submitted"
+    | "selected"
+    | "dismissed"
+    | "edited";
 
   nearbyEvents?: string[];
 }
@@ -307,9 +323,9 @@ export interface ArtifactRef {
 
   hash?: string;
 
-  createdAt?: string;
+  createdAt?: ISODateTimeString;
 
-  modifiedAt?: string;
+  modifiedAt?: ISODateTimeString;
 
   extracted?: {
     text?: string;
@@ -342,6 +358,26 @@ export interface PrivacyInfo {
 
   redacted?: boolean;
 
+  rawContentStored?: boolean;
+
+  redactionStrategy?:
+    | "none"
+    | "mask"
+    | "hash"
+    | "drop"
+    | "summarize";
+
+  retentionDays?: number;
+
+  allowedUses?: Array<
+    | "collection"
+    | "normalization"
+    | "prediction"
+    | "user_feedback_learning"
+    | "debugging"
+    | "training"
+  >;
+
   permissionScope: string[];
 }
 
@@ -350,7 +386,7 @@ export interface PrivacyInfo {
 // ======================================================
 
 export interface QualityInfo {
-  confidence: number;
+  confidence: ConfidenceScore;
 
   completeness: "partial" | "full";
 
@@ -360,6 +396,370 @@ export interface QualityInfo {
     | "browser_extension"
     | "filesystem"
     | "ocr";
+}
+
+// ======================================================
+// Normalized Action
+// ======================================================
+//
+// Observations are raw and source-specific. NormalizedActions
+// are stable events that fuzzy matching and prediction can use.
+//
+// ======================================================
+
+export type ActionApp =
+  | "seatalk"
+  | "browser"
+  | "macos"
+  | "filesystem"
+  | "other";
+
+export type NormalizedActionType =
+  | "view"
+  | "focus"
+  | "click"
+  | "type"
+  | "send_message"
+  | "receive_message"
+  | "open_url"
+  | "search"
+  | "copy"
+  | "paste"
+  | "select"
+  | "submit"
+  | "open_file"
+  | "close"
+  | "unknown";
+
+export interface NormalizedAction {
+  id: string;
+
+  observationId: string;
+
+  sequenceId?: string;
+
+  app: ActionApp;
+
+  source: SourceInfo;
+
+  type: NormalizedActionType;
+
+  target?: ActionTarget;
+
+  input?: ActionInput;
+
+  occurredAt: ISODateTimeString;
+
+  confidence: ConfidenceScore;
+
+  privacy: PrivacyInfo;
+
+  quality?: QualityInfo;
+}
+
+export interface ActionTarget {
+  app?: string;
+
+  bundleId?: string;
+
+  windowTitle?: string;
+
+  url?: string;
+
+  domain?: string;
+
+  route?: string;
+
+  conversationId?: string;
+
+  threadId?: string;
+
+  filePath?: string;
+
+  elementRole?: string;
+
+  elementTitle?: string;
+
+  // Stable path from AXTree, DOM, or app-specific hierarchy.
+  elementPath?: string;
+
+  entityId?: string;
+
+  metadata?: Record<string, JsonValue>;
+}
+
+export interface ActionInput {
+  text?: string;
+
+  redactedText?: string;
+
+  textHash?: string;
+
+  selectedText?: string;
+
+  language?: string;
+
+  metadata?: Record<string, JsonValue>;
+}
+
+// ======================================================
+// Action Sequence
+// ======================================================
+
+export interface ActionSequence {
+  id: string;
+
+  userId?: string;
+
+  sessionId?: string;
+
+  startedAt: ISODateTimeString;
+
+  updatedAt: ISODateTimeString;
+
+  actions: NormalizedActionRef[];
+
+  context?: {
+    activeApp?: string;
+
+    activeWindowTitle?: string;
+
+    activeUrl?: string;
+
+    metadata?: Record<string, JsonValue>;
+  };
+}
+
+export interface NormalizedActionRef {
+  actionId: string;
+
+  occurredAt: ISODateTimeString;
+
+  app: ActionApp;
+
+  type: NormalizedActionType;
+
+  targetSummary?: string;
+}
+
+// ======================================================
+// Prediction
+// ======================================================
+
+export interface PredictionProcessor {
+  id: string;
+
+  normalize(
+    observation: Observation
+  ): Promise<NormalizedAction[]>;
+
+  predict(
+    request: NextActionPredictionRequest
+  ): Promise<PredictionSet>;
+
+  createSuggestion(
+    predictionSet: PredictionSet,
+    options?: SuggestionOptions
+  ): Promise<UserSuggestion>;
+
+  recordFeedback(
+    feedback: UserFeedback
+  ): Promise<void>;
+}
+
+export interface NextActionPredictionRequest {
+  id: string;
+
+  sequenceId?: string;
+
+  currentActionId?: string;
+
+  observations?: Observation[];
+
+  actions?: NormalizedAction[];
+
+  maxCandidates?: number;
+
+  locale?: string;
+
+  createdAt: ISODateTimeString;
+
+  privacy?: PrivacyInfo;
+}
+
+export interface PredictionSet {
+  id: string;
+
+  requestId: string;
+
+  candidates: PredictedNextAction[];
+
+  status: "ready" | "empty" | "low_confidence" | "error";
+
+  errorMessage?: string;
+
+  createdAt: ISODateTimeString;
+}
+
+export interface PredictedNextAction {
+  id: string;
+
+  requestId?: string;
+
+  basedOnActionIds: string[];
+
+  action: ExpectedAction;
+
+  score: ConfidenceScore;
+
+  priority: PriorityScore;
+
+  reason?: string;
+
+  evidence?: PredictionEvidence;
+
+  model?: ModelInfo;
+
+  expiresAt?: ISODateTimeString;
+
+  createdAt: ISODateTimeString;
+}
+
+export interface ExpectedAction {
+  app?: ActionApp;
+
+  type: NormalizedActionType;
+
+  target?: ActionTarget;
+
+  input?: ActionInput;
+
+  command?: {
+    name: string;
+
+    parameters?: Record<string, JsonValue>;
+  };
+}
+
+export interface PredictionEvidence {
+  fuzzySimilarity?: ConfidenceScore;
+
+  historicalSelectionCount?: number;
+
+  historicalDismissalCount?: number;
+
+  recentFrequency?: number;
+
+  matchedPatternIds?: string[];
+
+  matchedActionIds?: string[];
+
+  featureWeights?: Record<string, number>;
+}
+
+export interface ModelInfo {
+  name: string;
+
+  version?: string;
+
+  provider?: string;
+}
+
+// ======================================================
+// User Suggestion
+// ======================================================
+
+export interface SuggestionOptions {
+  locale?: string;
+
+  tone?: "concise" | "friendly" | "technical";
+
+  maxChoices?: number;
+}
+
+export interface UserSuggestion {
+  id: string;
+
+  predictionSetId: string;
+
+  predictions: PredictedNextAction[];
+
+  // English text generated for the user, for example:
+  // "Looks like you may want to send this message in SeaTalk."
+  englishText: string;
+
+  delivery?: {
+    channel:
+      | "desktop_notification"
+      | "inline_overlay"
+      | "chat_message"
+      | "api";
+
+    destination?: string;
+  };
+
+  status:
+    | "created"
+    | "shown"
+    | "selected"
+    | "dismissed"
+    | "expired";
+
+  createdAt: ISODateTimeString;
+
+  shownAt?: ISODateTimeString;
+
+  expiresAt?: ISODateTimeString;
+}
+
+// ======================================================
+// User Feedback and Learning
+// ======================================================
+
+export interface UserFeedback {
+  id: string;
+
+  suggestionId: string;
+
+  predictionId: string;
+
+  feedback:
+    | "selected"
+    | "dismissed"
+    | "wrong"
+    | "edited";
+
+  selectedActionId?: string;
+
+  editedAction?: Partial<ExpectedAction>;
+
+  priorityDelta?: number;
+
+  occurredAt: ISODateTimeString;
+
+  metadata?: Record<string, JsonValue>;
+}
+
+export interface LearnedActionPattern {
+  id: string;
+
+  signature: string;
+
+  action: ExpectedAction;
+
+  priority: PriorityScore;
+
+  selectionCount: number;
+
+  dismissalCount: number;
+
+  lastSelectedAt?: ISODateTimeString;
+
+  lastDismissedAt?: ISODateTimeString;
+
+  sourcePredictionIds?: string[];
+
+  metadata?: Record<string, JsonValue>;
 }
 
 // ======================================================
@@ -383,6 +783,8 @@ export interface AXTreeSnapshot {
     title?: string;
 
     value?: string;
+
+    path?: string;
   };
 
   tree?: AXNode;
