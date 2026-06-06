@@ -9,6 +9,7 @@ from pathlib import Path
 
 COLLECTOR_ID = "chrome.browser"
 SEPARATOR = "::"
+DEFAULT_ACTION_BLACKLIST = {"element_focus"}
 
 
 def get_path(value, *path):
@@ -91,13 +92,34 @@ def anchor_name(event):
     )
 
 
-def normalize_event(event):
+def parse_action_blacklist(value):
+    if value is None:
+        return set(DEFAULT_ACTION_BLACKLIST)
+    if isinstance(value, str):
+        return {
+            item.strip()
+            for item in value.split(",")
+            if item.strip()
+        }
+    return {str(item).strip() for item in value if str(item).strip()}
+
+
+def action_blacklist():
+    return parse_action_blacklist(os.environ.get("RADAR_CHROME_BROWSER_ACTION_BLACKLIST"))
+
+
+def normalize_event(event, blacklist=None):
+    action = anchor_name(event)
+    ignored_actions = action_blacklist() if blacklist is None else parse_action_blacklist(blacklist)
+    if action in ignored_actions:
+        return None
+
     collector_id = first_text(event.get("collector_id"), COLLECTOR_ID) or COLLECTOR_ID
     payload = SEPARATOR.join(
         compact_component(part)
         for part in (
             collector_id,
-            anchor_name(event),
+            action,
             css_path(event),
             document_url(event),
         )
@@ -131,12 +153,15 @@ def iter_jsonl_files(path):
             yield candidate
 
 
-def normalize_path(path):
+def normalize_path(path, blacklist=None):
+    ignored_actions = action_blacklist() if blacklist is None else parse_action_blacklist(blacklist)
     for jsonl_file in iter_jsonl_files(path):
         for event in read_jsonl(jsonl_file):
             if event.get("collector_id") not in (None, COLLECTOR_ID):
                 continue
-            yield normalize_event(event)
+            record = normalize_event(event, blacklist=ignored_actions)
+            if record:
+                yield record
 
 
 def default_input_path():
@@ -184,12 +209,18 @@ def parse_args():
         "--output",
         help="Optional JSONL output path. Defaults to stdout.",
     )
+    parser.add_argument(
+        "--action-blacklist",
+        default=os.environ.get("RADAR_CHROME_BROWSER_ACTION_BLACKLIST"),
+        help="Comma-separated action names to skip. Defaults to element_focus.",
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    write_jsonl(normalize_path(args.input), args.output)
+    blacklist = parse_action_blacklist(args.action_blacklist)
+    write_jsonl(normalize_path(args.input, blacklist=blacklist), args.output)
 
 
 if __name__ == "__main__":
