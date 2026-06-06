@@ -18,6 +18,7 @@ const DEFAULT_ACTOR_SUGGESTION_COOLDOWN_SECONDS: u64 = 45;
 const GOOGLE_OAUTH_AUTHORIZE_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_OAUTH_TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 const GMAIL_PROFILE_URL: &str = "https://gmail.googleapis.com/gmail/v1/users/me/profile";
+const GMAIL_READONLY_SCOPE: &str = "https://www.googleapis.com/auth/gmail.readonly";
 const GOOGLE_CONNECTION_SCOPES: &str =
     "openid email https://www.googleapis.com/auth/gmail.readonly";
 const GOOGLE_OAUTH_TIMEOUT: Duration = Duration::from_secs(180);
@@ -313,15 +314,10 @@ fn connect_google_account() -> Result<GoogleConnectionStatus, String> {
     open_external_url(&auth_url)?;
     let authorization_code = wait_for_google_oauth_code(listener, &state)?;
     let token = exchange_google_oauth_code(&config, &redirect_uri, &authorization_code)?;
+    let scopes = google_token_scopes(token.scope.as_deref());
+    ensure_gmail_scope_granted(&scopes)?;
     let profile = fetch_gmail_profile(&token.access_token)?;
 
-    let scopes: Vec<String> = token
-        .scope
-        .clone()
-        .unwrap_or_else(|| GOOGLE_CONNECTION_SCOPES.to_string())
-        .split_whitespace()
-        .map(str::to_string)
-        .collect();
     let connection = GoogleConnection {
         provider: "google".to_string(),
         email: profile.email_address.clone(),
@@ -487,6 +483,24 @@ fn google_default_scopes() -> Vec<String> {
         .split_whitespace()
         .map(str::to_string)
         .collect()
+}
+
+fn google_token_scopes(scope: Option<&str>) -> Vec<String> {
+    scope
+        .unwrap_or(GOOGLE_CONNECTION_SCOPES)
+        .split_whitespace()
+        .map(str::to_string)
+        .collect()
+}
+
+fn ensure_gmail_scope_granted(scopes: &[String]) -> Result<(), String> {
+    if scopes.iter().any(|scope| scope == GMAIL_READONLY_SCOPE) {
+        return Ok(());
+    }
+
+    Err(format!(
+        "Google account connected, but Gmail read-only permission was not granted. Add {GMAIL_READONLY_SCOPE} to your Google OAuth consent screen scopes, make sure the Gmail API is enabled, then connect again."
+    ))
 }
 
 fn google_oauth_config() -> Result<GoogleOAuthConfig, String> {

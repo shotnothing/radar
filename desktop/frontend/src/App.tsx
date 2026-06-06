@@ -544,7 +544,7 @@ function ConnectionSettings({
           </div>
           {!configured ? (
             <p className="connection-warning">
-              Set RADAR_GOOGLE_CLIENT_ID before connecting.
+              Add a Google OAuth client id to ~/.radar/config.json before connecting.
             </p>
           ) : null}
           {googleError ? <p className="connection-error">{googleError}</p> : null}
