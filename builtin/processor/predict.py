@@ -461,6 +461,16 @@ class PredictProcessor:
     def process_payload(self, payload, input_ref="payload"):
         return self.process_payloads([payload], input_ref=input_ref)
 
+    def snapshot(self, input_ref="model"):
+        estdec_result = {
+            "available": True,
+            "patterns": self.estdec._patterns(self.dictionary),
+            "transactions_seen": self.estdec.model["transactions_seen"],
+            "effective_transaction_count": self.estdec.model["effective_transaction_count"],
+            "pattern_count": len(self.estdec.model["counts"]),
+        }
+        return self._build_result(input_ref, [], 0, estdec_result)
+
     def process_path(self, input_ref):
         encoded = []
         for jsonl_file in iter_jsonl_files(input_ref):

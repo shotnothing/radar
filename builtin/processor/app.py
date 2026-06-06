@@ -31,6 +31,7 @@ DEFAULT_APP_STATE_DIR = Path("~/.radar/processors/builtin_processor_app").expand
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 5060
 LLM_HISTORY_LIMIT = 4
+PREDICTION_EVENT_LIMIT = 100
 
 
 app = Flask(__name__)
@@ -38,10 +39,10 @@ socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
 runtime = {
     "started_at": utc_timestamp(),
     "engine": None,
-    "last_prediction": None,
     "last_scan": None,
     "last_learning": None,
     "last_error": "",
+    "prediction_events": [],
     "args": None,
     "llm_client": None,
     "connected_clients": 0,
@@ -189,7 +190,29 @@ def enrich_prediction_with_llm(event, scan_result, args):
             "status": "error",
             "error": str(error),
         }
-        return event
+    return event
+
+
+def predict_transactions_seen(engine):
+    try:
+        return int(engine.predict.estdec.model.get("transactions_seen", 0) or 0)
+    except (AttributeError, TypeError, ValueError):
+        return 0
+
+
+def collector_history_exists(engine):
+    for path in iter_collector_jsonl_files(engine.collectors_root):
+        try:
+            if Path(path).stat().st_size > 0:
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def reset_checkpoint_for_bootstrap_replay(engine):
+    engine.checkpoint = {"version": 1, "files": {}, "updated_at": utc_timestamp()}
+    write_json_atomic(engine.checkpoint_path, engine.checkpoint)
 
 
 def scan_loop(args):
@@ -211,6 +234,8 @@ def scan_loop(args):
             mark_existing_collector_files_seen(engine)
     elif args.replay_existing or args.reset:
         engine.reset()
+    elif predict_transactions_seen(engine) == 0 and collector_history_exists(engine):
+        reset_checkpoint_for_bootstrap_replay(engine)
 
     while True:
         try:
@@ -232,7 +257,6 @@ def scan_loop(args):
                 {
                     "type": "processor_scan",
                     **runtime["last_scan"],
-                    "has_last_prediction": runtime["last_prediction"] is not None,
                     "collectors_root": str(engine.collectors_root),
                     "normalizers_root": str(engine.normalizers_root),
                     "state_dir": str(engine.state_dir),
@@ -246,7 +270,10 @@ def scan_loop(args):
                     else compact_prediction(scan_result, args.max_patterns)
                 )
                 event = enrich_prediction_with_llm(event, scan_result, args)
-                runtime["last_prediction"] = event
+                runtime["prediction_events"] = [
+                    event,
+                    *runtime["prediction_events"],
+                ][:PREDICTION_EVENT_LIMIT]
                 socketio.emit("prediction_generated", event)
         except Exception as error:  # pragma: no cover - defensive app loop.
             runtime["last_error"] = str(error)
@@ -273,7 +300,7 @@ def health():
             "connected_clients": runtime["connected_clients"],
             "last_error": runtime["last_error"],
             "last_scan": runtime["last_scan"],
-            "has_last_prediction": runtime["last_prediction"] is not None,
+            "prediction_events": runtime["prediction_events"],
             "llm_enabled": (
                 llm_enabled(args) if args else bool(os.environ.get(OPENAI_API_KEY_ENV))
             ),
@@ -284,11 +311,6 @@ def health():
     )
 
 
-@app.get("/last_prediction")
-def last_prediction():
-    return jsonify(runtime["last_prediction"] or {})
-
-
 @socketio.on("connect")
 def handle_connect():
     runtime["connected_clients"] += 1
@@ -297,11 +319,8 @@ def handle_connect():
         {
             "type": "processor_connected",
             "created_at": utc_timestamp(),
-            "has_last_prediction": runtime["last_prediction"] is not None,
         },
     )
-    if runtime["last_prediction"] is not None:
-        emit("prediction_generated", runtime["last_prediction"])
     if runtime["last_scan"] is not None:
         engine = runtime.get("engine")
         emit(
@@ -309,7 +328,6 @@ def handle_connect():
             {
                 "type": "processor_scan",
                 **runtime["last_scan"],
-                "has_last_prediction": runtime["last_prediction"] is not None,
                 "collectors_root": str(engine.collectors_root) if engine else "",
                 "normalizers_root": str(engine.normalizers_root) if engine else "",
                 "state_dir": str(engine.state_dir) if engine else "",

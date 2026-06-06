@@ -21,7 +21,7 @@ include $(ENV_FILE)
 export
 endif
 
-.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup seatalk-ping-actor-live seatalk-ping-actor-open seatalk-ping-applescript-open test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-git-commit-actor test-actor-live test-coordinator-actor-api axtree-debug
+.PHONY: install install-desktop run stop-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup seatalk-ping-actor-live seatalk-ping-actor-open seatalk-ping-applescript-open test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-macos-collector-unit test-actor-runtime test-git-commit-actor test-actor-live test-coordinator-actor-api axtree-debug
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
@@ -47,6 +47,31 @@ axtree-debug:
 # Run the Radar Tauri desktop app in development mode.
 run-desktop:
 	$(NPM) --prefix $(RADAR_DESKTOP_DIR) run tauri:dev
+
+# Stop local Radar desktop dev processes that commonly survive interrupted runs.
+stop-desktop:
+	@for port in 5173 5060 47322 8888 47321; do \
+		pids=$$(lsof -tiTCP:$$port -sTCP:LISTEN 2>/dev/null || true); \
+		if [ -n "$$pids" ]; then \
+			echo "Stopping process(es) on port $$port: $$pids"; \
+			kill $$pids 2>/dev/null || true; \
+		fi; \
+	done
+
+# Start the full desktop dev stack: Vite, Tauri, coordinator, collectors, and processor.
+run: stop-desktop
+	@if [ ! -d "$(RADAR_DESKTOP_DIR)/node_modules" ] || [ ! -d "$(RADAR_DESKTOP_DIR)/frontend/node_modules" ]; then \
+		echo "Desktop dependencies are missing. Run: make install-desktop"; \
+		exit 1; \
+	fi; \
+	openai_key="$$(launchctl getenv OPENAI_API_KEY 2>/dev/null || true)"; \
+	openai_key="$${openai_key:-$${OPENAI_API_KEY}}"; \
+	if [ -z "$$openai_key" ]; then \
+		echo "OPENAI_API_KEY is not set in this shell or launchctl."; \
+		echo "Set it first, then run: make run"; \
+		exit 1; \
+	fi; \
+	cd "$(RADAR_DESKTOP_DIR)" && OPENAI_API_KEY="$$openai_key" $(NPM) run tauri:dev
 
 # Package Radar's Chrome extension into dist/radar-extension.
 package-chrome-extension:

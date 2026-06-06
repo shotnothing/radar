@@ -249,7 +249,7 @@ class ProcessorEngine:
                     continue
                 normalized_records.append(normalized)
 
-        model_result = None
+        model_result = self.predict.snapshot(input_ref=str(self.normalized_log_path))
         prediction = None
         if normalized_records:
             append_jsonl(self.normalized_log_path, normalized_records)
@@ -275,7 +275,7 @@ class ProcessorEngine:
             "skipped_without_normalizer": skipped_without_normalizer,
             "skipped_without_payload": skipped_without_payload,
             "normalized_log_path": str(self.normalized_log_path),
-            "last_result_path": str(self.last_result_path) if model_result else "",
+            "last_result_path": str(self.last_result_path) if normalized_records else "",
             "learning": compact_learning_status(model_result),
             "model_result": model_result,
             "prediction": prediction,

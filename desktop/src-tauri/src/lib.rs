@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{HashMap, HashSet, VecDeque},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
     path::PathBuf,
@@ -15,6 +15,7 @@ const ACTOR_API_TOKEN: &str = "radar-desktop-actor-token";
 const PROCESSOR_APP_PORT: u16 = 5060;
 const PROXY_API_PORT: u16 = 8888;
 const ACTOR_MONITOR_TICK: Duration = Duration::from_millis(500);
+const PROCESSOR_DEBUG_BRIDGE_TICK: Duration = Duration::from_secs(1);
 const CHROME_BRIDGE_PORT: u16 = 9223;
 const COLLECTOR_META_CHAT_TRANSCRIPT: &str = "builtin/collector/chat_transcript/meta.json";
 const COLLECTOR_META_CHROME: &str = "builtin/collector/chrome/meta.json";
@@ -42,6 +43,7 @@ struct ActorRuntimeHandle {
 struct ActorRuntimeInner {
     child: Mutex<Option<Child>>,
     processor_child: Mutex<Option<Child>>,
+    processor_debug_bridge_started: Mutex<bool>,
     inflight_actors: Mutex<HashSet<String>>,
     cooldown_until: Mutex<HashMap<String, Instant>>,
     last_polled_at: Mutex<HashMap<String, Instant>>,
@@ -62,6 +64,7 @@ impl ActorRuntimeHandle {
             inner: Arc::new(ActorRuntimeInner {
                 child: Mutex::new(None),
                 processor_child: Mutex::new(None),
+                processor_debug_bridge_started: Mutex::new(false),
                 inflight_actors: Mutex::new(HashSet::new()),
                 cooldown_until: Mutex::new(HashMap::new()),
                 last_polled_at: Mutex::new(HashMap::new()),
@@ -229,7 +232,6 @@ pub fn run() {
             complete_actor_suggestion,
             dismiss_assistant_window,
             get_monitoring_status,
-            get_processor_debug_state,
             start_monitoring,
             stop_monitoring,
             get_google_connection_status,
@@ -247,6 +249,10 @@ pub fn run() {
             start_actor_runtime_process(&actor_runtime, &collector_meta);
             start_processor_app_process(&actor_runtime);
             start_actor_monitor(app.handle().clone(), Arc::downgrade(&actor_runtime.inner));
+            start_processor_debug_bridge(
+                app.handle().clone(),
+                Arc::downgrade(&actor_runtime.inner),
+            );
             start_proxy_api_server();
 
             if cfg!(debug_assertions) {
@@ -265,38 +271,6 @@ pub fn run() {
 #[tauri::command]
 fn get_monitoring_status(state: tauri::State<'_, ActorRuntimeHandle>) -> MonitoringStatus {
     state.status()
-}
-
-#[tauri::command]
-fn get_processor_debug_state() -> Result<serde_json::Value, String> {
-    let client = reqwest::blocking::Client::builder()
-        .timeout(Duration::from_secs(3))
-        .build()
-        .map_err(|error| format!("failed to build processor debug client: {error}"))?;
-    let base_url = processor_app_url();
-
-    let health = client
-        .get(format!("{base_url}/health"))
-        .send()
-        .map_err(|error| format!("failed to read processor health: {error}"))?
-        .error_for_status()
-        .map_err(|error| format!("processor health failed: {error}"))?
-        .json::<serde_json::Value>()
-        .map_err(|error| format!("failed to parse processor health: {error}"))?;
-
-    let last_prediction = client
-        .get(format!("{base_url}/last_prediction"))
-        .send()
-        .map_err(|error| format!("failed to read last prediction: {error}"))?
-        .error_for_status()
-        .map_err(|error| format!("last prediction failed: {error}"))?
-        .json::<serde_json::Value>()
-        .map_err(|error| format!("failed to parse last prediction: {error}"))?;
-
-    Ok(serde_json::json!({
-        "health": health,
-        "last_prediction": last_prediction,
-    }))
 }
 
 #[tauri::command]
@@ -1571,6 +1545,155 @@ fn start_actor_poll(
             clear_actor_inflight(&runtime, &actor.actor_id);
         }
     });
+}
+
+fn start_processor_debug_bridge(app: tauri::AppHandle, runtime: Weak<ActorRuntimeInner>) {
+    let Some(inner) = runtime.upgrade() else {
+        return;
+    };
+
+    {
+        let Ok(mut started) = inner.processor_debug_bridge_started.lock() else {
+            return;
+        };
+        if *started {
+            return;
+        }
+        *started = true;
+    }
+
+    std::thread::spawn(move || {
+        let client = match reqwest::blocking::Client::builder()
+            .timeout(Duration::from_secs(2))
+            .build()
+        {
+            Ok(client) => client,
+            Err(error) => {
+                let _ = app.emit_to(
+                    "settings",
+                    "radar://processor-error",
+                    serde_json::json!({ "error": format!("processor debug client failed: {error}") }),
+                );
+                return;
+            }
+        };
+        let mut last_error = String::new();
+        let mut emitted_predictions = HashSet::new();
+        let mut emitted_prediction_order = VecDeque::new();
+
+        loop {
+            std::thread::sleep(PROCESSOR_DEBUG_BRIDGE_TICK);
+
+            if runtime.upgrade().is_none() {
+                return;
+            }
+
+            match client.get(format!("{}/health", processor_app_url())).send() {
+                Ok(response) => match response.error_for_status() {
+                    Ok(response) => match response.json::<serde_json::Value>() {
+                        Ok(payload) => {
+                            last_error.clear();
+                            let scan = payload
+                                .get("last_scan")
+                                .cloned()
+                                .unwrap_or_else(|| serde_json::json!({}));
+                            let scan = enrich_processor_scan_for_frontend(scan, &payload);
+                            let _ = app.emit_to("settings", "radar://processor-scan", scan);
+                            emit_processor_predictions(
+                                &app,
+                                &payload,
+                                &mut emitted_predictions,
+                                &mut emitted_prediction_order,
+                            );
+                        }
+                        Err(error) => {
+                            emit_processor_debug_error(
+                                &app,
+                                &mut last_error,
+                                format!("failed to parse processor health: {error}"),
+                            );
+                        }
+                    },
+                    Err(error) => {
+                        emit_processor_debug_error(
+                            &app,
+                            &mut last_error,
+                            format!("processor health failed: {error}"),
+                        );
+                    }
+                },
+                Err(error) => {
+                    emit_processor_debug_error(
+                        &app,
+                        &mut last_error,
+                        format!("processor bridge failed: {error}"),
+                    );
+                }
+            }
+        }
+    });
+}
+
+fn enrich_processor_scan_for_frontend(
+    mut scan: serde_json::Value,
+    health: &serde_json::Value,
+) -> serde_json::Value {
+    if let Some(scan_object) = scan.as_object_mut() {
+        for key in ["collectors_root", "normalizers_root", "state_dir"] {
+            if let Some(value) = health.get(key) {
+                scan_object.insert(key.to_string(), value.clone());
+            }
+        }
+    }
+    scan
+}
+
+fn emit_processor_predictions(
+    app: &tauri::AppHandle,
+    health: &serde_json::Value,
+    emitted: &mut HashSet<String>,
+    emitted_order: &mut VecDeque<String>,
+) {
+    let Some(events) = health.get("prediction_events").and_then(|value| value.as_array()) else {
+        return;
+    };
+
+    for event in events.iter().rev() {
+        let id = processor_prediction_id(event);
+        if !emitted.insert(id.clone()) {
+            continue;
+        }
+
+        emitted_order.push_back(id.clone());
+        while emitted_order.len() > 500 {
+            if let Some(oldest) = emitted_order.pop_front() {
+                emitted.remove(&oldest);
+            }
+        }
+
+        let _ = app.emit_to("settings", "radar://prediction-generated", event.clone());
+    }
+}
+
+fn processor_prediction_id(event: &serde_json::Value) -> String {
+    event
+        .get("prediction_id")
+        .or_else(|| event.get("id"))
+        .and_then(|value| value.as_str())
+        .map(ToString::to_string)
+        .unwrap_or_else(|| event.to_string())
+}
+
+fn emit_processor_debug_error(app: &tauri::AppHandle, last_error: &mut String, error: String) {
+    if *last_error == error {
+        return;
+    }
+    *last_error = error.clone();
+    let _ = app.emit_to(
+        "settings",
+        "radar://processor-error",
+        serde_json::json!({ "error": error }),
+    );
 }
 
 enum ActorPollOutcome {
