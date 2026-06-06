@@ -166,6 +166,23 @@ kinds are:
 - `chat_tool_result`
 - `normalized_chat_session`
 
+## macOS Activity Event Kinds
+
+macOS activity collectors should treat native input signals as action anchors,
+not as raw input logs. A collector may listen for important triggers such as
+mouse clicks and Enter/Return key presses, then emit one context-rich observation
+for each trigger.
+
+Common `anchor.name` values are:
+
+- `mouse_click`
+- `enter_key`
+
+The collector should capture the active app/window/document and focused
+accessibility element around the trigger under `extra_data.macos`. It should not
+store raw keystroke streams. Focused element values or selected text, when
+captured, should be redacted for sensitive controls and bounded in length.
+
 ## Runtime Storage
 
 Collectors do not submit collected event payloads over Socket.IO. After

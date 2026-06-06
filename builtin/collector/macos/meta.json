@@ -1,0 +1,44 @@
+{
+  "collector_id": "macos.activity",
+  "display_name": "macOS Activity Collector",
+  "description": "Captures important macOS user-action triggers and writes context-rich Radar observations.",
+  "protocol_version": 1,
+  "source": {
+    "type": "macos"
+  },
+  "runtime": {
+    "command": "python3",
+    "args": [
+      "-m",
+      "builtin.collector.macos.cli"
+    ]
+  },
+  "required_permissions": [
+    "macos.accessibility",
+    "macos.input_monitoring"
+  ],
+  "capabilities": [
+    "active_app",
+    "active_window",
+    "focused_element",
+    "mouse_click_trigger",
+    "enter_key_trigger",
+    "jsonl_storage",
+    "heartbeat"
+  ],
+  "emits": [
+    "collected_data.macos_activity"
+  ],
+  "anchors": [
+    "user_action",
+    "state_change"
+  ],
+  "default_config": {
+    "coordinator_url": "http://127.0.0.1:5000",
+    "file_split_ms": 3600000,
+    "heartbeat_interval_seconds": 5,
+    "connect_timeout_seconds": 10,
+    "compile_helper": true,
+    "prompt_permissions": false
+  }
+}

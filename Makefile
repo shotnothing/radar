@@ -1,4 +1,5 @@
 PYTHON ?= python3
+NPM ?= npm
 ENV_FILE ?= .env
 RADAR_HOST ?= 127.0.0.1
 RADAR_PORT ?= 5000
@@ -7,17 +8,23 @@ RADAR_ACTOR_PATH ?= builtin/actor
 RADAR_COLLECTOR_VIEWER_HOST ?= 127.0.0.1
 RADAR_COLLECTOR_VIEWER_PORT ?= 5174
 RADAR_COLLECTOR_VIEWER_DATA ?= $(RADAR_WORK_DIR)/collectors
+RADAR_DESKTOP_DIR ?= desktop
 
 ifneq (,$(wildcard $(ENV_FILE)))
 include $(ENV_FILE)
 export
 endif
 
-.PHONY: install run-coordinator run-collector-viewer package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime test-actor-live test-coordinator-actor-api
+.PHONY: install install-desktop run-coordinator run-collector-viewer run-desktop package-chrome-extension actor-live-setup test test-unit test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-actor-runtime test-actor-live test-coordinator-actor-api
 
 # Install Python dependencies used by the debug harness and collectors.
 install:
 	$(PYTHON) -m pip install -r requirements.txt
+
+# Install dependencies for the Tauri desktop app and its frontend.
+install-desktop:
+	$(NPM) --prefix $(RADAR_DESKTOP_DIR) install
+	$(NPM) --prefix $(RADAR_DESKTOP_DIR)/frontend install
 
 # Run the local Socket.IO coordinator/debug harness.
 run-coordinator:
@@ -26,6 +33,10 @@ run-coordinator:
 # Run the local collector JSONL debug viewer.
 run-collector-viewer:
 	cd debug/collector_viewer && npm start -- --host $(RADAR_COLLECTOR_VIEWER_HOST) --port $(RADAR_COLLECTOR_VIEWER_PORT) --data $(abspath $(RADAR_COLLECTOR_VIEWER_DATA))
+
+# Run the Radar Tauri desktop app in development mode.
+run-desktop:
+	$(NPM) --prefix $(RADAR_DESKTOP_DIR) run tauri:dev
 
 # Package Radar's Chrome extension into dist/radar-extension.
 package-chrome-extension:
@@ -49,7 +60,7 @@ actor-live-setup:
 test: test-unit test-actor-live
 
 # Run the non-live unit and integration tests.
-test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-actor-runtime
+test-unit: test-sample-collector test-chat-transcript-collector test-chat-skill-processor test-seatalk-collector test-chrome-collector test-macos-collector test-actor-runtime
 
 # Run the sample collector integration test.
 test-sample-collector:
@@ -75,6 +86,11 @@ test-seatalk-collector:
 test-chrome-collector:
 	$(PYTHON) -m py_compile builtin/collector/chrome/runtime.py builtin/collector/chrome/observation.py tests/test_chrome_collector.py
 	$(PYTHON) -m unittest tests.test_chrome_collector
+
+# Run the macOS activity collector unit tests.
+test-macos-collector:
+	$(PYTHON) -m py_compile builtin/collector/macos/runtime.py builtin/collector/macos/observation.py tests/test_macos_collector.py
+	$(PYTHON) -m unittest tests.test_macos_collector
 
 # Run actor runtime tests with local debug context and Chrome bridge stubs.
 test-actor-runtime:

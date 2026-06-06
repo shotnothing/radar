@@ -15,6 +15,7 @@ COLLECTOR_ID = "seatalk.personal"
 DISPLAY_NAME = "SeaTalk Personal Collector"
 DEFAULT_SEATALK_ROOT = Path.home() / "Library" / "Application Support" / "SeaTalk"
 DEFAULT_SEATALK_RESOURCES = Path("/Applications/SeaTalk.app/Contents/Resources")
+MIN_VALID_SEATALK_UNIX_SECONDS = 946684800
 PROCESSED_ID_LIMIT = 10000
 
 
@@ -36,6 +37,25 @@ def iso_from_unix_seconds(value):
     return datetime.fromtimestamp(int(value), tz=timezone.utc).isoformat().replace(
         "+00:00", "Z"
     )
+
+
+def iso_from_epoch_ms(value):
+    return datetime.fromtimestamp(int(value) / 1000, tz=timezone.utc).isoformat().replace(
+        "+00:00", "Z"
+    )
+
+
+def is_valid_seatalk_timestamp(value):
+    return int(value or 0) >= MIN_VALID_SEATALK_UNIX_SECONDS
+
+
+def observed_time_for_row(row):
+    ts = int(row.get("ts") or 0)
+    if is_valid_seatalk_timestamp(ts):
+        observed_at = ts * 1000
+        return observed_at, iso_from_unix_seconds(ts)
+    observed_at = observed_time_ms()
+    return observed_at, iso_from_epoch_ms(observed_at)
 
 
 def source_uri(path):
@@ -402,7 +422,7 @@ def build_user_message_event(
     previous_rows,
     reply_to_row,
 ):
-    observed_at = row["ts"] * 1000 if row["ts"] else observed_time_ms()
+    observed_at, occurred_at = observed_time_for_row(row)
     message_id = seatalk_message_id(row)
     conversation_info = conversation_map.get(row["sid"], {})
     convo_type = conversation_type(row["sid"], conversation_info)
@@ -434,7 +454,7 @@ def build_user_message_event(
             "id": message_id,
             "type": "communication_message",
             "name": "user_message_sent",
-            "occurred_at": iso_from_unix_seconds(row["ts"]),
+            "occurred_at": occurred_at,
             "target": {
                 "app": "SeaTalk",
                 "conversation_id": row["sid"],

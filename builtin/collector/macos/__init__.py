@@ -1,0 +1,1 @@
+"""macOS activity collector implementation."""

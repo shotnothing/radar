@@ -198,6 +198,30 @@ def main():
             m2["time"]["observed_at"] == (FIXTURE_BASE_TS + 1) * 1000,
             f"observed_at should be realistic epoch milliseconds: {m2['time']}",
         )
+        invalid_ts_event = collector.build_user_message_event(
+            {
+                "sid": "group-1",
+                "mid": "bad-ts",
+                "rmid": "",
+                "rtmid": "",
+                "u": 123,
+                "c": text_payload("Bad timestamp should not become 1970 observed_at."),
+                "t": "text",
+                "ts": 108,
+            },
+            db_path=db_path,
+            db_fingerprint="fixture",
+            self_user_id=123,
+            user_map={123: {"name": "Radar User", "email": "me@example.com"}},
+            conversation_map={"group-1": {"name": "Payments Infra", "type": "group"}},
+            previous_rows=[],
+            reply_to_row=None,
+        )
+        require(
+            invalid_ts_event["time"]["observed_at"] != 108000
+            and invalid_ts_event["time"]["observed_at"] >= 1_000_000_000_000,
+            f"invalid tiny ts must not become observed_at=108000: {invalid_ts_event['time']}",
+        )
         require(
             m2["context"]["conversation_name"] == "Payments Infra",
             "missing conversation name",
