@@ -37,6 +37,31 @@ python3 debug/app.py --collector-meta builtin/collector/chrome/meta.json
 - Browser or extension events can be posted to `POST /event` on the local event
   server. The collector converts them to snake_case observations and writes JSONL
   under the assigned `work_dir`.
+- The unpacked Chrome extension lives in `builtin/collector/chrome/extension`.
+  Load that folder in `chrome://extensions` as **Radar Extension**. It captures
+  page navigation, clicks, focus, form submits, copy/paste, selection, and
+  debounced input events, then forwards them to `http://127.0.0.1:47321/event`.
+
+## Install Extension
+
+Build the install artifacts:
+
+```bash
+make package-chrome-extension
+```
+
+This creates:
+
+- `dist/radar-extension/`: unpacked folder for local Chrome Developer Mode.
+- `dist/radar-extension.zip`: zip package for sharing or Chrome Web Store upload.
+
+1. Open `chrome://extensions`.
+2. Enable **Developer mode**.
+3. Choose **Load unpacked**.
+4. Select `dist/radar-extension`.
+
+The collector must be running for extension events to be stored. The extension
+popup shows the local collector endpoint and latest delivery status.
 
 ## Example Event
 

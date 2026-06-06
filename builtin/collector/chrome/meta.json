@@ -25,6 +25,7 @@
     "navigation",
     "browser_event",
     "dom_event",
+    "chrome_extension",
     "jsonl_storage"
   ],
   "emits": [
@@ -44,5 +45,9 @@
     "file_split_ms": 3600000,
     "heartbeat_interval_seconds": 5,
     "connect_timeout_seconds": 10
+  },
+  "extension": {
+    "name": "Radar Extension",
+    "path": "builtin/collector/chrome/extension"
   }
 }
