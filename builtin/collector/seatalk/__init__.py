@@ -1,0 +1,1 @@
+"""SeaTalk collector package."""

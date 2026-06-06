@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Radar Collector Viewer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Radar Debug</p>
+          <h1>Collector Timeline</h1>
+        </div>
+        <div class="summary" aria-live="polite">
+          <div>
+            <span id="event-count">0</span>
+            <small>events</small>
+          </div>
+          <div>
+            <span id="collector-count">0</span>
+            <small>collectors</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Timeline filters">
+        <label>
+          <span>Search</span>
+          <input id="search" type="search" placeholder="Text, source, file, action" />
+        </label>
+        <label>
+          <span>Collector</span>
+          <select id="collector-filter">
+            <option value="">All collectors</option>
+          </select>
+        </label>
+        <label>
+          <span>Source</span>
+          <select id="source-filter">
+            <option value="">All sources</option>
+          </select>
+        </label>
+        <label>
+          <span>Limit</span>
+          <input id="limit" type="number" min="1" max="5000" step="50" value="500" />
+        </label>
+        <button id="refresh" type="button">Refresh</button>
+      </section>
+
+      <section class="status-row">
+        <div id="data-root" class="path"></div>
+        <div id="parse-errors" class="parse-errors"></div>
+      </section>
+
+      <section class="timeline-shell">
+        <ol id="timeline" class="timeline" aria-live="polite"></ol>
+        <div id="empty-state" class="empty-state" hidden>
+          <h2>No collected data matched</h2>
+          <p>Start a collector, point the server at another work folder, or relax the filters.</p>
+        </div>
+      </section>
+    </main>
+
+    <template id="event-template">
+      <li class="event-card">
+        <div class="rail">
+          <span class="dot"></span>
+          <span class="line"></span>
+        </div>
+        <article>
+          <header class="event-header">
+            <div>
+              <time></time>
+              <h2></h2>
+            </div>
+            <span class="collector-pill"></span>
+          </header>
+          <p class="event-text"></p>
+          <div class="meta-row"></div>
+          <details>
+            <summary>Event details</summary>
+            <div class="detail-grid"></div>
+            <pre></pre>
+          </details>
+        </article>
+      </li>
+    </template>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

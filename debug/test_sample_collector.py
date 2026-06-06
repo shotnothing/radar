@@ -126,6 +126,7 @@ def main():
 
     env = os.environ.copy()
     env["RADAR_HOME"] = str(radar_home)
+    env.pop("RADAR_WORK_DIR", None)
     env["RADAR_HOST"] = "127.0.0.1"
     env["RADAR_PORT"] = str(port)
     env["RADAR_COORDINATOR_URL"] = f"http://127.0.0.1:{port}"
@@ -141,6 +142,8 @@ def main():
             "127.0.0.1",
             "--port",
             str(port),
+            "--work-dir",
+            str(radar_home),
             "--collector-meta",
             "builtin/collector/sample/meta.json",
         ],

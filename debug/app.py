@@ -2,6 +2,7 @@ import argparse
 import atexit
 import json
 import os
+import sys
 import signal
 import subprocess
 import time
@@ -15,6 +16,14 @@ eventlet.monkey_patch()
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit, join_room
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from debug.active_context import MacOSActiveContextReader
+from debug.actor_runtime import ActorRuntime
+from debug.chrome_bridge import ChromeBridgeServer
+
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
 
@@ -27,8 +36,12 @@ registry = {
 config = {
     "work_root": Path(os.environ.get("RADAR_HOME", "~/.radar")).expanduser().resolve(),
     "session_id": str(uuid.uuid4()),
+    "api_token": os.environ.get("RADAR_API_TOKEN", str(uuid.uuid4())),
 }
 managed_collectors = []
+active_context_reader = MacOSActiveContextReader()
+chrome_bridge_server: ChromeBridgeServer | None = None
+actor_runtime: ActorRuntime | None = None
 
 
 def repo_root():
@@ -336,7 +349,213 @@ def state():
 
 @app.get("/debug/state")
 def debug_state():
-    return jsonify(state())
+    payload = state()
+    if actor_runtime is not None:
+        payload["actor_packages"] = actor_runtime.list_actors()
+    return jsonify(payload)
+
+
+@app.get("/debug/context")
+def debug_context():
+    return jsonify(current_context_snapshot())
+
+
+@app.get("/debug/chrome_bridge/status")
+@app.get("/api/chrome_bridge/status")
+def debug_chrome_bridge_status():
+    if chrome_bridge_server is None:
+        return jsonify({"connected": False, "error": "chrome bridge server not started"})
+    return jsonify(chrome_bridge_server.status())
+
+
+@app.get("/debug/actors")
+@app.get("/api/actors")
+def debug_actors():
+    if actor_runtime is None:
+        return jsonify({"actors": []})
+    return jsonify({"actors": actor_runtime.list_actors()})
+
+
+@app.post("/debug/actors/refresh")
+@app.post("/api/actors/refresh")
+def debug_actors_refresh():
+    if request.path.startswith("/api/") and not api_authorized():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    if actor_runtime is None:
+        return jsonify({"ok": False, "error": "actor runtime not started"}), 503
+    actor_runtime.refresh()
+    return jsonify({"ok": True, "actors": actor_runtime.list_actors()})
+
+
+@app.post("/debug/actors/<actor_id>/should_trigger")
+@app.post("/api/actors/<actor_id>/should_trigger")
+def debug_actor_should_trigger(actor_id):
+    if request.path.startswith("/api/") and not api_authorized():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    if actor_runtime is None:
+        return jsonify({"ok": False, "error": "actor runtime not started"}), 503
+    payload = request_json(default={})
+    try:
+        output = actor_runtime.should_trigger(
+            actor_id,
+            context_override=payload.get("context"),
+            ignore_filters=bool(payload.get("ignore_filters")),
+        )
+    except Exception as error:
+        return jsonify({"ok": False, "error": str(error)}), 500
+    return jsonify({"ok": True, "output": output})
+
+
+@app.post("/debug/actors/<actor_id>/run")
+@app.post("/api/actors/<actor_id>/run")
+def debug_actor_run(actor_id):
+    if request.path.startswith("/api/") and not api_authorized():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    if actor_runtime is None:
+        return jsonify({"ok": False, "error": "actor runtime not started"}), 503
+    payload = request_json(default={})
+    try:
+        output = actor_runtime.run_action(
+            actor_id,
+            trigger_id=payload.get("trigger_id"),
+            action_context=payload.get("action_context"),
+            user_action=payload.get("user_action"),
+            context_override=payload.get("context"),
+        )
+    except Exception as error:
+        return jsonify({"ok": False, "error": str(error)}), 500
+    socketio.emit("debug:actor_result", output, room="debug_clients")
+    return jsonify({"ok": True, "output": output})
+
+
+@app.get("/api/context/current")
+def api_context_current():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    return jsonify({"success": True, **current_context_snapshot()})
+
+
+@app.post("/api/accessibility/query")
+def api_accessibility_query():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    payload = request_json(default={})
+    return jsonify(
+        active_context_reader.read_accessibility(
+            bundle_id=payload.get("bundle_id", ""),
+            mode=payload.get("mode", "tree"),
+            max_depth=int(payload.get("max_depth", 3) or 3),
+        )
+    )
+
+
+@app.post("/api/browser/page_content")
+@app.post("/api/page/content")
+def api_browser_page_content():
+    return invoke_chrome_bridge("page_content")
+
+
+@app.post("/api/browser/page_action")
+@app.post("/api/page/action")
+def api_browser_page_action():
+    return invoke_chrome_bridge("page_action")
+
+
+@app.post("/api/desktop/open")
+def api_desktop_open():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    payload = request_json(default={})
+    target = payload.get("target") or payload.get("url") or payload.get("path") or payload.get("app")
+    if not target:
+        return jsonify({"success": False, "error": "target is required"}), 400
+    result = subprocess.run(["open", str(target)], capture_output=True, text=True, check=False)
+    return jsonify(
+        {
+            "success": result.returncode == 0,
+            "error": result.stderr.strip() if result.returncode != 0 else "",
+        }
+    )
+
+
+@app.post("/api/clipboard/write")
+def api_clipboard_write():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    payload = request_json(default={})
+    text = str(payload.get("text", ""))
+    result = subprocess.run(["pbcopy"], input=text, capture_output=True, text=True, check=False)
+    return jsonify(
+        {
+            "success": result.returncode == 0,
+            "error": result.stderr.strip() if result.returncode != 0 else "",
+        }
+    )
+
+
+@app.post("/api/progress")
+def api_progress():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    payload = request_json(default={})
+    payload.setdefault("created_at", utc_timestamp())
+    socketio.emit("debug:actor_progress", payload, room="debug_clients")
+    return jsonify({"success": True})
+
+
+@app.post("/api/view/open")
+def api_view_open():
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    payload = request_json(default={})
+    view_id = str(uuid.uuid4())
+    socketio.emit(
+        "debug:view_open",
+        {
+            "id": view_id,
+            **payload,
+        },
+        room="debug_clients",
+    )
+    return jsonify({"success": True, "view_id": view_id})
+
+
+def current_context_snapshot():
+    return active_context_reader.read_current()
+
+
+def request_json(default=None):
+    if not request.data:
+        return default
+    try:
+        payload = request.get_json(force=True)
+    except Exception:
+        return default
+    return payload if payload is not None else default
+
+
+def api_authorized():
+    token = config.get("api_token")
+    if not token:
+        return True
+    return request.headers.get("Authorization") == f"Bearer {token}"
+
+
+def invoke_chrome_bridge(method):
+    if not api_authorized():
+        return jsonify({"success": False, "error": "unauthorized"}), 401
+    if chrome_bridge_server is None:
+        return jsonify({"success": False, "error": "chrome bridge server not started"}), 503
+    payload = request_json(default={})
+    try:
+        result = chrome_bridge_server.invoke(method, [payload])
+    except Exception as error:
+        return jsonify({"success": False, "error": str(error)}), 503
+    if isinstance(result, dict) and result.get("error"):
+        return jsonify({"success": False, **result})
+    if isinstance(result, dict):
+        return jsonify({"success": True, **result})
+    return jsonify({"success": True, "result": result})
 
 
 @socketio.on("connect")
@@ -535,6 +754,24 @@ def parse_args():
         help="Path to a collector meta.json to launch and manage.",
     )
     parser.add_argument(
+        "--actor-path",
+        action="append",
+        default=None,
+        help="Actor package directory, manifest path, or directory containing actor packages.",
+    )
+    parser.add_argument(
+        "--chrome-bridge-port",
+        default=int(os.environ.get("RADAR_CHROME_BRIDGE_PORT", 9223)),
+        type=int,
+        help="Port for the Wingman-compatible Chrome bridge WebSocket server.",
+    )
+    parser.add_argument(
+        "--disable-chrome-bridge",
+        action="store_true",
+        default=os.environ.get("RADAR_DISABLE_CHROME_BRIDGE", "").lower()
+        in {"1", "true", "yes"},
+    )
+    parser.add_argument(
         "--debug",
         action="store_true",
         default=os.environ.get("RADAR_DEBUG", "").lower() in {"1", "true", "yes"},
@@ -548,12 +785,47 @@ if __name__ == "__main__":
     config["work_root"].mkdir(parents=True, exist_ok=True)
     recover_stale_collectors()
     write_coordinator_state()
+
+    if not args.disable_chrome_bridge:
+        chrome_bridge_server = ChromeBridgeServer(port=args.chrome_bridge_port)
+        try:
+            chrome_bridge_server.start()
+            print(
+                f"started chrome bridge ws on ws://127.0.0.1:{args.chrome_bridge_port}/wingman-chrome-bridge-ws",
+                flush=True,
+            )
+        except Exception as error:
+            print(f"failed to start chrome bridge: {error}", flush=True)
+
+    host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
+    api_url = os.environ.get("RADAR_API_URL", f"http://{host}:{args.port}")
+    actor_paths = args.actor_path or split_env_list(os.environ.get("RADAR_ACTOR_PATH"))
+    if not actor_paths:
+        actor_paths = ["builtin/actor"]
+    actor_runtime = ActorRuntime(
+        actor_paths=actor_paths,
+        state_root=config["work_root"] / "actors",
+        context_provider=current_context_snapshot,
+        api_url=api_url,
+        api_token=config["api_token"],
+        progress_callback=lambda payload: socketio.emit(
+            "debug:actor_progress",
+            payload,
+            room="debug_clients",
+        ),
+    )
+    actor_runtime.refresh()
+    print(
+        f"loaded {len(actor_runtime.actors)} actor package(s); RADAR_API_URL={api_url}",
+        flush=True,
+    )
+    print(f"debug actor API token: {config['api_token']}", flush=True)
+
     collector_meta = args.collector_meta
     if collector_meta is None:
         collector_meta = split_env_list(os.environ.get("RADAR_COLLECTOR_META"))
 
     if collector_meta:
-        host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
         coordinator_url = os.environ.get(
             "RADAR_COORDINATOR_URL",
             f"http://{host}:{args.port}",
