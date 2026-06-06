@@ -75,10 +75,10 @@ const settingsTabs: Array<{
   label: string;
   icon: LucideIcon;
 }> = [
-  { id: "collector", label: "collector", icon: Settings2 },
-  { id: "processor", label: "processor", icon: Cpu },
-  { id: "actor", label: "actor", icon: Bot },
-  { id: "connection", label: "connection", icon: Link2 },
+  { id: "collector", label: "Collector", icon: Settings2 },
+  { id: "processor", label: "Processor", icon: Cpu },
+  { id: "actor", label: "Actor", icon: Bot },
+  { id: "connection", label: "Connection", icon: Link2 },
 ];
 
 const settingsCopy: Record<
@@ -86,22 +86,22 @@ const settingsCopy: Record<
   { title: string; description: string; empty: string }
 > = {
   collector: {
-    title: "collector",
+    title: "Collector",
     description: "Local sources that collect activity signals.",
     empty: "No collectors configured.",
   },
   processor: {
-    title: "processor",
+    title: "Processor",
     description: "Pipelines that turn collected signals into intent.",
     empty: "No processors configured.",
   },
   actor: {
-    title: "actor",
+    title: "Actor",
     description: "Actions that can be triggered after intent is detected.",
     empty: "No actors configured yet.",
   },
   connection: {
-    title: "connection",
+    title: "Connection",
     description: "External accounts Radar can use with your permission.",
     empty: "No connections configured yet.",
   },
