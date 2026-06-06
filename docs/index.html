@@ -1021,7 +1021,7 @@
             <a href="#landing">Problem</a>
             <a href="#user-guide">User Guide</a>
             <a href="#developer-guide">Developer Guide</a>
-            <a href="#architecture">Architecture</a>
+            <a href="#local-setup">Local Setup</a>
           </div>
         </div>
       </nav>
@@ -1248,60 +1248,7 @@
           </div>
         </section>
 
-        <section class="band" id="developer-guide">
-          <div class="shell">
-            <div class="section-head">
-              <h2>Developer guide</h2>
-              <p>Minimal commands for running the demo locally and explaining the technical foundation.</p>
-            </div>
-
-            <div class="steps">
-              <article class="step">
-                <div class="step-number">1</div>
-                <div>
-                  <h3>Install Python dependencies</h3>
-                  <p>Use the repo root and create a local virtual environment for the coordinator and collectors.</p>
-                  <div class="code-panel">
-                    <div class="code-title"><span>Terminal</span><span>setup</span></div>
-                    <pre><code>git clone https://github.com/shotnothing/radar.git
-cd radar
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt</code></pre>
-                  </div>
-                </div>
-              </article>
-
-              <article class="step">
-                <div class="step-number">2</div>
-                <div>
-                  <h3>Package and load the Chrome extension</h3>
-                  <p>Build the unpacked extension, then load the generated folder in Chrome Developer Mode.</p>
-                  <div class="code-panel">
-                    <div class="code-title"><span>Terminal</span><span>extension</span></div>
-                    <pre><code>make PYTHON=.venv/bin/python package-chrome-extension
-open -a "Google Chrome" chrome://extensions</code></pre>
-                  </div>
-                </div>
-              </article>
-
-              <article class="step">
-                <div class="step-number">3</div>
-                <div>
-                  <h3>Run the coordinator with Chrome collection</h3>
-                  <p>The coordinator launches the managed Chrome collector and writes JSONL observations under the debug work folder.</p>
-                  <div class="code-panel">
-                    <div class="code-title"><span>Terminal</span><span>run</span></div>
-                    <pre><code>PATH="$PWD/.venv/bin:$PATH" \
-RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
-make PYTHON=.venv/bin/python run-coordinator</code></pre>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section class="shell" id="architecture">
+        <section class="shell" id="developer-guide">
           <div class="section-head">
             <h2>Architecture at a glance.</h2>
             <p>A simple loop that is easy to understand and strong enough to grow into a production system.</p>
@@ -1429,6 +1376,59 @@ make PYTHON=.venv/bin/python run-coordinator</code></pre>
                   <text class="diagram-subtitle" x="22" y="55">priority + reusable skills</text>
                 </g>
               </svg>
+            </div>
+          </div>
+        </section>
+
+        <section class="band" id="local-setup">
+          <div class="shell">
+            <div class="section-head">
+              <h2>Local setup</h2>
+              <p>Minimal commands for running the demo locally and explaining the technical foundation.</p>
+            </div>
+
+            <div class="steps">
+              <article class="step">
+                <div class="step-number">1</div>
+                <div>
+                  <h3>Install Python dependencies</h3>
+                  <p>Use the repo root and create a local virtual environment for the coordinator and collectors.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>setup</span></div>
+                    <pre><code>git clone https://github.com/shotnothing/radar.git
+cd radar
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt</code></pre>
+                  </div>
+                </div>
+              </article>
+
+              <article class="step">
+                <div class="step-number">2</div>
+                <div>
+                  <h3>Package and load the Chrome extension</h3>
+                  <p>Build the unpacked extension, then load the generated folder in Chrome Developer Mode.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>extension</span></div>
+                    <pre><code>make PYTHON=.venv/bin/python package-chrome-extension
+open -a "Google Chrome" chrome://extensions</code></pre>
+                  </div>
+                </div>
+              </article>
+
+              <article class="step">
+                <div class="step-number">3</div>
+                <div>
+                  <h3>Run the coordinator with Chrome collection</h3>
+                  <p>The coordinator launches the managed Chrome collector and writes JSONL observations under the debug work folder.</p>
+                  <div class="code-panel">
+                    <div class="code-title"><span>Terminal</span><span>run</span></div>
+                    <pre><code>PATH="$PWD/.venv/bin:$PATH" \
+RADAR_COLLECTOR_META=builtin/collector/chrome/meta.json \
+make PYTHON=.venv/bin/python run-coordinator</code></pre>
+                  </div>
+                </div>
+              </article>
             </div>
           </div>
         </section>
