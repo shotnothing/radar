@@ -259,11 +259,13 @@ class ActorRuntimeTest(unittest.TestCase):
             args = json.loads(captured_args.read_text())
 
             self.assertTrue(output["success"])
-            self.assertEqual(args[0], "exec")
+            self.assertEqual(args[0], "--ask-for-approval")
             self.assertIn("--ask-for-approval", args)
             self.assertIn("never", args)
             self.assertIn("--sandbox", args)
             self.assertIn("danger-full-access", args)
+            self.assertIn("exec", args)
+            self.assertGreater(args.index("exec"), args.index("danger-full-access"))
             self.assertIn("Do not type a reply body and do not click Send.", args[-1])
             self.assertIn(payload["action_context"]["url"], args[-1])
 

@@ -10,3 +10,4 @@ __pycache__/
 debug/work/
 /dist
 .env
+*.log

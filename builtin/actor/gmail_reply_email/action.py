@@ -63,11 +63,11 @@ def run_codex_reply_action(url: str) -> dict[str, Any]:
     prompt = build_codex_prompt(url)
     command = [
         codex_bin,
-        "exec",
         "--ask-for-approval",
         "never",
         "--sandbox",
         "danger-full-access",
+        "exec",
         "--skip-git-repo-check",
         "--cd",
         os.getcwd(),
