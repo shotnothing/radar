@@ -1,0 +1,42 @@
+{
+  "collector_id": "chrome.browser",
+  "display_name": "Chrome Browser Collector",
+  "protocol_version": 1,
+  "source": {
+    "type": "browser",
+    "app": "Google Chrome",
+    "bundle_id": "com.google.Chrome"
+  },
+  "runtime": {
+    "command": "python3 -m builtin.collector.chrome.cli"
+  },
+  "permissions": [
+    "macos.automation.google_chrome",
+    "chrome.active_tab",
+    "chrome.tabs",
+    "chrome.web_navigation"
+  ],
+  "capabilities": [
+    "active_tab",
+    "navigation",
+    "browser_event",
+    "dom_event",
+    "jsonl_storage"
+  ],
+  "emits": [
+    "observation"
+  ],
+  "anchors": [
+    "time_interval",
+    "user_action",
+    "content_change",
+    "state_change"
+  ],
+  "default_config": {
+    "coordinator_url": "http://127.0.0.1:5000",
+    "event_host": "127.0.0.1",
+    "event_port": 47321,
+    "poll_interval_ms": 2000,
+    "file_split_ms": 3600000
+  }
+}
