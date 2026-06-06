@@ -110,6 +110,10 @@ def is_user_organized(event, account_email=""):
     return not organizer_email and account_email == ""
 
 
+def iso_param_from_ms(value):
+    return iso_from_epoch_ms(value) if value else ""
+
+
 def normalize_attendee(value):
     if isinstance(value, dict):
         return {
@@ -251,10 +255,15 @@ def scan_sources(args, work_dir):
         payload = client.get(
             args.organized_events_endpoint,
             {
-                "updated_min_ms": updated_min,
-                "time_min_ms": max(0, now_ms - int(args.initial_lookback_seconds) * 1000),
-                "time_max_ms": now_ms + int(args.future_lookahead_seconds) * 1000,
-                "limit": int(args.batch_limit),
+                "singleEvents": "true",
+                "maxResults": int(args.batch_limit),
+                "timeMin": iso_param_from_ms(
+                    max(0, now_ms - int(args.initial_lookback_seconds) * 1000)
+                ),
+                "timeMax": iso_param_from_ms(
+                    now_ms + int(args.future_lookahead_seconds) * 1000
+                ),
+                **({"updatedMin": iso_param_from_ms(updated_min)} if updated_min else {}),
             },
         )
         events_seen = item_list(payload, "events", "meetings", "items")
@@ -400,16 +409,16 @@ def parse_args():
     )
     parser.add_argument(
         "--google-api-base-url",
-        default=os.environ.get("RADAR_GOOGLE_API_BASE_URL", "http://127.0.0.1:47611"),
+        default=os.environ.get("RADAR_GOOGLE_API_BASE_URL", "http://127.0.0.1:8888"),
         help="Local desktop Google API bridge base URL.",
     )
     parser.add_argument(
         "--organized-events-endpoint",
         default=os.environ.get(
             "RADAR_GOOGLE_CALENDAR_ORGANIZED_EVENTS_ENDPOINT",
-            "/google_calendar/events/organized",
+            "/api/google_calendar/calendars/primary/events",
         ),
-        help="Local API path that returns meetings organized by the user.",
+        help="Local API path that lists Google Calendar events.",
     )
     parser.add_argument(
         "--google-api-token",

@@ -34,36 +34,34 @@
         <div id="parse-errors" class="parse-errors"></div>
       </section>
 
-      <section class="timeline-shell">
-        <ol id="timeline" class="timeline" aria-live="polite"></ol>
+      <section class="timeline-shell" aria-label="Collected event timeline">
+        <div class="timeline-scroll">
+          <ol id="timeline" class="timeline" aria-live="polite"></ol>
+        </div>
+        <button
+          id="scroll-left"
+          class="scroll-arrow scroll-arrow-left"
+          type="button"
+          aria-label="Scroll timeline left"
+          hidden
+        >
+          ‹
+        </button>
+        <button
+          id="scroll-right"
+          class="scroll-arrow scroll-arrow-right"
+          type="button"
+          aria-label="Scroll timeline right"
+          hidden
+        >
+          ›
+        </button>
         <div id="empty-state" class="empty-state" hidden>
           <h2>No collected data matched</h2>
           <p>Start a collector, point the server at another work folder, or relax the filters.</p>
         </div>
       </section>
     </main>
-
-    <template id="event-template">
-      <li class="event-card">
-        <div class="rail">
-          <span class="dot"></span>
-          <span class="line"></span>
-        </div>
-        <article>
-          <header class="event-header">
-            <div>
-              <time></time>
-              <h2></h2>
-            </div>
-          </header>
-          <p class="event-text"></p>
-          <div class="event-footer">
-            <span class="collector-pill"></span>
-            <span class="event-kind"></span>
-          </div>
-        </article>
-      </li>
-    </template>
 
     <script src="/app.js" type="module"></script>
   </body>

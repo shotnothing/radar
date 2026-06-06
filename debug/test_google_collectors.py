@@ -56,14 +56,21 @@ class FakeGoogleApiClient:
         self.__class__.calls.append({"endpoint": endpoint, "params": params or {}})
         if self.__class__.error:
             raise self.__class__.error
+        if endpoint.endswith("/profile"):
+            return self.__class__.payload.get("profile", {})
+        for message_id, message in self.__class__.payload.get("message_details", {}).items():
+            if endpoint.endswith(f"/{message_id}"):
+                return message
         return self.__class__.payload
 
 
 def mail_args():
     return SimpleNamespace(
-        google_api_base_url="http://127.0.0.1:47611",
+        google_api_base_url="http://127.0.0.1:8888",
         google_api_token="",
-        sent_endpoint="/google_mail/sent",
+        sent_endpoint="/api/google_gmail/users/me/messages",
+        message_endpoint="/api/google_gmail/users/me/messages/{id}",
+        profile_endpoint="/api/google_gmail/users/me/profile",
         request_timeout=10,
         checkpoint_lookback_seconds=300,
         initial_lookback_seconds=9999999999,
@@ -74,9 +81,9 @@ def mail_args():
 
 def calendar_args():
     return SimpleNamespace(
-        google_api_base_url="http://127.0.0.1:47611",
+        google_api_base_url="http://127.0.0.1:8888",
         google_api_token="",
-        organized_events_endpoint="/google_calendar/events/organized",
+        organized_events_endpoint="/api/google_calendar/calendars/primary/events",
         request_timeout=10,
         checkpoint_lookback_seconds=300,
         initial_lookback_seconds=9999999999,
@@ -97,30 +104,49 @@ def test_mail_collector():
         FakeGoogleApiClient.calls = []
         FakeGoogleApiClient.error = None
         FakeGoogleApiClient.payload = {
-            "account_email": "me@example.com",
+            "profile": {"emailAddress": "me@example.com"},
             "messages": [
-                {
-                    "id": "m1",
-                    "thread_id": "t1",
-                    "sent_at_ms": FIXTURE_START_MS,
-                    "subject": "Follow up",
-                    "from": {"email": "me@example.com", "name": "Me"},
-                    "to": [{"email": "you@example.com", "name": "You"}],
-                    "snippet": "Can you confirm?",
-                    "body": "Can you confirm the launch date?",
-                    "label_ids": ["SENT"],
-                    "web_link": "https://mail.google.com/mail/u/0/#sent/m1",
-                },
-                {
-                    "id": "m2",
-                    "thread_id": "t2",
-                    "sent_at_ms": FIXTURE_START_MS + 1000,
-                    "subject": "Decision",
-                    "from": "me@example.com",
-                    "to": "team@example.com",
-                    "body": "I will take this.",
-                },
+                {"id": "m1", "threadId": "t1"},
+                {"id": "m2", "threadId": "t2"},
             ],
+            "message_details": {
+                "m1": {
+                    "id": "m1",
+                    "threadId": "t1",
+                    "internalDate": str(FIXTURE_START_MS),
+                    "snippet": "Can you confirm?",
+                    "labelIds": ["SENT"],
+                    "payload": {
+                        "headers": [
+                            {"name": "Subject", "value": "Follow up"},
+                            {"name": "From", "value": "Me <me@example.com>"},
+                            {"name": "To", "value": "You <you@example.com>"},
+                        ],
+                        "parts": [
+                            {
+                                "mimeType": "text/plain",
+                                "body": {
+                                    "data": "Q2FuIHlvdSBjb25maXJtIHRoZSBsYXVuY2ggZGF0ZT8="
+                                },
+                            }
+                        ],
+                    },
+                },
+                "m2": {
+                    "id": "m2",
+                    "threadId": "t2",
+                    "internalDate": str(FIXTURE_START_MS + 1000),
+                    "payload": {
+                        "headers": [
+                            {"name": "Subject", "value": "Decision"},
+                            {"name": "From", "value": "me@example.com"},
+                            {"name": "To", "value": "team@example.com"},
+                        ],
+                        "mimeType": "text/plain",
+                        "body": {"data": "SSB3aWxsIHRha2UgdGhpcy4="},
+                    },
+                },
+            },
         }
 
         args = mail_args()
@@ -131,20 +157,20 @@ def test_mail_collector():
         require(first["events_written"] == 2, f"expected two written messages: {first}")
         require(len(events) == 2, f"unexpected mail event count: {len(events)}")
         require(
-            FakeGoogleApiClient.calls[0]["endpoint"] == "/google_mail/sent",
+            FakeGoogleApiClient.calls[0]["endpoint"] == "/api/google_gmail/users/me/messages",
             f"wrong mail endpoint: {FakeGoogleApiClient.calls}",
         )
         require(
-            "since_ms" in FakeGoogleApiClient.calls[0]["params"],
-            f"mail collector should pass incremental since_ms: {FakeGoogleApiClient.calls}",
+            FakeGoogleApiClient.calls[0]["params"]["labelIds"] == "SENT",
+            f"mail collector should pass the Gmail SENT label: {FakeGoogleApiClient.calls}",
         )
 
         first_event = next(event for event in events if event["extra_data"]["google_mail"]["id"] == "m1")
         require(first_event["subject"]["kind"] == "communication_user_email", "wrong mail kind")
         require(first_event["content"]["text"] == "Can you confirm the launch date?", "wrong mail body")
         require(first_event["context"]["account_email"] == "me@example.com", "missing account email")
-        require(first_event["context"]["to"][0]["email"] == "you@example.com", "missing recipient")
-        require(first_event["provenance"]["source_uri"].endswith("/m1"), "missing mail source URI")
+        require("you@example.com" in first_event["context"]["to"][0]["email"], "missing recipient")
+        require(first_event["provenance"]["source_uri"] == "gmail://message/m1", "missing mail source URI")
 
         args.force_all = False
         second = collector.scan_sources(args, work_dir)
@@ -198,12 +224,12 @@ def test_calendar_collector():
         require(first["events_written"] == 1, f"expected one organized event: {first}")
         require(len(events) == 1, f"unexpected calendar event count: {len(events)}")
         require(
-            FakeGoogleApiClient.calls[0]["endpoint"] == "/google_calendar/events/organized",
+            FakeGoogleApiClient.calls[0]["endpoint"] == "/api/google_calendar/calendars/primary/events",
             f"wrong calendar endpoint: {FakeGoogleApiClient.calls}",
         )
         require(
-            "updated_min_ms" in FakeGoogleApiClient.calls[0]["params"],
-            f"calendar collector should pass incremental updated_min_ms: {FakeGoogleApiClient.calls}",
+            "timeMin" in FakeGoogleApiClient.calls[0]["params"],
+            f"calendar collector should pass Google timeMin: {FakeGoogleApiClient.calls}",
         )
 
         event = events[0]

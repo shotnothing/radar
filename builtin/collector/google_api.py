@@ -163,18 +163,36 @@ class LocalGoogleApiClient:
         except requests.RequestException as error:
             raise LocalGoogleApiError(str(error)) from error
 
-        if response.status_code in {401, 403}:
+        body_text = response.text
+        auth_required = response.status_code in {401, 403} or is_auth_error(body_text)
+        if auth_required:
             raise LocalGoogleApiError(
-                f"local Google API authorization failed with HTTP {response.status_code}",
+                f"local Google API authorization failed with HTTP {response.status_code}: {body_text[:240]}",
                 status_code=response.status_code,
                 auth_required=True,
             )
         if response.status_code < 200 or response.status_code >= 300:
             raise LocalGoogleApiError(
-                f"local Google API request failed with HTTP {response.status_code}: {response.text[:240]}",
+                f"local Google API request failed with HTTP {response.status_code}: {body_text[:240]}",
                 status_code=response.status_code,
             )
         try:
             return response.json()
         except ValueError as error:
             raise LocalGoogleApiError("local Google API returned non-JSON response") from error
+
+
+def is_auth_error(body_text):
+    text = str(body_text or "").lower()
+    return any(
+        marker in text
+        for marker in (
+            "google account is not connected",
+            "permission was not granted",
+            "no refresh token",
+            "token expired",
+            "token refresh failed",
+            "unauthorized",
+            "invalid_grant",
+        )
+    )

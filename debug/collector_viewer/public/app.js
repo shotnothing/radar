@@ -14,14 +14,18 @@ const palette = [
 ];
 
 const timeline = document.querySelector("#timeline");
+const timelineScroll = document.querySelector(".timeline-scroll");
 const emptyState = document.querySelector("#empty-state");
-const template = document.querySelector("#event-template");
 const legend = document.querySelector("#legend");
 const refreshButton = document.querySelector("#refresh");
+const scrollLeftButton = document.querySelector("#scroll-left");
+const scrollRightButton = document.querySelector("#scroll-right");
 const eventCount = document.querySelector("#event-count");
 const collectorCount = document.querySelector("#collector-count");
 const parseErrors = document.querySelector("#parse-errors");
 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const eventUnitPx = 22;
+const groupMinWidthPx = 132;
 
 function pad(value) {
   return String(value).padStart(2, "0");
@@ -40,7 +44,7 @@ function formatMarker(ms) {
     return "Unknown time";
   }
   const date = new Date(ms);
-  return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()} · ${pad(date.getHours())}:00`;
+  return `${date.getDate()} ${monthNames[date.getMonth()]} · ${pad(date.getHours())}:00`;
 }
 
 function formatShortTime(ms) {
@@ -49,14 +53,6 @@ function formatShortTime(ms) {
   }
   const date = new Date(ms);
   return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
-
-function truncate(value, length = 120) {
-  const text = String(value || "").replace(/\s+/g, " ").trim();
-  if (text.length <= length) {
-    return text;
-  }
-  return `${text.slice(0, length).trim()}...`;
 }
 
 function queryString() {
@@ -98,10 +94,11 @@ function render(payload) {
   const colorMap = createColorMap(payload.collectors || []);
   renderLegend(payload.collectors || [], colorMap);
 
-  const items = renderTimeline(payload.events || [], colorMap);
+  const { nodes: items, firstRun } = renderTimeline(payload.events || [], colorMap);
   timeline.replaceChildren(...items);
-  emptyState.hidden = items.length > 0;
-  if (items.length === 0) {
+  emptyState.hidden = Boolean(firstRun);
+  requestAnimationFrame(updateScrollArrows);
+  if (!firstRun) {
     emptyState.querySelector("h2").textContent = "No collected data matched";
     emptyState.querySelector("p").textContent =
       payload.totalEvents > 0
@@ -148,53 +145,161 @@ function markerKey(ms) {
 function renderTimeline(events, colorMap) {
   const nodes = [];
   let currentMarker = "";
+  const chronologicalEvents = [...events].sort((a, b) => a.observedAt - b.observedAt);
+  const runs = createTimelineRuns(chronologicalEvents);
 
-  for (const event of events) {
-    const nextMarker = markerKey(event.observedAt);
+  for (const run of runs) {
+    const nextMarker = markerKey(run.startAt);
     if (nextMarker !== currentMarker) {
       currentMarker = nextMarker;
-      nodes.push(renderTimeMarker(event.observedAt));
+      nodes.push(renderTimeMarker(run.startAt));
     }
-    nodes.push(renderEvent(event, colorMap));
+    nodes.push(renderRun(run, colorMap));
   }
 
-  return nodes;
+  return { nodes, firstRun: runs[0] || null };
+}
+
+function createTimelineRuns(events) {
+  const runs = [];
+
+  for (const event of events) {
+    const lastRun = runs.at(-1);
+    if (lastRun && canMerge(lastRun, event)) {
+      lastRun.events.push(event);
+      lastRun.endAt = event.observedAt || lastRun.endAt;
+      continue;
+    }
+
+    runs.push({
+      collectorId: event.collectorId,
+      startAt: event.observedAt,
+      endAt: event.observedAt,
+      events: [event],
+    });
+  }
+
+  return runs;
+}
+
+function canMerge(run, event) {
+  return run.collectorId === event.collectorId;
 }
 
 function renderTimeMarker(ms) {
   const item = document.createElement("li");
   item.className = "time-marker";
 
-  const line = document.createElement("span");
   const label = document.createElement("time");
   label.textContent = formatMarker(ms);
   if (ms) {
     label.dateTime = new Date(ms).toISOString();
   }
 
-  item.append(line, label);
+  item.append(label);
   return item;
 }
 
-function renderEvent(event, colorMap) {
-  const node = template.content.firstElementChild.cloneNode(true);
-  const title = node.querySelector("h2");
-  const time = node.querySelector("time");
-  const collector = node.querySelector(".collector-pill");
-  const text = node.querySelector(".event-text");
-  const kind = node.querySelector(".event-kind");
-  const color = colorMap.get(event.collectorId) || palette[0];
+function renderRun(run, colorMap) {
+  const node = document.createElement("li");
+  const segment = document.createElement("div");
+  const color = colorMap.get(run.collectorId) || palette[0];
+  const count = run.events.length;
+  const segmentWidth = eventUnitPx * count;
 
-  title.textContent = event.title || "Untitled event";
-  time.textContent = formatShortTime(event.observedAt) || formatDate(event.observedAt);
-  time.dateTime = event.observedAt ? new Date(event.observedAt).toISOString() : "";
-  collector.textContent = event.collectorId;
-  text.textContent = truncate(event.text);
-  kind.textContent = [event.sourceApp, event.subjectKind].filter(Boolean).join(" / ");
-  node.style.setProperty("--event-color", color);
+  node.className = "timeline-group";
+  node.style.inlineSize = `${Math.max(segmentWidth, groupMinWidthPx)}px`;
+  node.setAttribute("aria-label", runLabel(run));
+
+  segment.className = "timeline-segment";
+  segment.style.setProperty("--event-color", color);
+  segment.style.inlineSize = `${segmentWidth}px`;
+  segment.title = runLabel(run);
+
+  if (count > 1) {
+    const badge = document.createElement("span");
+    badge.textContent = new Intl.NumberFormat().format(count);
+    segment.append(badge);
+  }
+
+  const meta = document.createElement("div");
+  meta.className = "segment-meta";
+
+  const source = document.createElement("span");
+  source.textContent = formatValueList(uniqueValues(run.events, "sourceType"));
+
+  const app = document.createElement("span");
+  app.textContent = formatValueList(uniqueValues(run.events, "sourceApp"));
+
+  const kind = document.createElement("small");
+  kind.textContent = [formatValueList(uniqueValues(run.events, "subjectKind")), formatRunTime(run)]
+    .filter((value) => value && value !== "-")
+    .join(" / ");
+
+  meta.append(source, app, kind);
+  node.append(segment, meta);
   return node;
 }
 
+function uniqueValues(events, key) {
+  return [...new Set(events.map((event) => event[key]).filter(Boolean))];
+}
+
+function formatValueList(values) {
+  if (values.length === 0) {
+    return "-";
+  }
+  if (values.length <= 2) {
+    return values.join(", ");
+  }
+  return `${values.slice(0, 2).join(", ")} +${values.length - 2}`;
+}
+
+function formatRunTime(run) {
+  if (run.startAt === run.endAt) {
+    return formatShortTime(run.startAt) || "Unknown";
+  }
+  return `${formatShortTime(run.startAt)}-${formatShortTime(run.endAt)}`;
+}
+
+function runLabel(run) {
+  const count = run.events.length;
+  const range =
+    run.startAt === run.endAt
+      ? formatDate(run.startAt)
+      : `${formatDate(run.startAt)} to ${formatDate(run.endAt)}`;
+  return `${count} ${count === 1 ? "event" : "events"} from ${run.collectorId}, ${range}`;
+}
+
+function scrollTimeline(direction) {
+  if (!timelineScroll) {
+    return;
+  }
+
+  timelineScroll.scrollBy({
+    left: direction * Math.max(timelineScroll.clientWidth * 0.8, 240),
+    behavior: "smooth",
+  });
+}
+
+function updateScrollArrows() {
+  if (!timelineScroll || !scrollLeftButton || !scrollRightButton) {
+    return;
+  }
+
+  const maxScrollLeft = timelineScroll.scrollWidth - timelineScroll.clientWidth;
+  const canScroll = maxScrollLeft > 1;
+  const canScrollLeft = canScroll && timelineScroll.scrollLeft > 1;
+  const canScrollRight = canScroll && timelineScroll.scrollLeft < maxScrollLeft - 1;
+
+  scrollLeftButton.hidden = !canScrollLeft;
+  scrollRightButton.hidden = !canScrollRight;
+}
+
 refreshButton.addEventListener("click", loadEvents);
+scrollLeftButton?.addEventListener("click", () => scrollTimeline(-1));
+scrollRightButton?.addEventListener("click", () => scrollTimeline(1));
+timelineScroll?.addEventListener("scroll", updateScrollArrows, { passive: true });
+window.addEventListener("resize", updateScrollArrows);
 
 loadEvents();

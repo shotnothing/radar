@@ -28,8 +28,10 @@
     "collected_data.communication_user_email"
   ],
   "default_config": {
-    "google_api_base_url": "http://127.0.0.1:47611",
-    "sent_endpoint": "/google_mail/sent",
+    "google_api_base_url": "http://127.0.0.1:8888",
+    "sent_endpoint": "/api/google_gmail/users/me/messages",
+    "message_endpoint": "/api/google_gmail/users/me/messages/{id}",
+    "profile_endpoint": "/api/google_gmail/users/me/profile",
     "scan_interval_seconds": 300,
     "checkpoint_lookback_seconds": 300,
     "initial_lookback_seconds": 86400,

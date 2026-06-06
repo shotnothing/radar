@@ -167,6 +167,14 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       icon: Workflow,
       defaultEnabled: true,
     },
+    {
+      id: "actor.codex_use_radar_skill",
+      name: "Codex Radar Skill",
+      description: "Offers Radar Coding Memory when Codex is open on a known repo.",
+      status: "builtin.codex_use_radar_skill",
+      icon: Bot,
+      defaultEnabled: true,
+    },
   ],
   connection: [],
 };

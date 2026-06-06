@@ -1,4 +1,5 @@
 import argparse
+import base64
 import os
 import sys
 import time
@@ -24,7 +25,6 @@ from builtin.collector.google_api import (
     parse_time_ms,
     safe_list,
     save_checkpoint,
-    utc_timestamp,
     write_events,
 )
 
@@ -54,6 +54,22 @@ def normalize_address_list(value):
     return [normalize_email_address(item) for item in safe_list(value) if item]
 
 
+def header_map(message):
+    raw_headers = message.get("headers")
+    if isinstance(raw_headers, dict):
+        return {str(key).lower(): str(value) for key, value in raw_headers.items()}
+    payload = message.get("payload") if isinstance(message.get("payload"), dict) else {}
+    headers = {}
+    for item in payload.get("headers") or []:
+        if isinstance(item, dict) and item.get("name"):
+            headers[str(item["name"]).lower()] = str(item.get("value", ""))
+    return headers
+
+
+def header_value(message, name):
+    return header_map(message).get(name.lower(), "")
+
+
 def message_id(message):
     return str(
         first_value(
@@ -61,6 +77,10 @@ def message_id(message):
             "id",
             "message_id",
             "gmail_id",
+            default=header_value(message, "Message-ID"),
+        )
+        or first_value(
+            message,
             "rfc822_message_id",
             default=str(uuid.uuid4()),
         )
@@ -83,6 +103,12 @@ def message_text(message):
     body = first_value(message, "body", "text", "plain_text", "snippet")
     if isinstance(body, dict):
         body = first_value(body, "text", "plain", "value")
+    if body:
+        return str(body)
+    payload = message.get("payload") if isinstance(message.get("payload"), dict) else {}
+    decoded = decode_payload_text(payload)
+    if decoded:
+        return decoded
     return str(body or "")
 
 
@@ -90,15 +116,78 @@ def source_uri(message, msg_id):
     return str(first_value(message, "web_link", "url", "source_uri", default=f"gmail://message/{msg_id}"))
 
 
+def decode_payload_text(payload):
+    if not isinstance(payload, dict):
+        return ""
+    mime_type = str(payload.get("mimeType") or "")
+    body = payload.get("body") if isinstance(payload.get("body"), dict) else {}
+    data = body.get("data")
+    if data and (mime_type.startswith("text/plain") or not payload.get("parts")):
+        return decode_base64url_text(data)
+    parts = payload.get("parts") if isinstance(payload.get("parts"), list) else []
+    plain_parts = []
+    html_parts = []
+    for part in parts:
+        text = decode_payload_text(part)
+        part_type = str(part.get("mimeType") or "") if isinstance(part, dict) else ""
+        if not text:
+            continue
+        if part_type.startswith("text/plain"):
+            plain_parts.append(text)
+        elif part_type.startswith("text/html"):
+            html_parts.append(text)
+        else:
+            plain_parts.append(text)
+    return "\n\n".join(plain_parts or html_parts)
+
+
+def decode_base64url_text(data):
+    try:
+        padded = str(data) + "=" * (-len(str(data)) % 4)
+        return base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8", "replace")
+    except (ValueError, UnicodeDecodeError):
+        return ""
+
+
+def gmail_after_query(scan_after_ms):
+    if not scan_after_ms:
+        return ""
+    return "after:" + time.strftime("%Y/%m/%d", time.gmtime(scan_after_ms / 1000))
+
+
+def is_gmail_summary(message):
+    payload = message.get("payload") if isinstance(message, dict) else None
+    return isinstance(message, dict) and not isinstance(payload, dict)
+
+
+def hydrate_gmail_messages(client, endpoint_template, summaries):
+    messages = []
+    for summary in summaries:
+        if not isinstance(summary, dict):
+            continue
+        msg_id = summary.get("id")
+        if not msg_id or not is_gmail_summary(summary):
+            messages.append(summary)
+            continue
+        message = client.get(
+            endpoint_template.format(id=msg_id),
+            {"format": "full"},
+        )
+        if isinstance(message, dict):
+            messages.append(message)
+    return messages
+
+
 def build_sent_email_event(message, account_email=""):
     msg_id = message_id(message)
     sent_at = message_sent_at_ms(message)
     thread_id = str(first_value(message, "thread_id", "threadId", default=""))
-    subject = str(first_value(message, "subject", default="(no subject)"))
-    from_list = normalize_address_list(first_value(message, "from", "sender", default=[]))
-    to_list = normalize_address_list(first_value(message, "to", "recipients", default=[]))
-    cc_list = normalize_address_list(first_value(message, "cc", default=[]))
-    bcc_list = normalize_address_list(first_value(message, "bcc", default=[]))
+    headers = header_map(message)
+    subject = str(first_value(message, "subject", default=headers.get("subject", "(no subject)")))
+    from_list = normalize_address_list(first_value(message, "from", "sender", default=headers.get("from", "")))
+    to_list = normalize_address_list(first_value(message, "to", "recipients", default=headers.get("to", "")))
+    cc_list = normalize_address_list(first_value(message, "cc", default=headers.get("cc", "")))
+    bcc_list = normalize_address_list(first_value(message, "bcc", default=headers.get("bcc", "")))
     text = message_text(message)
     uri = source_uri(message, msg_id)
 
@@ -153,7 +242,7 @@ def build_sent_email_event(message, account_email=""):
                 "id": msg_id,
                 "thread_id": thread_id,
                 "label_ids": safe_list(first_value(message, "label_ids", "labelIds", default=[])),
-                "headers": message.get("headers", {}) if isinstance(message, dict) else {},
+                "headers": headers,
                 "relation_to_user": "sent_by_user",
             }
         },
@@ -191,6 +280,16 @@ def account_email_from_payload(payload):
     )
 
 
+def fetch_gmail_profile_email(client, profile_endpoint):
+    try:
+        profile = client.get(profile_endpoint)
+    except LocalGoogleApiError:
+        return ""
+    if not isinstance(profile, dict):
+        return ""
+    return str(first_value(profile, "emailAddress", "email", default=""))
+
+
 def scan_sources(args, work_dir):
     checkpoint = load_checkpoint(work_dir, CHECKPOINT_KEY)
     state = checkpoint.setdefault(CHECKPOINT_KEY, {})
@@ -215,12 +314,17 @@ def scan_sources(args, work_dir):
         payload = client.get(
             args.sent_endpoint,
             {
-                "since_ms": scan_after,
-                "limit": int(args.batch_limit),
+                "labelIds": "SENT",
+                "maxResults": int(args.batch_limit),
+                **({"q": gmail_after_query(scan_after)} if gmail_after_query(scan_after) else {}),
             },
         )
-        messages = item_list(payload, "messages", "emails", "items")
-        account_email = account_email_from_payload(payload)
+        summaries = item_list(payload, "messages", "emails", "items")
+        messages = hydrate_gmail_messages(client, args.message_endpoint, summaries)
+        account_email = account_email_from_payload(payload) or fetch_gmail_profile_email(
+            client,
+            args.profile_endpoint,
+        )
         processed_ids = set(state.get("processed_message_ids") or [])
         for message in messages:
             if not isinstance(message, dict):
@@ -359,13 +463,29 @@ def parse_args():
     )
     parser.add_argument(
         "--google-api-base-url",
-        default=os.environ.get("RADAR_GOOGLE_API_BASE_URL", "http://127.0.0.1:47611"),
+        default=os.environ.get("RADAR_GOOGLE_API_BASE_URL", "http://127.0.0.1:8888"),
         help="Local desktop Google API bridge base URL.",
     )
     parser.add_argument(
         "--sent-endpoint",
-        default=os.environ.get("RADAR_GOOGLE_MAIL_SENT_ENDPOINT", "/google_mail/sent"),
-        help="Local API path that returns user-sent Gmail messages.",
+        default=os.environ.get("RADAR_GOOGLE_MAIL_SENT_ENDPOINT", "/api/google_gmail/users/me/messages"),
+        help="Local API path that lists Gmail SENT messages.",
+    )
+    parser.add_argument(
+        "--message-endpoint",
+        default=os.environ.get(
+            "RADAR_GOOGLE_MAIL_MESSAGE_ENDPOINT",
+            "/api/google_gmail/users/me/messages/{id}",
+        ),
+        help="Local API path template that reads one Gmail message by {id}.",
+    )
+    parser.add_argument(
+        "--profile-endpoint",
+        default=os.environ.get(
+            "RADAR_GOOGLE_MAIL_PROFILE_ENDPOINT",
+            "/api/google_gmail/users/me/profile",
+        ),
+        help="Local API path that returns the Gmail profile.",
     )
     parser.add_argument(
         "--google-api-token",

@@ -28,8 +28,8 @@
     "collected_data.calendar_user_organized_meeting"
   ],
   "default_config": {
-    "google_api_base_url": "http://127.0.0.1:47611",
-    "organized_events_endpoint": "/google_calendar/events/organized",
+    "google_api_base_url": "http://127.0.0.1:8888",
+    "organized_events_endpoint": "/api/google_calendar/calendars/primary/events",
     "scan_interval_seconds": 300,
     "checkpoint_lookback_seconds": 300,
     "initial_lookback_seconds": 86400,
