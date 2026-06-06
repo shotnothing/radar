@@ -274,6 +274,10 @@ def find_available_skill(
     }
 
 
+def build_codex_skill_prompt(repo_skill_path: str) -> str:
+    return f" Please use the skill at {repo_skill_path}."
+
+
 def paste_text_into_codex(text: str) -> dict[str, Any]:
     script = r'''
     on run argv

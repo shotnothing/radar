@@ -16,7 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CHROME_BRIDGE_PORT = int(os.environ.get("RADAR_CHROME_BRIDGE_PORT", "9223"))
 RADAR_EXTENSION_DIR = REPO_ROOT / "dist" / "radar-extension"
 YOUTUBE_ACTOR_ID = "builtin.youtube_search_nab"
-YOUTUBE_SEARCH_SELECTOR = "input#search, input[name='search_query'], ytd-searchbox input"
+YOUTUBE_SEARCH_SELECTOR = ".yt-searchbox-input"
 
 
 class CoordinatorActorAPILiveTest(unittest.TestCase):

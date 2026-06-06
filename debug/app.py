@@ -6,6 +6,7 @@ import sys
 import signal
 import subprocess
 import time
+import traceback
 import uuid
 from pathlib import Path
 
@@ -427,6 +428,7 @@ def debug_actor_run(actor_id):
             trigger_event=payload.get("trigger_event") or payload.get("event"),
         )
     except Exception as error:
+        traceback.print_exc()
         return jsonify({"ok": False, "error": str(error)}), 500
     socketio.emit("debug:actor_result", output, room="debug_clients")
     return jsonify({"ok": True, "output": output})
@@ -648,6 +650,7 @@ def read_chrome_bridge_active_tab():
         "url": url,
         "title": title,
         "domain": domain_from_url(url),
+        "tab_id": result.get("tab_id") if isinstance(result.get("tab_id"), int) else None,
     }
 
 

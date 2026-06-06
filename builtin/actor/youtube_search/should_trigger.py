@@ -38,6 +38,7 @@ def main() -> None:
     browser = payload.get("browser") or {}
     active_tab = browser.get("active_tab") or {}
     url = active_tab.get("url") or ""
+    tab_id = active_tab.get("tab_id")
 
     available = is_youtube_url(url)
     if not available:
@@ -64,6 +65,7 @@ def main() -> None:
                 "action_context": {
                     "query": "kpop",
                     "url": url,
+                    "tab_id": tab_id if isinstance(tab_id, int) else None,
                 },
                 "debounce_seconds": 30,
             }

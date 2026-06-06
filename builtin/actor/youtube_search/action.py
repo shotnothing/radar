@@ -7,24 +7,32 @@ import urllib.error
 import urllib.request
 
 
-SEARCH_SELECTOR = "input#search, input[name='search_query'], ytd-searchbox input"
+SEARCH_SELECTOR = ".yt-searchbox-input"
 
 
 def main() -> None:
     payload = json.load(sys.stdin)
     action_context = payload.get("action_context") or {}
+    browser = payload.get("browser") or {}
+    active_tab = browser.get("active_tab") or {}
     query = action_context.get("query") or "kpop"
+    tab_id = action_context.get("tab_id")
+    if not isinstance(tab_id, int):
+        tab_id = active_tab.get("tab_id")
     api_url = os.environ["RADAR_API_URL"].rstrip("/")
     token = os.environ.get("RADAR_API_TOKEN", "")
 
     page_action = {
-        "url_pattern": "*://*.youtube.com/*",
+        "url_patterns": ["*://youtube.com/*", "*://*.youtube.com/*"],
         "stop_on_error": True,
+        "tab_id": tab_id if isinstance(tab_id, int) else None,
         "actions": [
             {
                 "name": "focus_search",
                 "type": "focus",
                 "selector": SEARCH_SELECTOR,
+                "visible": True,
+                "wait_for_selector_ms": 5000,
             },
             {
                 "name": "fill_search",
@@ -33,6 +41,8 @@ def main() -> None:
                 "value": query,
                 "clear": True,
                 "trigger_input": True,
+                "visible": True,
+                "wait_for_selector_ms": 5000,
             },
         ],
     }

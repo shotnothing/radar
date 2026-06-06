@@ -306,11 +306,11 @@ async function performPageActions(request) {
     return { success: false, results: [], error: "Cannot access this tab" };
   }
 
-  if (request.url_pattern && !globMatches(request.url_pattern, tab.url)) {
+  if (!urlPatternsMatch(request, tab.url)) {
     return {
       success: false,
       results: [],
-      error: `URL does not match pattern: ${request.url_pattern}`
+      error: `URL does not match pattern: ${urlPatternLabel(request)}`
     };
   }
 
@@ -320,6 +320,7 @@ async function performPageActions(request) {
     try {
       const injection = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
+        world: "MAIN",
         func: executePageAction,
         args: [action]
       });
@@ -353,7 +354,68 @@ async function performPageActions(request) {
   };
 }
 
-function executePageAction(action) {
+async function executePageAction(action) {
+  async function findActionElement() {
+    const timeoutMs = Number(action.wait_for_selector_ms || action.waitForSelectorMs || 0);
+    const deadline = Date.now() + Math.max(0, timeoutMs);
+
+    while (true) {
+      const element = queryActionElement();
+      if (element) {
+        return element;
+      }
+      if (Date.now() >= deadline) {
+        return null;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  }
+
+  function queryActionElement() {
+    const elements = Array.from(document.querySelectorAll(action.selector));
+    if (!action.visible) {
+      return elements[0] || null;
+    }
+    return elements.find((element) => isVisibleElement(element)) || null;
+  }
+
+  function isVisibleElement(element) {
+    if (!element || !(element instanceof Element)) {
+      return false;
+    }
+    const style = window.getComputedStyle(element);
+    if (style.visibility === "hidden" || style.display === "none" || Number(style.opacity) === 0) {
+      return false;
+    }
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  function setNativeInputValue(element, value) {
+    const prototype =
+      element instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype;
+    const descriptor = Object.getOwnPropertyDescriptor(prototype, "value");
+    if (descriptor && typeof descriptor.set === "function") {
+      descriptor.set.call(element, value);
+      return;
+    }
+    element.value = value;
+  }
+
+  function dispatchInputEvents(element, value) {
+    element.dispatchEvent(
+      new InputEvent("input", {
+        bubbles: true,
+        composed: true,
+        data: value,
+        inputType: "insertText"
+      })
+    );
+    element.dispatchEvent(new Event("change", { bubbles: true, composed: true }));
+  }
+
   const result = {
     name: action.name,
     type: action.type,
@@ -375,7 +437,7 @@ function executePageAction(action) {
       return result;
     }
 
-    const element = document.querySelector(action.selector);
+    const element = await findActionElement();
     if (!element) {
       result.error = `Element not found: ${action.selector}`;
       return result;
@@ -386,14 +448,15 @@ function executePageAction(action) {
     if (action.type === "focus") {
       element.focus();
       result.success = true;
+      result.value = "value" in element ? element.value : undefined;
       return result;
     }
     if (action.type === "fill") {
       if ("value" in element) {
         if (action.clear !== false) {
-          element.value = "";
+          setNativeInputValue(element, "");
         }
-        element.value = action.value || "";
+        setNativeInputValue(element, action.value || "");
       } else if (element.isContentEditable) {
         element.textContent = action.value || "";
       } else {
@@ -401,10 +464,10 @@ function executePageAction(action) {
         return result;
       }
       if (action.trigger_input !== false) {
-        element.dispatchEvent(new Event("input", { bubbles: true }));
-        element.dispatchEvent(new Event("change", { bubbles: true }));
+        dispatchInputEvents(element, action.value || "");
       }
       result.success = true;
+      result.value = "value" in element ? element.value : undefined;
       return result;
     }
     if (action.type === "click") {
@@ -419,6 +482,25 @@ function executePageAction(action) {
     result.error = String(error && error.message ? error.message : error);
     return result;
   }
+}
+
+function urlPatternsMatch(request, url) {
+  const patterns = Array.isArray(request.url_patterns) ? [...request.url_patterns] : [];
+  if (request.url_pattern) {
+    patterns.push(request.url_pattern);
+  }
+  if (patterns.length === 0) {
+    return true;
+  }
+  return patterns.some((pattern) => globMatches(pattern, url));
+}
+
+function urlPatternLabel(request) {
+  const patterns = Array.isArray(request.url_patterns) ? [...request.url_patterns] : [];
+  if (request.url_pattern) {
+    patterns.push(request.url_pattern);
+  }
+  return patterns.join(", ");
 }
 
 function globMatches(pattern, value) {

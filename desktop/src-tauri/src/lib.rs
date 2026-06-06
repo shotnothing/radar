@@ -360,7 +360,13 @@ fn run_actor_action(
         .map_err(|error| format!("failed to run actor: {error}"))?;
 
     if !response.status().is_success() {
-        return Err(format!("actor run failed with HTTP {}", response.status()));
+        let status = response.status();
+        let body = response.text().unwrap_or_default();
+        let detail = body.trim();
+        if detail.is_empty() {
+            return Err(format!("actor run failed with HTTP {status}"));
+        }
+        return Err(format!("actor run failed with HTTP {status}: {detail}"));
     }
 
     let payload = response
@@ -1530,26 +1536,39 @@ fn start_actor_monitor(app: tauri::AppHandle, runtime: Weak<ActorRuntimeInner>) 
                     continue;
                 }
 
-                match poll_actor(&client, &runtime, &actor) {
-                    Some(ActorPollOutcome::Suggestion(suggestion)) => {
-                        let _ = app.emit_to("assistant", "radar://mock-suggestion", suggestion);
-                        let _ = show_assistant_window(&app);
-                    }
-                    Some(ActorPollOutcome::AutomaticRun {
-                        actor_id,
-                        trigger_id,
-                        debounce_seconds,
-                    }) => {
-                        start_automatic_actor_run(
-                            runtime.clone(),
-                            actor_id,
-                            trigger_id,
-                            debounce_seconds,
-                        );
-                    }
-                    None => {}
+                if actor_is_in_cooldown(&runtime, &actor.actor_id)
+                    || actor_is_inflight(&runtime, &actor.actor_id)
+                {
+                    continue;
                 }
+
+                mark_actor_inflight(&runtime, &actor.actor_id);
+                start_actor_poll(client.clone(), runtime.clone(), app.clone(), actor);
             }
+        }
+    });
+}
+
+fn start_actor_poll(
+    client: reqwest::blocking::Client,
+    runtime: Arc<ActorRuntimeInner>,
+    app: tauri::AppHandle,
+    actor: ActorPackage,
+) {
+    std::thread::spawn(move || match poll_actor(&client, &actor) {
+        Some(ActorPollOutcome::Suggestion(suggestion)) => {
+            let _ = app.emit_to("assistant", "radar://mock-suggestion", suggestion);
+            let _ = show_assistant_window(&app);
+        }
+        Some(ActorPollOutcome::AutomaticRun {
+            actor_id,
+            trigger_id,
+            debounce_seconds,
+        }) => {
+            start_automatic_actor_run(runtime, actor_id, trigger_id, debounce_seconds);
+        }
+        None => {
+            clear_actor_inflight(&runtime, &actor.actor_id);
         }
     });
 }
@@ -1614,17 +1633,8 @@ fn actor_poll_is_due(runtime: &ActorRuntimeInner, actor: &ActorPackage) -> bool 
 
 fn poll_actor(
     client: &reqwest::blocking::Client,
-    runtime: &Arc<ActorRuntimeInner>,
     actor: &ActorPackage,
 ) -> Option<ActorPollOutcome> {
-    if actor_is_in_cooldown(runtime, &actor.actor_id) {
-        return None;
-    }
-
-    if actor_is_inflight(runtime, &actor.actor_id) {
-        return None;
-    }
-
     let url = format!(
         "{}/api/actors/{}/should_trigger",
         actor_api_url(),
@@ -1653,15 +1663,12 @@ fn poll_actor(
 
     let trigger_id = output.trigger_id?;
     if actor.activation.mode.as_deref() == Some("automatic") {
-        mark_actor_inflight(runtime, &actor.actor_id);
         return Some(ActorPollOutcome::AutomaticRun {
             actor_id: actor.actor_id.clone(),
             trigger_id,
             debounce_seconds: output.debounce_seconds,
         });
     }
-
-    mark_actor_inflight(runtime, &actor.actor_id);
 
     let presentation = output.presentation;
     let title = presentation

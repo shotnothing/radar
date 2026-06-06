@@ -40,6 +40,7 @@ def youtube_context(url: str) -> dict[str, object]:
                 "url": url,
                 "title": "YouTube",
                 "domain": "www.youtube.com",
+                "tab_id": 123,
             },
         },
     }
@@ -114,6 +115,11 @@ class ActorRuntimeTest(unittest.TestCase):
 
             self.assertTrue(output["available"])
             self.assertEqual(output["action_context"]["query"], "kpop")
+            self.assertEqual(output["action_context"]["tab_id"], 123)
+            self.assertEqual(
+                output["action_request"]["input"]["action_context"]["tab_id"],
+                123,
+            )
             self.assertIn("action_request", output)
 
     def test_youtube_actor_filter_skips_non_youtube(self) -> None:
@@ -582,6 +588,14 @@ class ActorRuntimeTest(unittest.TestCase):
             self.assertTrue(result["available"])
             self.assertEqual(result["repo_path"], str(repo))
             self.assertEqual(result["repo_source"], "recent_codex_session")
+
+    def test_codex_skill_actor_builds_skill_instruction_prompt(self) -> None:
+        prompt = codex_skill_lib.build_codex_skill_prompt("/Users/example/.radar/skill/projects/radar")
+
+        self.assertEqual(
+            prompt,
+            " Please use the skill at /Users/example/.radar/skill/projects/radar.",
+        )
 
 
 if __name__ == "__main__":

@@ -23,7 +23,7 @@ def main() -> None:
                 "reason": f"Codex is open on {repo_path} and Radar has skill guidance for it.",
                 "presentation": {
                     "title": "Use Radar skill in Codex",
-                    "message": f"Add {repo_skill_path} to the current Codex prompt.",
+                    "message": f"Add a skill instruction for {repo_skill_path} to the current Codex prompt.",
                     "button_label": "Use skill",
                 },
                 "action_context": result,

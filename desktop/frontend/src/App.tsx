@@ -294,7 +294,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Prepares agenda, attendees, and recent context before a calendar event.",
       status: "demo.meeting_brief",
       icon: CalendarCheck2,
-      defaultEnabled: false,
+      defaultEnabled: true,
     },
     {
       id: "actor.gmail_follow_up",
@@ -302,7 +302,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Drafts a polite follow-up when an email thread is waiting on a reply.",
       status: "demo.gmail_follow_up",
       icon: Mail,
-      defaultEnabled: false,
+      defaultEnabled: true,
     },
     {
       id: "actor.seatalk_action_items",
@@ -310,7 +310,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Turns recent chat decisions into a concise task list or reminder draft.",
       status: "demo.seatalk_action_items",
       icon: ClipboardCheck,
-      defaultEnabled: false,
+      defaultEnabled: true,
     },
     {
       id: "actor.pr_review_prep",
@@ -318,7 +318,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Summarizes changed files and opens a focused review checklist for a branch.",
       status: "demo.pr_review_prep",
       icon: GitPullRequest,
-      defaultEnabled: false,
+      defaultEnabled: true,
     },
     {
       id: "actor.send_status_update",
@@ -326,7 +326,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       description: "Composes a short project update from recent work and sends it to chat.",
       status: "demo.status_update_sender",
       icon: Send,
-      defaultEnabled: false,
+      defaultEnabled: true,
     },
   ],
   connection: [],
