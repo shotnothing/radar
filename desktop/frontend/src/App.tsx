@@ -56,8 +56,26 @@ type ProcessorPredictionEvent = {
   id?: string;
   prediction_id?: string;
   confidence?: number;
+  should_show?: boolean;
   transactions_seen?: number;
   patterns?: PredictionPattern[];
+  suggested_action?: {
+    title?: string;
+    body?: string;
+    action_text?: string;
+    primary_action?: string;
+  };
+  llm?: {
+    enabled?: boolean;
+    status?: string;
+    review?: {
+      makes_sense?: boolean;
+      should_show?: boolean;
+      confidence?: number;
+      reason?: string;
+    };
+    error?: string;
+  };
   payload?: {
     confidence?: number;
     transactions_seen?: number;
@@ -246,7 +264,34 @@ function patternLabel(pattern: PredictionPattern) {
 
 function processorPredictionToSuggestion(
   prediction: ProcessorPredictionEvent
-): Suggestion {
+): Suggestion | null {
+  if (
+    prediction.should_show === false ||
+    prediction.llm?.review?.should_show === false
+  ) {
+    return null;
+  }
+
+  const suggestedAction = prediction.suggested_action;
+  if (
+    suggestedAction?.title ||
+    suggestedAction?.body ||
+    suggestedAction?.action_text
+  ) {
+    return {
+      id:
+        prediction.prediction_id ??
+        prediction.id ??
+        `processor-prediction-${Date.now()}`,
+      title: suggestedAction.title?.trim() || "Suggested next action",
+      body: suggestedAction.body?.trim() || "Radar found a likely next step.",
+      primary_action:
+        suggestedAction.primary_action?.trim() ||
+        suggestedAction.action_text?.trim() ||
+        "Open",
+    };
+  }
+
   const payload = prediction.payload ?? {};
   const confidence = prediction.confidence ?? payload.confidence ?? 0;
   const transactionsSeen =
@@ -325,7 +370,10 @@ function AssistantWindow() {
     });
 
     socket.on("prediction_generated", async (prediction: ProcessorPredictionEvent) => {
-      await enqueueSuggestion(processorPredictionToSuggestion(prediction));
+      const suggestion = processorPredictionToSuggestion(prediction);
+      if (suggestion) {
+        await enqueueSuggestion(suggestion);
+      }
     });
 
     socket.on("connect_error", (error) => {

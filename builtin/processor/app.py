@@ -24,11 +24,13 @@ from builtin.processor.engine import (
     utc_timestamp,
     write_json_atomic,
 )
+from builtin.processor.llm import LLMClient, LLMError, OPENAI_API_KEY_ENV
 
 
 DEFAULT_APP_STATE_DIR = Path("~/.radar/processors/builtin_processor_app").expanduser()
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 5060
+LLM_HISTORY_LIMIT = 4
 
 
 app = Flask(__name__)
@@ -40,6 +42,8 @@ runtime = {
     "last_scan": None,
     "last_learning": None,
     "last_error": "",
+    "args": None,
+    "llm_client": None,
     "connected_clients": 0,
 }
 
@@ -87,7 +91,101 @@ def compact_prediction(scan_result, max_patterns):
     }
 
 
+def read_recent_normalized_history(path, limit=LLM_HISTORY_LIMIT):
+    path = Path(path)
+    if limit <= 0 or not path.exists():
+        return []
+
+    records = []
+    try:
+        with path.open(encoding="utf-8") as input_file:
+            for line in input_file:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(record, dict):
+                    continue
+                records.append(
+                    {
+                        "collector_id": record.get("collector_id"),
+                        "timestamp": record.get("timestamp"),
+                        "payload": record.get("payload"),
+                    }
+                )
+    except OSError:
+        return []
+    return records[-limit:]
+
+
+def llm_enabled(args):
+    return bool(not args.disable_llm and os.environ.get(OPENAI_API_KEY_ENV))
+
+
+def llm_client(args):
+    current = runtime.get("llm_client")
+    if current is None:
+        current = LLMClient(base_url=args.llm_base_url, timeout=args.llm_timeout)
+        runtime["llm_client"] = current
+    return current
+
+
+def enrich_prediction_with_llm(event, scan_result, args):
+    if not llm_enabled(args):
+        event["llm"] = {
+            "enabled": False,
+            "status": (
+                "missing_api_key"
+                if not os.environ.get(OPENAI_API_KEY_ENV)
+                else "disabled"
+            ),
+        }
+        return event
+
+    history = read_recent_normalized_history(scan_result.get("normalized_log_path"))
+    context = {
+        "created_at": scan_result.get("created_at"),
+        "normalized_count": scan_result.get("normalized_count", 0),
+        "events_seen": scan_result.get("events_seen", 0),
+    }
+    try:
+        client = llm_client(args)
+        review = client.review_prediction(event, history, context=context)
+        event["llm"] = {
+            "enabled": True,
+            "status": "ok",
+            "review": {
+                "makes_sense": review.makes_sense,
+                "should_show": review.should_show,
+                "confidence": review.confidence,
+                "reason": review.reason,
+                "relevant_history_indices": review.relevant_history_indices,
+            },
+        }
+        event["should_show"] = review.should_show
+        if review.should_show:
+            suggestion = client.suggest_action(event, history, context=context)
+            event["suggested_action"] = {
+                "title": suggestion.title,
+                "body": suggestion.body,
+                "action_text": suggestion.action_text,
+                "primary_action": suggestion.action_text,
+            }
+        return event
+    except LLMError as error:
+        event["llm"] = {
+            "enabled": True,
+            "status": "error",
+            "error": str(error),
+        }
+        return event
+
+
 def scan_loop(args):
+    runtime["args"] = args
     apply_predict_config_overrides(args)
     engine = ProcessorEngine(
         collectors_root=args.collectors_root,
@@ -128,6 +226,7 @@ def scan_loop(args):
                     if args.full
                     else compact_prediction(scan_result, args.max_patterns)
                 )
+                event = enrich_prediction_with_llm(event, scan_result, args)
                 runtime["last_prediction"] = event
                 socketio.emit("prediction_generated", event)
         except Exception as error:  # pragma: no cover - defensive app loop.
@@ -147,6 +246,7 @@ def scan_loop(args):
 @app.get("/health")
 def health():
     engine = runtime.get("engine")
+    args = runtime.get("args")
     return jsonify(
         {
             "ok": True,
@@ -155,6 +255,9 @@ def health():
             "last_error": runtime["last_error"],
             "last_scan": runtime["last_scan"],
             "has_last_prediction": runtime["last_prediction"] is not None,
+            "llm_enabled": (
+                llm_enabled(args) if args else bool(os.environ.get(OPENAI_API_KEY_ENV))
+            ),
             "collectors_root": str(engine.collectors_root) if engine else "",
             "normalizers_root": str(engine.normalizers_root) if engine else "",
             "state_dir": str(engine.state_dir) if engine else "",
@@ -253,6 +356,22 @@ def parse_args():
         "--full",
         action="store_true",
         help="Emit the full prediction result instead of a compact event.",
+    )
+    parser.add_argument(
+        "--disable-llm",
+        action="store_true",
+        help="Disable LLM prediction review and suggested action generation.",
+    )
+    parser.add_argument(
+        "--llm-base-url",
+        default=os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+        help="OpenAI-compatible API base URL.",
+    )
+    parser.add_argument(
+        "--llm-timeout",
+        type=float,
+        default=env_float("RADAR_PROCESSOR_APP_LLM_TIMEOUT", 30),
+        help="Seconds to wait for each LLM request.",
     )
     parser.add_argument(
         "--min-transactions-before-prediction",

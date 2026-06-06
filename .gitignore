@@ -9,3 +9,4 @@ __pycache__/
 *.pyc
 debug/work/
 /dist
+.env
