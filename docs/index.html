@@ -241,9 +241,13 @@
 
       .radar-visual {
         position: relative;
-        width: min(100%, 670px);
-        margin: 0;
-        padding: 10px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(245px, 0.92fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 14px;
+        width: min(100%, 630px);
+        height: 520px;
+        padding: 22px;
         border-radius: 30px;
         border: 1px solid rgba(255, 255, 255, 0.12);
         background:
@@ -271,42 +275,232 @@
         z-index: 0;
       }
 
+      .radar-visual::after {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
       @keyframes sweep {
         to {
           transform: rotate(360deg);
         }
       }
 
-      .radar-visual img {
+      .mock-window,
+      .suggestion-card,
+      .pipeline-card {
         position: relative;
-        display: block;
-        z-index: 1;
-        width: 100%;
-        height: auto;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 22px;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+        z-index: 2;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(10, 16, 27, 0.86);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+        backdrop-filter: blur(18px);
       }
 
-      .visual-label {
-        position: relative;
+      .mock-window {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        border-radius: 22px;
+        overflow: hidden;
+      }
+
+      .window-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--rose);
+      }
+
+      .dot:nth-child(2) {
+        background: var(--amber);
+      }
+
+      .dot:nth-child(3) {
+        background: var(--mint);
+      }
+
+      .browser-body {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 0;
+        padding: 14px;
+      }
+
+      .url-row,
+      .event-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .url-row {
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .url-row span:last-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .event-list {
+        display: grid;
+        flex: 1;
+        align-content: stretch;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .event-row {
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .event-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 11px;
+        background: rgba(84, 215, 255, 0.15);
+        color: var(--cyan);
+        font-weight: 850;
+      }
+
+      .event-copy strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .event-copy span {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .suggestion-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .suggestion-top {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
-        z-index: 2;
-        margin-top: 10px;
-        color: var(--soft);
+        color: var(--mint);
         font-size: 12px;
         font-weight: 800;
       }
 
-      .visual-label span:first-child {
-        color: var(--mint);
+      .confidence {
+        color: var(--cyan);
       }
 
-      .visual-label span:last-child {
-        color: var(--cyan);
+      .suggestion-card h3 {
+        margin-top: 14px;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .suggestion-card p {
+        margin-top: 10px;
+        color: var(--soft);
+        font-size: 13px;
+      }
+
+      .choice-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .choice-row button {
+        min-height: 42px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .choice-row button:first-child {
+        background: var(--mint);
+        color: #061018;
+      }
+
+      .pipeline-card {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .pipeline-title {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .pipeline-step {
+        min-height: 62px;
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.075);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .pipeline-step strong {
+        display: block;
+        color: var(--text);
+        font-size: 13px;
       }
 
       section {
@@ -562,7 +756,18 @@
         }
 
         .radar-visual {
+          grid-template-columns: 1fr;
+          height: auto;
           margin: auto;
+        }
+
+        .mock-window,
+        .suggestion-card {
+          height: auto;
+        }
+
+        .choice-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .feature-grid,
@@ -625,6 +830,10 @@
           display: none;
         }
 
+        .pipeline {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .step {
           grid-template-columns: 1fr;
         }
@@ -685,16 +894,70 @@
             </div>
 
             <div class="demo-stage" aria-label="Radar product preview">
-              <figure class="radar-visual">
-                <img
-                  src="assets/collector-ui.png"
-                  alt="Radar Settings Collector screen showing Chrome, SeaTalk, Chat Transcript, and macOS Activity sources"
-                />
-                <figcaption class="visual-label">
-                  <span>Collector UI</span>
-                  <span>Local activity signals</span>
-                </figcaption>
-              </figure>
+              <div class="radar-visual">
+                <div class="mock-window">
+                  <div class="window-bar">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                  <div class="browser-body">
+                    <div class="url-row">
+                      <span>Chrome</span>
+                      <span>https://github.com/shotnothing/radar</span>
+                    </div>
+                    <div class="event-list">
+                      <div class="event-row">
+                        <div class="event-icon">1</div>
+                        <div class="event-copy">
+                          <strong>Observe work</strong>
+                          <span>User completes a task once.</span>
+                        </div>
+                      </div>
+                      <div class="event-row">
+                        <div class="event-icon">2</div>
+                        <div class="event-copy">
+                          <strong>Learn pattern</strong>
+                          <span>Radar filters noise and stores the workflow.</span>
+                        </div>
+                      </div>
+                      <div class="event-row">
+                        <div class="event-icon">3</div>
+                        <div class="event-copy">
+                          <strong>Suggest next step</strong>
+                          <span>LLM explains what can be done faster.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="suggestion-card">
+                  <div class="suggestion-top">
+                    <span>Proactive AI suggestion</span>
+                    <span class="confidence">91% confidence</span>
+                  </div>
+                  <h3>Make this a reusable skill.</h3>
+                  <p>
+                    Radar learned the steps from the user's work. Next time, it can
+                    suggest the workflow or let an agent run it directly.
+                  </p>
+                  <div class="choice-row">
+                    <button type="button">Use suggestion</button>
+                    <button type="button">Keep working</button>
+                  </div>
+                </div>
+
+                <div class="pipeline-card">
+                  <div class="pipeline-title">Self-evolving loop</div>
+                  <div class="pipeline">
+                    <div class="pipeline-step"><strong>Work</strong>User acts normally</div>
+                    <div class="pipeline-step"><strong>Learn</strong>Workflow pattern</div>
+                    <div class="pipeline-step"><strong>Suggest</strong>LLM next action</div>
+                    <div class="pipeline-step"><strong>Automate</strong>Reusable skill</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </header>
