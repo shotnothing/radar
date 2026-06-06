@@ -1,0 +1,19 @@
+{
+  "seatalk": {
+    "last_error": "",
+    "last_scan_at": 1780722158027,
+    "last_seen_mid": "m7",
+    "last_seen_ts": 1780718408,
+    "processed_message_ids": [
+      "seatalk:buddy-9:d2",
+      "seatalk:group-1:m2",
+      "seatalk:group-1:m5",
+      "seatalk:group-1:m7"
+    ],
+    "self_user_id": 123,
+    "source_fingerprint": "8192:1780722158026819012",
+    "source_type": "seatalk_sqlite_main",
+    "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/seatalk/main_123.sqlite"
+  },
+  "version": 1
+}

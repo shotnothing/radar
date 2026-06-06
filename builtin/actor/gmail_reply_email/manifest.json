@@ -1,0 +1,38 @@
+{
+  "actor_id": "builtin.gmail_reply_email",
+  "version": "1.0.0",
+  "enabled": true,
+  "title": "Reply this email",
+  "description": "Show a placeholder reply action when a Gmail email thread is open.",
+  "activation": {
+    "mode": "desktop_option",
+    "priority": "normal",
+    "button_label": "reply this email"
+  },
+  "trigger": {
+    "polling_interval_seconds": 1,
+    "filters": {
+      "app_patterns": [
+        "Google Chrome",
+        "com.google.Chrome"
+      ],
+      "url_patterns": [
+        "https://mail.google.com/*"
+      ]
+    },
+    "should_trigger": {
+      "command": [
+        "python3",
+        "should_trigger.py"
+      ],
+      "timeout_seconds": 10
+    }
+  },
+  "action": {
+    "command": [
+      "python3",
+      "action.py"
+    ],
+    "timeout_seconds": 10
+  }
+}

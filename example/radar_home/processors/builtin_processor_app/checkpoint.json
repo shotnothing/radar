@@ -1,0 +1,291 @@
+{
+  "files": {
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780715817119.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.559573Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780715842265.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.559708Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716234474.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.559842Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716270221.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.559959Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716274536.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.560132Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716275990.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.560212Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716293581.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.560698Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716311250.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.560823Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716334485.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.560959Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716478155.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561073Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716540718.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561189Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780716621883.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561311Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780718369331.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561403Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780718872704.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561531Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780719030302.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561632Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780719060984.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561728Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780719231757.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561838Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780719253453.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.561995Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780719544489.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.562133Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780725572171.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.562239Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/builtin_sample/20260606/1780725711479.jsonl": {
+      "offset": 793,
+      "size": 793,
+      "updated_at": "2026-06-06T07:53:01.562348Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780716599845.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562454Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780716638621.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562548Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780718870497.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562644Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780719034521.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562748Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780719064994.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562881Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780719235916.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.562991Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780719260753.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563069Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780719548644.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563153Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720567160.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.563221Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720574816.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563328Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720591178.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563403Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720591183.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.563486Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720608847.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563589Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720608852.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.563726Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720608883.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.563907Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720655078.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564034Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720683383.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564133Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780720877515.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564251Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721040041.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.564351Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721152510.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.564426Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721172087.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564508Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721223342.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.564601Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721232844.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564685Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721295806.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.564766Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721301751.jsonl": {
+      "offset": 10959,
+      "size": 10959,
+      "updated_at": "2026-06-06T07:53:01.564849Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721303301.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.564950Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780721425052.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.565028Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780725865811.jsonl": {
+      "offset": 168899282,
+      "size": 168899282,
+      "updated_at": "2026-06-06T07:53:01.565109Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780728996203.jsonl": {
+      "offset": 11019,
+      "size": 11019,
+      "updated_at": "2026-06-06T07:53:01.565194Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chat_transcript/20260606/1780732139502.jsonl": {
+      "offset": 3224387,
+      "size": 3224387,
+      "updated_at": "2026-06-06T07:53:01.565277Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chrome_browser/20260606/1780725600000.jsonl": {
+      "offset": 331714,
+      "size": 331714,
+      "updated_at": "2026-06-06T07:53:01.565366Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/chrome_browser/20260606/1780729200000.jsonl": {
+      "offset": 63159,
+      "size": 63159,
+      "updated_at": "2026-06-06T07:53:01.565534Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/macos_activity/20260606/1780722000000.jsonl": {
+      "offset": 425645,
+      "size": 425645,
+      "updated_at": "2026-06-06T07:53:01.565689Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/macos_activity/20260606/1780729200000.jsonl": {
+      "offset": 168086,
+      "size": 168086,
+      "updated_at": "2026-06-06T07:53:01.565839Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/seatalk_personal/20260606/1780722158021.jsonl": {
+      "offset": 6423,
+      "size": 6423,
+      "updated_at": "2026-06-06T07:53:01.565956Z"
+    },
+    "/Users/yunyuan.yu/.radar/collectors/seatalk_personal/20260606/1780722158027.jsonl": {
+      "offset": 2452,
+      "size": 2452,
+      "updated_at": "2026-06-06T07:53:01.566130Z"
+    }
+  },
+  "updated_at": "2026-06-06T07:53:01.569667Z",
+  "version": 1
+}

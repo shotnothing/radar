@@ -153,7 +153,7 @@ test-macos-collector-unit:
 
 # Run actor runtime tests with local debug context and Chrome bridge stubs.
 test-actor-runtime:
-	$(PYTHON) -m py_compile debug/app.py debug/active_context.py debug/chrome_bridge.py debug/actor_runtime.py debug/test_actor_runtime.py builtin/actor/youtube_search/should_trigger.py builtin/actor/youtube_search/action.py builtin/actor/codex_skill/lib.py builtin/actor/codex_skill/should_trigger.py builtin/actor/codex_skill/action.py
+	$(PYTHON) -m py_compile debug/app.py debug/active_context.py debug/chrome_bridge.py debug/actor_runtime.py debug/test_actor_runtime.py builtin/actor/youtube_search/should_trigger.py builtin/actor/youtube_search/action.py builtin/actor/gmail_followup_draft/should_trigger.py builtin/actor/gmail_followup_draft/action.py builtin/actor/gmail_reply_email/should_trigger.py builtin/actor/gmail_reply_email/action.py builtin/actor/calendar_next_open_timeslot/should_trigger.py builtin/actor/calendar_next_open_timeslot/action.py builtin/actor/codex_skill/lib.py builtin/actor/codex_skill/should_trigger.py builtin/actor/codex_skill/action.py
 	$(PYTHON) debug/test_actor_runtime.py
 
 # Run coordinator API tests for actor registration and routing.

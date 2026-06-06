@@ -1,0 +1,1294 @@
+{
+  "cwd": "/tmp/radar-codex",
+  "files_touched": [
+    "collector.md"
+  ],
+  "key": "codex-22b990307ba9",
+  "messages": [
+    {
+      "id": "codex:codex-session-1:3",
+      "role": "user",
+      "source_ref": {
+        "collector_id": "chat.transcript",
+        "event_id": "9db34b4f-8539-4a44-a1b8-564b4cd083a1",
+        "session_key": "codex-22b990307ba9",
+        "source_fingerprint": "863:1780716599841553417",
+        "source_message_ids": [
+          "codex:codex-session-1:3"
+        ],
+        "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+        "tool_ids": []
+      },
+      "text": "Please inspect the collector spec.",
+      "thinking": "",
+      "timestamp": 1780707602000
+    }
+  ],
+  "model": "gpt-test",
+  "session_id": "codex-session-1",
+  "source": "Codex",
+  "source_fingerprint": "863:1780721301745373321",
+  "source_fingerprints": [
+    "863:1780716599841553417",
+    "863:1780716638616416050",
+    "863:1780718870466228670",
+    "863:1780719034517060146",
+    "863:1780719064989272176",
+    "863:1780719235910702792",
+    "863:1780719260749888699",
+    "863:1780719548639994495",
+    "863:1780720574805977886",
+    "863:1780720591173068444",
+    "863:1780720608824589530",
+    "863:1780720655072357709",
+    "863:1780720683365675471",
+    "863:1780720877511616542",
+    "863:1780721172081958469",
+    "863:1780721232835263311",
+    "863:1780721301745373321"
+  ],
+  "source_refs": [
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1a198982-e192-4fbf-bc9a-bd346b112e2c",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716599841553417",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9db34b4f-8539-4a44-a1b8-564b4cd083a1",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716599841553417",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e618d868-52d0-423e-b259-560974f27907",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716599841553417",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "638d3f70-846a-4cba-b682-978514c88781",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716599841553417",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "75cdde25-4692-4acb-90f9-b44b5c3c1941",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716638616416050",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8f58360f-e506-459e-a1fe-d4bef2c47642",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716638616416050",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "6243e892-d7bf-4c4d-9770-14c48ae319f4",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716638616416050",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "30d95022-b8b9-4994-b057-46e9212a49b2",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780716638616416050",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "fd302bde-1e9f-4532-94f0-bdd36f7ee422",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780718870466228670",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "dd44420a-9dbc-410c-944a-d2ff2fae85de",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780718870466228670",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "80ac1159-3799-467d-9ed6-21dc65755d0d",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780718870466228670",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b4ff9c75-d496-41b8-9d23-f594c10bebaf",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780718870466228670",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d4869d7d-0d28-456d-96c9-bd795b85729c",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719034517060146",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "425888ca-c557-46ec-913d-83c1bfd7f2e0",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719034517060146",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "a3356e4b-aa21-42f7-9108-16d1f25e0c14",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719034517060146",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "f075e9c5-212d-46fc-8c09-dc1526ac2aed",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719034517060146",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "56e56b0e-f5e4-4a7d-aa22-43fb6cc96e6f",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719064989272176",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2484ae55-14f4-4875-8bc5-29fd50cd68fe",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719064989272176",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "644b0da3-17d3-4f15-8b99-1b19b8230396",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719064989272176",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "fda0b4cf-8c66-4e74-86c6-c2f879ea416d",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719064989272176",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1a1103e1-772a-40c7-8513-3fe539c02ccb",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719235910702792",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "35133af6-07f8-47c8-aba1-14d983b3b52e",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719235910702792",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "243cbdbd-bbcf-4929-92e8-21985d949bd5",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719235910702792",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e5f7a4ed-66fe-4d16-b604-25248b28ba94",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719235910702792",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "4290c237-3a42-4704-8faa-b4068653b6bc",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719260749888699",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "48fd536e-15f0-467b-a1e4-8781c0536f6c",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719260749888699",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "54f81f21-262c-4c74-8c99-541d85a6c132",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719260749888699",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "7d7b8f3a-4901-4d9f-b1a8-3889d1ccc7bf",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719260749888699",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "32584827-a901-4c75-bfbc-d1d95cbc3645",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719548639994495",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d835685a-9eed-48ee-8535-d5227e00ccb6",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719548639994495",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "c8da7271-3805-46de-b683-8171b096c9a6",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719548639994495",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9c0d4021-a129-4cfd-86ec-64ef161d1981",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780719548639994495",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "463b4d0e-1a26-4e8f-9ad9-5f93ed687beb",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720574805977886",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b908b590-9f41-488c-ae92-7ae1a36e1daa",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720574805977886",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "090f2c20-9e46-46dd-92ca-82a228ddd71f",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720574805977886",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2f4b2760-ef6b-474f-9093-1e0237a6c076",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720574805977886",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "f6f0ab53-e0d4-42b4-9143-643f78b52725",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720591173068444",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "16fe3e4e-c4ec-4d5b-9068-5e102349ba83",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720591173068444",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b23da123-9b8a-4adf-b8e2-e37a8507290d",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720591173068444",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "45cf2940-9d30-4569-992b-322ab2c88b3c",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720591173068444",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d764fa00-e6da-4a10-bfe0-4ecd911d1bd0",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720608824589530",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "4c2da3ad-a542-40b1-9eb8-df1aa11109bb",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720608824589530",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "dda73550-becc-47cc-9171-4e1db0d116bd",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720608824589530",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b4143927-00fe-4f20-a8f9-f6ccf1175c3f",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720608824589530",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3e655525-e048-4324-a409-c7eea9c7f7d6",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720655072357709",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9410fe1d-6922-46a1-9e99-3072fe80a118",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720655072357709",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b8a81b30-8a55-4778-ae80-dc4f0db141ea",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720655072357709",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "a597a96b-bb0a-4a0e-8420-14ae1eb7737b",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720655072357709",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "506b55fd-56f6-47c1-9d44-a7fd4c999fc1",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720683365675471",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e68475c2-24d2-46e6-b55f-d40728841a23",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720683365675471",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "50818c8b-1962-49ef-b1db-da6829206430",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720683365675471",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "7d5e7300-768f-4a18-83ac-f594795c93db",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720683365675471",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "0409fa07-9e0f-428a-b776-58809f3d0c2d",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720877511616542",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9c687cec-ed96-4619-9cb6-27c200215560",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720877511616542",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "434b5ea4-af37-46dd-99ec-b6d69c9a013b",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720877511616542",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "558a1826-5afd-46eb-bdd4-3c6e0fab89da",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780720877511616542",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "f931999a-ab6b-47e1-97ce-797c8c801a6a",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721172081958469",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "546ac9e1-c754-47f7-b41d-03a04b3f8031",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721172081958469",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "124764c7-b82f-4e0f-a7db-fe05dc2765b9",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721172081958469",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "5ee201cc-5eb1-4fb3-9c83-777d65ef44a6",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721172081958469",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b40a95df-9ade-4d8d-8055-146ffea9142e",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721232835263311",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2b2fa9fd-25e2-4271-a784-07e6913b2c7b",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721232835263311",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "19d5fd1f-1776-4396-89d8-bf15a50732b5",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721232835263311",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "ff11f766-879f-4b45-8616-65e2fadf8819",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721232835263311",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "bdeccd0f-0b5a-4176-aa3e-0e31b2abcc89",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721301745373321",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "637516cb-9945-420f-9233-62621b561873",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721301745373321",
+      "source_message_ids": [
+        "codex:codex-session-1:3"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8eab0764-6f77-44e3-b985-5d64e04660f6",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721301745373321",
+      "source_message_ids": [
+        "codex:codex-session-1:4"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "fe673640-0abf-4ae8-b855-1c88cafe63f3",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721301745373321",
+      "source_message_ids": [
+        "codex:codex-session-1:5"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+      "tool_ids": [
+        "call_codex_1"
+      ]
+    }
+  ],
+  "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+  "started_at": 1780707600000,
+  "tool_details": {
+    "call_codex_1": {
+      "input": {
+        "cmd": "rg collector"
+      },
+      "name": "exec_command",
+      "output": {
+        "text": "collector.md"
+      },
+      "source_refs": [
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "e618d868-52d0-423e-b259-560974f27907",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780716599841553417",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "638d3f70-846a-4cba-b682-978514c88781",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780716599841553417",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "6243e892-d7bf-4c4d-9770-14c48ae319f4",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780716638616416050",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "30d95022-b8b9-4994-b057-46e9212a49b2",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780716638616416050",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "80ac1159-3799-467d-9ed6-21dc65755d0d",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780718870466228670",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b4ff9c75-d496-41b8-9d23-f594c10bebaf",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780718870466228670",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "a3356e4b-aa21-42f7-9108-16d1f25e0c14",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719034517060146",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "f075e9c5-212d-46fc-8c09-dc1526ac2aed",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719034517060146",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "644b0da3-17d3-4f15-8b99-1b19b8230396",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719064989272176",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "fda0b4cf-8c66-4e74-86c6-c2f879ea416d",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719064989272176",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "243cbdbd-bbcf-4929-92e8-21985d949bd5",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719235910702792",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "e5f7a4ed-66fe-4d16-b604-25248b28ba94",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719235910702792",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "54f81f21-262c-4c74-8c99-541d85a6c132",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719260749888699",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "7d7b8f3a-4901-4d9f-b1a8-3889d1ccc7bf",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719260749888699",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "c8da7271-3805-46de-b683-8171b096c9a6",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719548639994495",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "9c0d4021-a129-4cfd-86ec-64ef161d1981",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780719548639994495",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "090f2c20-9e46-46dd-92ca-82a228ddd71f",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720574805977886",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "2f4b2760-ef6b-474f-9093-1e0237a6c076",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720574805977886",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b23da123-9b8a-4adf-b8e2-e37a8507290d",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720591173068444",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "45cf2940-9d30-4569-992b-322ab2c88b3c",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720591173068444",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "dda73550-becc-47cc-9171-4e1db0d116bd",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720608824589530",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b4143927-00fe-4f20-a8f9-f6ccf1175c3f",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720608824589530",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b8a81b30-8a55-4778-ae80-dc4f0db141ea",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720655072357709",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "a597a96b-bb0a-4a0e-8420-14ae1eb7737b",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720655072357709",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "50818c8b-1962-49ef-b1db-da6829206430",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720683365675471",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "7d5e7300-768f-4a18-83ac-f594795c93db",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720683365675471",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "434b5ea4-af37-46dd-99ec-b6d69c9a013b",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720877511616542",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "558a1826-5afd-46eb-bdd4-3c6e0fab89da",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780720877511616542",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "124764c7-b82f-4e0f-a7db-fe05dc2765b9",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721172081958469",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "5ee201cc-5eb1-4fb3-9c83-777d65ef44a6",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721172081958469",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "19d5fd1f-1776-4396-89d8-bf15a50732b5",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721232835263311",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "ff11f766-879f-4b45-8616-65e2fadf8819",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721232835263311",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "8eab0764-6f77-44e3-b985-5d64e04660f6",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721301745373321",
+          "source_message_ids": [
+            "codex:codex-session-1:4"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "fe673640-0abf-4ae8-b855-1c88cafe63f3",
+          "session_key": "codex-22b990307ba9",
+          "source_fingerprint": "863:1780721301745373321",
+          "source_message_ids": [
+            "codex:codex-session-1:5"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl",
+          "tool_ids": [
+            "call_codex_1"
+          ]
+        }
+      ],
+      "status": "",
+      "tool_id": "call_codex_1"
+    }
+  },
+  "updated_at": 1780721301745
+}

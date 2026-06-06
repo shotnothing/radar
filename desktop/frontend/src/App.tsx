@@ -7,8 +7,12 @@ import { io } from "socket.io-client";
 import {
   Bell,
   Bot,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Chrome,
   Cpu,
+  DatabaseZap,
   FileText,
   Link2,
   Layers2,
@@ -16,6 +20,7 @@ import {
   Mail,
   MessageCircle,
   Play,
+  RefreshCw,
   Settings2,
   Sparkles,
   Square,
@@ -83,7 +88,12 @@ type ProcessorPredictionEvent = {
   };
 };
 
-type SettingsSection = "collector" | "processor" | "actor" | "connection";
+type SettingsSection =
+  | "collector"
+  | "processor"
+  | "actor"
+  | "connection"
+  | "debug";
 
 type ModuleConfig = {
   id: string;
@@ -109,6 +119,49 @@ type MonitoringStatus = {
   work_dir: string;
 };
 
+type CollectorEvent = {
+  id: string;
+  collectorId: string;
+  observedAt: number;
+  sourceType: string;
+  sourceApp: string;
+  subjectKind: string;
+  title: string;
+  text: string;
+  anchorType: string;
+  action: string;
+  contextApp: string;
+  contextWindow: string;
+  artifactCount: number;
+  provenanceType: string;
+  sourceUri: string;
+  filePath: string;
+  lineNumber: number;
+};
+
+type CollectorParseError = {
+  filePath: string;
+  lineNumber: number;
+  message: string;
+};
+
+type CollectorEventsPayload = {
+  dataRoot: string;
+  totalEvents: number;
+  returnedEvents: number;
+  collectors: string[];
+  sources: string[];
+  errors: CollectorParseError[];
+  events: CollectorEvent[];
+};
+
+type TimelineRun = {
+  collectorId: string;
+  startAt: number;
+  endAt: number;
+  events: CollectorEvent[];
+};
+
 const PROCESSOR_APP_URL =
   import.meta.env.VITE_RADAR_PROCESSOR_APP_URL || "http://127.0.0.1:5060";
 
@@ -121,6 +174,7 @@ const settingsTabs: Array<{
   { id: "processor", label: "Processor", icon: Cpu },
   { id: "actor", label: "Actor", icon: Bot },
   { id: "connection", label: "Connection", icon: Link2 },
+  { id: "debug", label: "Debug", icon: DatabaseZap },
 ];
 
 const settingsCopy: Record<
@@ -146,6 +200,11 @@ const settingsCopy: Record<
     title: "Connection",
     description: "External accounts Radar can use with your permission.",
     empty: "No connections configured yet.",
+  },
+  debug: {
+    title: "Debug Viewer",
+    description: "Collected event timeline from the local Radar data folder.",
+    empty: "No collected events yet.",
   },
 };
 
@@ -220,6 +279,30 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
       defaultEnabled: true,
     },
     {
+      id: "actor.gmail_followup_draft",
+      name: "Gmail Follow-up Draft",
+      description: "Opens Compose and inserts a short follow-up draft.",
+      status: "builtin.gmail_followup_draft",
+      icon: Mail,
+      defaultEnabled: true,
+    },
+    {
+      id: "actor.gmail_reply_email",
+      name: "Gmail Reply Email",
+      description: "Shows a placeholder reply action for open Gmail threads.",
+      status: "builtin.gmail_reply_email",
+      icon: Mail,
+      defaultEnabled: true,
+    },
+    {
+      id: "actor.calendar_next_open_timeslot",
+      name: "Calendar Open Timeslot",
+      description: "Shows a placeholder timeslot action for Google Calendar week view.",
+      status: "builtin.calendar_next_open_timeslot",
+      icon: CalendarDays,
+      defaultEnabled: true,
+    },
+    {
       id: "actor.codex_use_radar_skill",
       name: "Codex Radar Skill",
       description: "Offers Radar Coding Memory when Codex is open on a known repo.",
@@ -229,6 +312,7 @@ const moduleCatalog: Record<SettingsSection, ModuleConfig[]> = {
     },
   ],
   connection: [],
+  debug: [],
 };
 
 function getInitialModuleState() {
@@ -260,6 +344,132 @@ function patternLabel(pattern: PredictionPattern) {
     return "unknown action";
   }
   return items.map(compactPayloadLabel).join(" -> ");
+}
+
+const debugPalette = [
+  "#0f766e",
+  "#b45309",
+  "#2563eb",
+  "#be123c",
+  "#6d28d9",
+  "#15803d",
+  "#c2410c",
+  "#0369a1",
+];
+const debugEventUnitPx = 18;
+const debugGroupMinWidthPx = 112;
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+function pad(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function formatShortTime(ms: number) {
+  if (!ms) {
+    return "";
+  }
+  const date = new Date(ms);
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function formatDebugDate(ms: number) {
+  if (!ms) {
+    return "Unknown time";
+  }
+  const date = new Date(ms);
+  return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}, ${formatShortTime(ms)}`;
+}
+
+function formatDebugMarker(ms: number) {
+  if (!ms) {
+    return "Unknown time";
+  }
+  const date = new Date(ms);
+  return `${date.getDate()} ${monthNames[date.getMonth()]} / ${pad(date.getHours())}:00`;
+}
+
+function debugMarkerKey(ms: number) {
+  if (!ms) {
+    return "unknown";
+  }
+  const date = new Date(ms);
+  date.setMinutes(0, 0, 0);
+  return String(date.getTime());
+}
+
+function formatValueList(values: string[]) {
+  if (values.length === 0) {
+    return "-";
+  }
+  if (values.length <= 2) {
+    return values.join(", ");
+  }
+  return `${values.slice(0, 2).join(", ")} +${values.length - 2}`;
+}
+
+function uniqueEventValues(events: CollectorEvent[], key: keyof CollectorEvent) {
+  return [
+    ...new Set(
+      events
+        .map((event) => event[key])
+        .filter((value): value is string => typeof value === "string" && value.length > 0)
+    ),
+  ];
+}
+
+function canMergeTimelineRun(run: TimelineRun, event: CollectorEvent) {
+  return run.collectorId === event.collectorId;
+}
+
+function createTimelineRuns(events: CollectorEvent[]) {
+  const runs: TimelineRun[] = [];
+
+  for (const event of [...events].sort((a, b) => a.observedAt - b.observedAt)) {
+    const lastRun = runs.at(-1);
+    if (lastRun && canMergeTimelineRun(lastRun, event)) {
+      lastRun.events.push(event);
+      lastRun.endAt = event.observedAt || lastRun.endAt;
+      continue;
+    }
+
+    runs.push({
+      collectorId: event.collectorId,
+      startAt: event.observedAt,
+      endAt: event.observedAt,
+      events: [event],
+    });
+  }
+
+  return runs;
+}
+
+function formatRunTime(run: TimelineRun) {
+  if (run.startAt === run.endAt) {
+    return formatShortTime(run.startAt) || "Unknown";
+  }
+  return `${formatShortTime(run.startAt)}-${formatShortTime(run.endAt)}`;
+}
+
+function timelineRunLabel(run: TimelineRun) {
+  const count = run.events.length;
+  const range =
+    run.startAt === run.endAt
+      ? formatDebugDate(run.startAt)
+      : `${formatDebugDate(run.startAt)} to ${formatDebugDate(run.endAt)}`;
+  return `${count} ${count === 1 ? "event" : "events"} from ${run.collectorId}, ${range}`;
 }
 
 function processorPredictionToSuggestion(
@@ -609,6 +819,7 @@ function SettingsWindow() {
   const activeCopy = settingsCopy[activeSection];
   const activeItems = moduleCatalog[activeSection];
   const isConnectionSection = activeSection === "connection";
+  const isDebugSection = activeSection === "debug";
   const monitoringRunning = monitoringStatus?.running ?? false;
 
   return (
@@ -709,6 +920,8 @@ function SettingsWindow() {
             onConnectGoogle={() => void connectGoogle()}
             onDisconnectGoogle={() => void disconnectGoogle()}
           />
+        ) : isDebugSection ? (
+          <DebugViewer />
         ) : activeItems.length > 0 ? (
           <section className="module-list" aria-label={`${activeCopy.title} list`}>
             {activeItems.map((item) => {
@@ -750,6 +963,262 @@ function SettingsWindow() {
         )}
       </main>
     </Card>
+  );
+}
+
+function DebugViewer() {
+  const [payload, setPayload] = useState<CollectorEventsPayload | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const timelineScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const colorMap = useMemo(() => {
+    const map = new Map<string, string>();
+    (payload?.collectors ?? []).forEach((collector, index) => {
+      map.set(collector, debugPalette[index % debugPalette.length]);
+    });
+    return map;
+  }, [payload?.collectors]);
+
+  const timelineRuns = useMemo(
+    () => createTimelineRuns(payload?.events ?? []),
+    [payload?.events]
+  );
+
+  useEffect(() => {
+    void loadEvents();
+  }, []);
+
+  useEffect(() => {
+    updateScrollArrows();
+  }, [timelineRuns.length]);
+
+  async function loadEvents() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const nextPayload = await invoke<CollectorEventsPayload>(
+        "get_collector_events",
+        { limit: 1000 }
+      );
+      setPayload(nextPayload);
+      requestAnimationFrame(updateScrollArrows);
+    } catch (loadError) {
+      setError(String(loadError));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function updateScrollArrows() {
+    const node = timelineScrollRef.current;
+    if (!node) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+
+    const maxScrollLeft = node.scrollWidth - node.clientWidth;
+    const canScroll = maxScrollLeft > 1;
+    setCanScrollLeft(canScroll && node.scrollLeft > 1);
+    setCanScrollRight(canScroll && node.scrollLeft < maxScrollLeft - 1);
+  }
+
+  function scrollTimeline(direction: -1 | 1) {
+    const node = timelineScrollRef.current;
+    if (!node) {
+      return;
+    }
+
+    node.scrollBy({
+      left: direction * Math.max(node.clientWidth * 0.8, 220),
+      behavior: "smooth",
+    });
+    requestAnimationFrame(updateScrollArrows);
+  }
+
+  const totalEvents = payload?.totalEvents ?? 0;
+  const collectorCount = payload?.collectors.length ?? 0;
+  const parseErrorCount = payload?.errors.length ?? 0;
+  const showEmpty = !loading && !error && timelineRuns.length === 0;
+
+  return (
+    <section className="debug-viewer" aria-label="Debug viewer">
+      <div className="debug-toolbar">
+        <div className="debug-legend" aria-label="Collector legend">
+          {(payload?.collectors ?? []).map((collector) => (
+            <span
+              className="debug-legend-item"
+              style={{ "--event-color": colorMap.get(collector) } as React.CSSProperties}
+              key={collector}
+            >
+              <span className="debug-legend-swatch" aria-hidden="true" />
+              <span>{collector}</span>
+            </span>
+          ))}
+        </div>
+
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="debug-refresh"
+          disabled={loading}
+          onClick={() => void loadEvents()}
+          aria-label="Refresh collected events"
+          title="Refresh collected events"
+        >
+          <RefreshCw
+            size={14}
+            strokeWidth={2.2}
+            className={loading ? "monitoring-spinner" : ""}
+          />
+          {loading ? "Loading" : "Refresh"}
+        </Button>
+      </div>
+
+      <div className="debug-summary" aria-label="Debug summary">
+        <div>
+          <span>{totalEvents.toLocaleString()}</span>
+          <small>events</small>
+        </div>
+        <div>
+          <span>{collectorCount.toLocaleString()}</span>
+          <small>collectors</small>
+        </div>
+        <div>
+          <span>{parseErrorCount.toLocaleString()}</span>
+          <small>parse issues</small>
+        </div>
+      </div>
+
+      {payload?.dataRoot ? (
+        <p className="debug-data-root" title={payload.dataRoot}>
+          {payload.dataRoot}
+        </p>
+      ) : null}
+
+      {error ? (
+        <section className="settings-empty debug-empty" aria-label="Debug load error">
+          <DatabaseZap size={22} strokeWidth={1.9} />
+          <p>{error}</p>
+        </section>
+      ) : showEmpty ? (
+        <section className="settings-empty debug-empty" aria-label="No collected events">
+          <DatabaseZap size={22} strokeWidth={1.9} />
+          <p>No collected events yet.</p>
+        </section>
+      ) : (
+        <section className="debug-timeline-shell" aria-label="Collected event timeline">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="debug-scroll-button debug-scroll-button-left"
+            hidden={!canScrollLeft}
+            onClick={() => scrollTimeline(-1)}
+            aria-label="Scroll timeline left"
+            title="Scroll timeline left"
+          >
+            <ChevronLeft size={15} strokeWidth={2.3} />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="debug-scroll-button debug-scroll-button-right"
+            hidden={!canScrollRight}
+            onClick={() => scrollTimeline(1)}
+            aria-label="Scroll timeline right"
+            title="Scroll timeline right"
+          >
+            <ChevronRight size={15} strokeWidth={2.3} />
+          </Button>
+
+          <div
+            className="debug-timeline-scroll"
+            ref={timelineScrollRef}
+            onScroll={updateScrollArrows}
+          >
+            <ol className="debug-timeline">
+              {timelineRuns.flatMap((run, index) => {
+                const previousRun = timelineRuns[index - 1];
+                const needsMarker =
+                  !previousRun ||
+                  debugMarkerKey(previousRun.startAt) !== debugMarkerKey(run.startAt);
+                const nodes = [];
+
+                if (needsMarker) {
+                  nodes.push(
+                    <li
+                      className="debug-time-marker"
+                      key={`marker-${debugMarkerKey(run.startAt)}-${index}`}
+                    >
+                      <time
+                        dateTime={
+                          run.startAt ? new Date(run.startAt).toISOString() : undefined
+                        }
+                      >
+                        {formatDebugMarker(run.startAt)}
+                      </time>
+                    </li>
+                  );
+                }
+
+                nodes.push(
+                  <TimelineRunItem
+                    key={`run-${run.collectorId}-${run.startAt}-${index}`}
+                    run={run}
+                    color={colorMap.get(run.collectorId) ?? debugPalette[0]}
+                  />
+                );
+
+                return nodes;
+              })}
+            </ol>
+          </div>
+        </section>
+      )}
+    </section>
+  );
+}
+
+function TimelineRunItem({ run, color }: { run: TimelineRun; color: string }) {
+  const count = run.events.length;
+  const segmentWidth = debugEventUnitPx * count;
+  const source = formatValueList(uniqueEventValues(run.events, "sourceType"));
+  const app = formatValueList(uniqueEventValues(run.events, "sourceApp"));
+  const kind = [formatValueList(uniqueEventValues(run.events, "subjectKind")), formatRunTime(run)]
+    .filter((value) => value && value !== "-")
+    .join(" / ");
+
+  return (
+    <li
+      className="debug-timeline-group"
+      style={{ inlineSize: Math.max(segmentWidth, debugGroupMinWidthPx) }}
+      aria-label={timelineRunLabel(run)}
+    >
+      <div
+        className="debug-timeline-segment"
+        style={
+          {
+            "--event-color": color,
+            inlineSize: segmentWidth,
+          } as React.CSSProperties
+        }
+        title={timelineRunLabel(run)}
+      >
+        {count > 1 ? <span>{count.toLocaleString()}</span> : null}
+      </div>
+      <div className="debug-segment-meta">
+        <span>{source}</span>
+        <span>{app}</span>
+        <small>{kind}</small>
+      </div>
+    </li>
   );
 }
 

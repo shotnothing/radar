@@ -54,6 +54,28 @@ def youtube_background_context(url: str) -> dict[str, object]:
     return context
 
 
+def gmail_context(url: str) -> dict[str, object]:
+    context = youtube_context(url)
+    context["active_context"]["window_title"] = "Gmail"
+    context["browser"]["active_tab"] = {
+        "url": url,
+        "title": "Inbox - Gmail",
+        "domain": "mail.google.com",
+    }
+    return context
+
+
+def calendar_context(url: str) -> dict[str, object]:
+    context = youtube_context(url)
+    context["active_context"]["window_title"] = "Google Calendar"
+    context["browser"]["active_tab"] = {
+        "url": url,
+        "title": "Google Calendar",
+        "domain": "calendar.google.com",
+    }
+    return context
+
+
 class ActorRuntimeTest(unittest.TestCase):
     def test_discovers_builtin_youtube_actor(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -69,6 +91,9 @@ class ActorRuntimeTest(unittest.TestCase):
             actor_ids = {actor["actor_id"] for actor in runtime.list_actors()}
 
             self.assertIn("builtin.youtube_search_nab", actor_ids)
+            self.assertIn("builtin.gmail_followup_draft", actor_ids)
+            self.assertIn("builtin.gmail_reply_email", actor_ids)
+            self.assertIn("builtin.calendar_next_open_timeslot", actor_ids)
             self.assertIn("builtin.codex_use_radar_skill", actor_ids)
 
     def test_youtube_actor_should_trigger_on_youtube(self) -> None:
@@ -118,6 +143,113 @@ class ActorRuntimeTest(unittest.TestCase):
             output = runtime.should_trigger("builtin.youtube_search_nab")
 
             self.assertFalse(output["available"])
+
+    def test_gmail_actor_should_trigger_on_gmail(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: gmail_context("https://mail.google.com/mail/u/0/#inbox"),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.gmail_followup_draft")
+
+            self.assertTrue(output["available"])
+            self.assertIn("draft_body", output["action_context"])
+            self.assertIn("action_request", output)
+
+    def test_gmail_actor_filter_skips_non_gmail(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: gmail_context("https://calendar.google.com/calendar/u/0/r"),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.gmail_followup_draft")
+
+            self.assertFalse(output["available"])
+            self.assertTrue(output["filtered"])
+
+    def test_gmail_reply_actor_should_trigger_on_open_email_thread(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: gmail_context(
+                    "https://mail.google.com/mail/u/0/#inbox/FMfcgzQgMLvxdbztfPfkNcTpBjgjhKDr"
+                ),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.gmail_reply_email")
+
+            self.assertTrue(output["available"])
+            self.assertEqual(output["presentation"]["button_label"], "reply this email")
+            self.assertIn("action_request", output)
+
+    def test_gmail_reply_actor_skips_gmail_inbox(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: gmail_context("https://mail.google.com/mail/u/0/#inbox"),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.gmail_reply_email")
+
+            self.assertFalse(output["available"])
+
+    def test_calendar_actor_should_trigger_on_calendar_week_view(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: calendar_context(
+                    "https://calendar.google.com/calendar/u/0/r/week"
+                ),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.calendar_next_open_timeslot")
+
+            self.assertTrue(output["available"])
+            self.assertEqual(
+                output["presentation"]["button_label"],
+                "Find my next open timeslot",
+            )
+            self.assertIn("action_request", output)
+
+    def test_calendar_actor_filter_skips_non_calendar_week_view(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            runtime = ActorRuntime(
+                actor_paths=["builtin/actor"],
+                state_root=tmp,
+                context_provider=lambda: calendar_context(
+                    "https://calendar.google.com/calendar/u/0/r/day"
+                ),
+                api_url="http://127.0.0.1:5000",
+                api_token="test-token",
+            )
+            runtime.refresh()
+
+            output = runtime.should_trigger("builtin.calendar_next_open_timeslot")
+
+            self.assertFalse(output["available"])
+            self.assertTrue(output["filtered"])
 
     def test_event_name_filter_requires_matching_trigger_event(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

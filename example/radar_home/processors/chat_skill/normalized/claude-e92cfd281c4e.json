@@ -1,0 +1,1276 @@
+{
+  "cwd": "/tmp/radar-claude",
+  "files_touched": [
+    "builtin/processor/spec/processor.md"
+  ],
+  "key": "claude-e92cfd281c4e",
+  "messages": [
+    {
+      "id": "claude-user-1",
+      "role": "user",
+      "source_ref": {
+        "collector_id": "chat.transcript",
+        "event_id": "e78bc0f1-1486-4eda-aba9-afc381c0308b",
+        "session_key": "claude-e92cfd281c4e",
+        "source_fingerprint": "676:1780716599842504588",
+        "source_message_ids": [
+          "claude-user-1"
+        ],
+        "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+        "tool_ids": []
+      },
+      "text": "Read the processor spec too.",
+      "thinking": "",
+      "timestamp": 1780711200000
+    },
+    {
+      "id": "claude-assistant-1",
+      "role": "assistant",
+      "source_ref": {
+        "collector_id": "chat.transcript",
+        "event_id": "ca72088f-ffa4-40ac-9f74-04966b4eeaf9",
+        "session_key": "claude-e92cfd281c4e",
+        "source_fingerprint": "676:1780716599842504588",
+        "source_message_ids": [
+          "claude-assistant-1"
+        ],
+        "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+        "tool_ids": []
+      },
+      "text": "I read the processor spec.",
+      "thinking": "",
+      "timestamp": 1780711201000
+    }
+  ],
+  "model": "claude-test",
+  "session_id": "claude-session-1",
+  "source": "Claude",
+  "source_fingerprint": "676:1780721301746139785",
+  "source_fingerprints": [
+    "676:1780716599842504588",
+    "676:1780716638616855843",
+    "676:1780718870473802345",
+    "676:1780719034517449191",
+    "676:1780719064989842680",
+    "676:1780719235911232754",
+    "676:1780719260750208368",
+    "676:1780719548640480332",
+    "676:1780720574806906101",
+    "676:1780720591173632532",
+    "676:1780720608825029741",
+    "676:1780720655072794754",
+    "676:1780720683366486435",
+    "676:1780720877512050587",
+    "676:1780721172082478598",
+    "676:1780721232835896774",
+    "676:1780721301746139785"
+  ],
+  "source_refs": [
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3b576b1b-d9c9-4b26-a35f-4bac129675b6",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716599842504588",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e78bc0f1-1486-4eda-aba9-afc381c0308b",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716599842504588",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "ca72088f-ffa4-40ac-9f74-04966b4eeaf9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716599842504588",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1f127c0f-e90d-4478-be18-327ce63e8ec7",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716599842504588",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "dbba5081-8faf-4c7c-80ea-5d7604dac003",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716638616855843",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "824f4026-eccc-45ed-8eb4-e88af0a60317",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716638616855843",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "14671f70-c080-4ee1-b6d2-2c69ed6e43c4",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716638616855843",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "c96bc193-8d58-4c64-be0d-3b70aa50b79f",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780716638616855843",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "eb025568-e1b6-4a21-a8d6-839e6f18b9b9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780718870473802345",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d4399263-f359-4cb8-aa6a-86b5c7a873b6",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780718870473802345",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "7bbe9723-76c4-4250-9c32-22ba8f415d2f",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780718870473802345",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "4f12b4c0-f0e4-4d70-8cd6-74fae5a9141f",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780718870473802345",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1bd6c285-a010-442e-9b33-bf3d8bdf329a",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719034517449191",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "77697305-8b3b-4132-af06-ac0d95e388ce",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719034517449191",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "15739933-4185-44f3-bcec-64391244273e",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719034517449191",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "68226bae-f335-4855-99dd-fec456da74a2",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719034517449191",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2111467c-e202-451e-bae4-d0c0ef387262",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719064989842680",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e0c1eb31-faa9-4da3-b02d-e90673c620ad",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719064989842680",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8581b0b9-5660-4d63-bf7e-c31c7be4838a",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719064989842680",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "51971a16-4fc1-4496-bc5c-ad180f75d127",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719064989842680",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1fa2bbae-bc07-4ec8-b1c5-7a17f595ef4b",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719235911232754",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "551b85c4-ad0d-4284-b255-a84b7d32d49d",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719235911232754",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "0269ca53-ec74-4db9-bf93-006943c95788",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719235911232754",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "dc7a1a04-bd60-4654-aab1-4cf635168915",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719235911232754",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "847fb439-8e0a-4a9a-bb0a-159524d7216e",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719260750208368",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "b4f086e0-3e5e-4fb8-94f1-7ad2a29938c9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719260750208368",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9cb99961-466e-4dbb-a045-0bddbfc86573",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719260750208368",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2b9cebd8-9db5-4e8a-9696-c3ec23411995",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719260750208368",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "bb5414c3-28cd-4410-977c-3e93ec134539",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719548640480332",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "93d2a112-44d2-4c72-9145-3279a25287e1",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719548640480332",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "27578fcf-d13b-485f-bca5-8539a30ea560",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719548640480332",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8bd458c1-d9fe-44ff-8404-782917740424",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780719548640480332",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3eb1a595-f347-43e3-89dd-6ed603aa38f6",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720574806906101",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d73be520-d80f-4d71-bcb1-5d278da263e9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720574806906101",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "53d34ae6-65cb-4184-9fd4-baaac1930896",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720574806906101",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "4f569778-ba2f-4aab-81be-cae237ec2ef9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720574806906101",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "f80ff4a6-65b7-4f2a-a3dd-b711900a3c3b",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720591173632532",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "c35fb5bd-6690-4e11-b4c5-8e1103fb16b9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720591173632532",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2368c64b-c959-40f7-af1a-b40c46cb0391",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720591173632532",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8778ea26-edca-41c3-a12b-31fc90a73164",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720591173632532",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1385beea-adad-43b4-a05a-2bb496c52bda",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720608825029741",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3b7eb461-08f5-4918-9a66-8331a3a7593c",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720608825029741",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "dcff54e6-0b1d-402a-b710-24095bc4bd52",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720608825029741",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "7767a5a4-dfc6-4009-a711-36d7d84470d3",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720608825029741",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3374a45e-16be-4745-a974-f874e4c70842",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720655072794754",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "d03167cb-5abb-48d5-a2ed-677467052875",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720655072794754",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "9284e167-363f-4d64-8e17-d0fe869da1f8",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720655072794754",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "7da41b38-cc95-4ec9-9e68-ad9538d5f8f4",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720655072794754",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "f9f05694-03b5-448e-b317-726196577259",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720683366486435",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "e0841888-71e4-4bb2-8408-ea24f3de4dd5",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720683366486435",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "88623042-cc88-4a71-9c00-46f224a3667d",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720683366486435",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "a04e75ba-bc6d-40b2-8f68-269ad28fb493",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720683366486435",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "cfb2e157-0baa-4fac-94db-afeb5220bd10",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720877512050587",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "2fd0af01-27fb-4a10-ae1d-35183d6a4b58",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720877512050587",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "0b22a008-d0f5-48a0-aaa3-e75493795b88",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720877512050587",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "4dfdbae0-e839-499d-b47b-db5efeec54dc",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780720877512050587",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "6c28c397-5451-4f90-8185-03051e8ef87a",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721172082478598",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3693f524-03b2-4259-87da-cb8c16cd7a5f",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721172082478598",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "3c6a5081-5a7f-46cc-b236-ee888f59a506",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721172082478598",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "a886b042-05d2-4a40-b1d4-0adb11969732",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721172082478598",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "8b90b91f-fb2a-4a2d-9ab7-34aed721abe0",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721232835896774",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "75031355-5301-4bff-88c0-61fb02ae714e",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721232835896774",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "c834b34e-423c-483f-a33a-3bb2f62455b9",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721232835896774",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "cf9ca63e-1e58-419b-8edf-ace156f69f81",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721232835896774",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "898b35ba-b601-42d5-b69f-7a61ebf32ee5",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721301746139785",
+      "source_message_ids": [],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "1d6004ba-4ec3-4db9-a749-9fd3ff8ba2be",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721301746139785",
+      "source_message_ids": [
+        "claude-user-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "6bda840a-7268-4fdd-a24f-2b8ca2a84712",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721301746139785",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": []
+    },
+    {
+      "collector_id": "chat.transcript",
+      "event_id": "6a95b12b-e5d7-4d4d-be53-38487f61352d",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721301746139785",
+      "source_message_ids": [
+        "claude-assistant-1"
+      ],
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+      "tool_ids": [
+        "tool_claude_1"
+      ]
+    }
+  ],
+  "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+  "started_at": 1780711200000,
+  "tool_details": {
+    "tool_claude_1": {
+      "input": {
+        "file_path": "builtin/processor/spec/processor.md"
+      },
+      "name": "Read",
+      "output": null,
+      "source_refs": [
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "1f127c0f-e90d-4478-be18-327ce63e8ec7",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780716599842504588",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "7f458b51-fbcb-4ed5-9e08-54c2a057a484",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780716599842504588",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "c96bc193-8d58-4c64-be0d-3b70aa50b79f",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780716638616855843",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "66d18921-7141-4d2a-9946-96874c6a3e6a",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780716638616855843",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "4f12b4c0-f0e4-4d70-8cd6-74fae5a9141f",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780718870473802345",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "436cc154-d403-4529-8a93-b8445446989b",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780718870473802345",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "68226bae-f335-4855-99dd-fec456da74a2",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719034517449191",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b9b3e59a-5692-47f6-bdbf-2affef22a44d",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719034517449191",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "51971a16-4fc1-4496-bc5c-ad180f75d127",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719064989842680",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "08361a9a-50ef-4146-8c5d-5c1167103256",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719064989842680",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "dc7a1a04-bd60-4654-aab1-4cf635168915",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719235911232754",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "47a2d51a-3fa5-48d9-9b81-c804fbb0dd97",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719235911232754",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "2b9cebd8-9db5-4e8a-9696-c3ec23411995",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719260750208368",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "b0f679a3-66cd-4a4c-badf-0f512ae6e49c",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719260750208368",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "8bd458c1-d9fe-44ff-8404-782917740424",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719548640480332",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "e0c1f843-3f20-420c-8a3c-82e31a675c56",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780719548640480332",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "4f569778-ba2f-4aab-81be-cae237ec2ef9",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720574806906101",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "4f80f2ea-1f64-4807-a359-a7a37cfd63b3",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720574806906101",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "8778ea26-edca-41c3-a12b-31fc90a73164",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720591173632532",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "da4c467c-7e06-477e-849a-b2b75a4a00be",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720591173632532",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "7767a5a4-dfc6-4009-a711-36d7d84470d3",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720608825029741",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "d2977e59-aa0e-4d25-a016-22b0aa7cb1c9",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720608825029741",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "7da41b38-cc95-4ec9-9e68-ad9538d5f8f4",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720655072794754",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "bda6d7de-80dd-4e0b-9db3-31db5256b37e",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720655072794754",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "a04e75ba-bc6d-40b2-8f68-269ad28fb493",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720683366486435",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "c7a3e20c-8c81-49de-abff-da5c74e06c9c",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720683366486435",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "4dfdbae0-e839-499d-b47b-db5efeec54dc",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720877512050587",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "bcf6a651-2954-4536-9889-cd389c553dac",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780720877512050587",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "a886b042-05d2-4a40-b1d4-0adb11969732",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721172082478598",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "2f617498-169e-4f0a-9a64-2dbe1957a6cc",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721172082478598",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "cf9ca63e-1e58-419b-8edf-ace156f69f81",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721232835896774",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "1d7821e9-a0c3-49fa-88d2-76d41833e58b",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721232835896774",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "6a95b12b-e5d7-4d4d-be53-38487f61352d",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721301746139785",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        },
+        {
+          "collector_id": "chat.transcript",
+          "event_id": "de606eda-29fc-4256-add3-64ef60c3077b",
+          "session_key": "claude-e92cfd281c4e",
+          "source_fingerprint": "676:1780721301746139785",
+          "source_message_ids": [
+            "claude-assistant-1"
+          ],
+          "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl",
+          "tool_ids": [
+            "tool_claude_1"
+          ]
+        }
+      ],
+      "status": "",
+      "tool_id": "tool_claude_1"
+    }
+  },
+  "updated_at": 1780721301746
+}

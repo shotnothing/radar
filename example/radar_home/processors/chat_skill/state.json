@@ -1,0 +1,42 @@
+{
+  "last_completed_at": 1780721425211,
+  "processed": {
+    "claude-bee5e10f739d": {
+      "changed_files": [
+        "/Users/yunyuan.yu/.radar/skill/projects/tmp-radar-claude/common_workflows.md"
+      ],
+      "entries": 1,
+      "fingerprint": "860726e4f4ff92c7935bb9e967c2970fb06820e0",
+      "status": "extracted",
+      "updated_at": 1780721425104
+    },
+    "claude-e92cfd281c4e": {
+      "changed_files": [
+        "/Users/yunyuan.yu/.radar/skill/projects/tmp-radar-claude/common_workflows.md"
+      ],
+      "entries": 1,
+      "fingerprint": "1fcc1e15c690a6bbcf02210ccc89cffaf61b473b",
+      "status": "extracted",
+      "updated_at": 1780721425098
+    },
+    "codex-22b990307ba9": {
+      "changed_files": [
+        "/Users/yunyuan.yu/.radar/skill/projects/tmp-radar-codex/common_workflows.md"
+      ],
+      "entries": 1,
+      "fingerprint": "345920cc763acad5f9a3f089513c6521b222aed0",
+      "status": "extracted",
+      "updated_at": 1780721425094
+    },
+    "codex-88c403cb3963": {
+      "changed_files": [
+        "/Users/yunyuan.yu/.radar/skill/projects/tmp-radar-codex/common_workflows.md"
+      ],
+      "entries": 1,
+      "fingerprint": "82aa9134bf42d6748d2e212e0e2808a823025f40",
+      "status": "extracted",
+      "updated_at": 1780721425101
+    }
+  },
+  "version": 1
+}

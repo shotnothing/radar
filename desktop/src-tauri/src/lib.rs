@@ -1,8 +1,9 @@
 use std::{
     collections::{HashMap, HashSet},
-    io::{Read, Write},
+    fs::File,
+    io::{BufRead, BufReader, Read, Write},
     net::{TcpListener, TcpStream},
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Child, Command, Stdio},
     sync::{Arc, Mutex, Weak},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
@@ -53,6 +54,48 @@ struct MonitoringStatus {
     processor_url: String,
     chrome_bridge_url: String,
     work_dir: String,
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CollectorEventsPayload {
+    data_root: String,
+    total_events: usize,
+    returned_events: usize,
+    collectors: Vec<String>,
+    sources: Vec<String>,
+    errors: Vec<CollectorParseError>,
+    events: Vec<CollectorEvent>,
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CollectorParseError {
+    file_path: String,
+    line_number: usize,
+    message: String,
+}
+
+#[derive(Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CollectorEvent {
+    id: String,
+    collector_id: String,
+    observed_at: u64,
+    source_type: String,
+    source_app: String,
+    subject_kind: String,
+    title: String,
+    text: String,
+    anchor_type: String,
+    action: String,
+    context_app: String,
+    context_window: String,
+    artifact_count: usize,
+    provenance_type: String,
+    source_uri: String,
+    file_path: String,
+    line_number: usize,
 }
 
 impl ActorRuntimeHandle {
@@ -229,6 +272,7 @@ pub fn run() {
             get_monitoring_status,
             start_monitoring,
             stop_monitoring,
+            get_collector_events,
             get_google_connection_status,
             connect_google_account,
             disconnect_google_account
@@ -276,6 +320,11 @@ fn start_monitoring(
 #[tauri::command]
 fn stop_monitoring(state: tauri::State<'_, ActorRuntimeHandle>) -> MonitoringStatus {
     state.stop()
+}
+
+#[tauri::command]
+fn get_collector_events(limit: Option<usize>) -> Result<CollectorEventsPayload, String> {
+    read_collector_events(limit.unwrap_or(1000))
 }
 
 #[tauri::command]

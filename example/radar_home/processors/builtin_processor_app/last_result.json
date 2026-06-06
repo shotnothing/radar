@@ -1,0 +1,132 @@
+{
+  "confidence": 0.076844,
+  "created_at": "2026-06-06T07:53:01.568558Z",
+  "id": "65fc69c1-075a-4ef9-ad0d-e23f25e6ee8a",
+  "input_refs": [
+    "/Users/yunyuan.yu/.radar/processors/builtin_processor_app/normalized_events.jsonl"
+  ],
+  "kind": "prediction_set",
+  "payload": {
+    "algorithm": "estdec",
+    "candidate_patterns": [
+      {
+        "decayed_count": 8.057557,
+        "item_ids": [
+          3
+        ],
+        "items": [
+          "chrome.browser::url_changed::html::https://www.google.com/search/warmup.html"
+        ],
+        "size": 1,
+        "support": 0.076844
+      },
+      {
+        "decayed_count": 5.175197,
+        "item_ids": [
+          9
+        ],
+        "items": [
+          "chrome.browser::url_changed::html.light::https://chatgpt.com/codex/cloud/settings/analytics#usage"
+        ],
+        "size": 1,
+        "support": 0.049355
+      },
+      {
+        "decayed_count": 3.58866,
+        "item_ids": [
+          69
+        ],
+        "items": [
+          "chrome.browser::mouse_click::div#container::https://www.youtube.com/"
+        ],
+        "size": 1,
+        "support": 0.034225
+      },
+      {
+        "decayed_count": 3.563975,
+        "item_ids": [
+          68
+        ],
+        "items": [
+          "chrome.browser::url_changed::html::https://www.youtube.com/"
+        ],
+        "size": 1,
+        "support": 0.033989
+      }
+    ],
+    "confidence": 0.076844,
+    "dictionary_path": "/Users/yunyuan.yu/.radar/processors/builtin_processor_app/predict/item_dictionary.json",
+    "dictionary_size": 76,
+    "effective_transaction_count": 104.85568587472054,
+    "error": null,
+    "estdec_algorithm": "NativeEstDec",
+    "estdec_available": true,
+    "events_processed": 1,
+    "implementation": "native_python",
+    "min_confidence": 0.01,
+    "min_pattern_decayed_count": 3.5,
+    "min_support": 0.01,
+    "min_transactions_before_prediction": 30,
+    "model_path": "/Users/yunyuan.yu/.radar/processors/builtin_processor_app/predict/estdec_model.json",
+    "patterns": [
+      {
+        "decayed_count": 8.057557,
+        "item_ids": [
+          3
+        ],
+        "items": [
+          "chrome.browser::url_changed::html::https://www.google.com/search/warmup.html"
+        ],
+        "size": 1,
+        "support": 0.076844
+      },
+      {
+        "decayed_count": 5.175197,
+        "item_ids": [
+          9
+        ],
+        "items": [
+          "chrome.browser::url_changed::html.light::https://chatgpt.com/codex/cloud/settings/analytics#usage"
+        ],
+        "size": 1,
+        "support": 0.049355
+      },
+      {
+        "decayed_count": 3.58866,
+        "item_ids": [
+          69
+        ],
+        "items": [
+          "chrome.browser::mouse_click::div#container::https://www.youtube.com/"
+        ],
+        "size": 1,
+        "support": 0.034225
+      },
+      {
+        "decayed_count": 3.563975,
+        "item_ids": [
+          68
+        ],
+        "items": [
+          "chrome.browser::url_changed::html::https://www.youtube.com/"
+        ],
+        "size": 1,
+        "support": 0.033989
+      }
+    ],
+    "ready": true,
+    "reason": "",
+    "status": "ready",
+    "stream_path": "/Users/yunyuan.yu/.radar/processors/builtin_processor_app/predict/spmf_stream.txt",
+    "tracked_pattern_count": 76,
+    "transactions_appended": 1,
+    "transactions_seen": 119,
+    "warmup_remaining": 0
+  },
+  "privacy": {
+    "contains_raw_content": false,
+    "redaction_applied": true
+  },
+  "processor_id": "builtin.predict",
+  "source_refs": []
+}

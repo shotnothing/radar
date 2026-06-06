@@ -1,0 +1,38 @@
+{
+  "actor_id": "builtin.calendar_next_open_timeslot",
+  "version": "1.0.0",
+  "enabled": true,
+  "title": "Find next open timeslot",
+  "description": "Show a placeholder timeslot-finding action while Google Calendar week view is active.",
+  "activation": {
+    "mode": "desktop_option",
+    "priority": "normal",
+    "button_label": "Find my next open timeslot"
+  },
+  "trigger": {
+    "polling_interval_seconds": 1,
+    "filters": {
+      "app_patterns": [
+        "Google Chrome",
+        "com.google.Chrome"
+      ],
+      "url_patterns": [
+        "https://calendar.google.com/calendar/u/0/r/week*"
+      ]
+    },
+    "should_trigger": {
+      "command": [
+        "python3",
+        "should_trigger.py"
+      ],
+      "timeout_seconds": 10
+    }
+  },
+  "action": {
+    "command": [
+      "python3",
+      "action.py"
+    ],
+    "timeout_seconds": 10
+  }
+}

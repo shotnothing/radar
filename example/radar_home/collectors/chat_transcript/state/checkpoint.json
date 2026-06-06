@@ -1,0 +1,2976 @@
+{
+  "last_scan_completed_at": 1780732139524,
+  "sources": {
+    "file:///Users/yunyuan.yu/.claude/projects/-/1e78c3f7-3bdd-4417-b738-53e5a9146818.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864588,
+      "session_id": "1e78c3f7-3bdd-4417-b738-53e5a9146818",
+      "session_key": "claude-6d72305216bb",
+      "source_fingerprint": "120:1780506148152857938",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/1e78c3f7-3bdd-4417-b738-53e5a9146818.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/2453225b-3d63-440e-b1c8-ff43aacfb4cb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864589,
+      "session_id": "2453225b-3d63-440e-b1c8-ff43aacfb4cb",
+      "session_key": "claude-00873f6a8ee0",
+      "source_fingerprint": "113:1780506009749249854",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/2453225b-3d63-440e-b1c8-ff43aacfb4cb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/30f73047-ddad-4b55-95b5-8a1bdb0a4d9f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864589,
+      "session_id": "30f73047-ddad-4b55-95b5-8a1bdb0a4d9f",
+      "session_key": "claude-a418af214ab0",
+      "source_fingerprint": "127:1780499593850224592",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/30f73047-ddad-4b55-95b5-8a1bdb0a4d9f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/3a567682-5962-4ffc-9bd2-90b02eff766b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864589,
+      "session_id": "3a567682-5962-4ffc-9bd2-90b02eff766b",
+      "session_key": "claude-73fd3ea81975",
+      "source_fingerprint": "131:1780481966508697134",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/3a567682-5962-4ffc-9bd2-90b02eff766b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/40034630-f0be-47cb-b334-081acd955776.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864590,
+      "session_id": "40034630-f0be-47cb-b334-081acd955776",
+      "session_key": "claude-d95d61b331fb",
+      "source_fingerprint": "125:1780370338098710419",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/40034630-f0be-47cb-b334-081acd955776.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/481624b4-3940-4961-984c-6f4596a58e72.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864590,
+      "session_id": "481624b4-3940-4961-984c-6f4596a58e72",
+      "session_key": "claude-8327a321ea8d",
+      "source_fingerprint": "122:1780501760581348265",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/481624b4-3940-4961-984c-6f4596a58e72.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/54665529-490f-4d91-a84c-a05b274cdd48.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864591,
+      "session_id": "54665529-490f-4d91-a84c-a05b274cdd48",
+      "session_key": "claude-d8f9e5fe9ece",
+      "source_fingerprint": "128:1780371327398631878",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/54665529-490f-4d91-a84c-a05b274cdd48.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/5b4f25bb-8320-480e-8082-505d8ce38c7c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864591,
+      "session_id": "5b4f25bb-8320-480e-8082-505d8ce38c7c",
+      "session_key": "claude-dcaebfd3cce9",
+      "source_fingerprint": "119:1780487228717769732",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/5b4f25bb-8320-480e-8082-505d8ce38c7c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/65ed5cf8-5b7a-4eaa-bd9b-78a2fbb706aa.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864591,
+      "session_id": "65ed5cf8-5b7a-4eaa-bd9b-78a2fbb706aa",
+      "session_key": "claude-79b3bc17312e",
+      "source_fingerprint": "102:1780486207612586728",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/65ed5cf8-5b7a-4eaa-bd9b-78a2fbb706aa.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/76ff388b-a0f4-4ed5-bcd7-5f5c22c0bf5e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864592,
+      "session_id": "76ff388b-a0f4-4ed5-bcd7-5f5c22c0bf5e",
+      "session_key": "claude-5cf78145e369",
+      "source_fingerprint": "132:1779956178883202724",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/76ff388b-a0f4-4ed5-bcd7-5f5c22c0bf5e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/7700669c-828c-4158-ae2a-9b3da9b5b47c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864592,
+      "session_id": "7700669c-828c-4158-ae2a-9b3da9b5b47c",
+      "session_key": "claude-c4387cc301b6",
+      "source_fingerprint": "130:1779952000119476458",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/7700669c-828c-4158-ae2a-9b3da9b5b47c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/773c2523-cf2f-4eee-b205-713aca667441.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864592,
+      "session_id": "773c2523-cf2f-4eee-b205-713aca667441",
+      "session_key": "claude-2355317441f7",
+      "source_fingerprint": "121:1780370412500970147",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/773c2523-cf2f-4eee-b205-713aca667441.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/7b65ede8-c79e-4a7e-8130-b877f9fe64b1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864593,
+      "session_id": "7b65ede8-c79e-4a7e-8130-b877f9fe64b1",
+      "session_key": "claude-3a72e5a48db4",
+      "source_fingerprint": "117:1780506142859885669",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/7b65ede8-c79e-4a7e-8130-b877f9fe64b1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/7f185aef-1926-4daf-8530-fec382139cca.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864593,
+      "session_id": "7f185aef-1926-4daf-8530-fec382139cca",
+      "session_key": "claude-2bd2fcf4a657",
+      "source_fingerprint": "121:1779694416409527682",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/7f185aef-1926-4daf-8530-fec382139cca.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/9463d6a9-e879-4756-84e1-2b08e3f8cdcd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864593,
+      "session_id": "9463d6a9-e879-4756-84e1-2b08e3f8cdcd",
+      "session_key": "claude-4995f175df19",
+      "source_fingerprint": "139:1780485109170475680",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/9463d6a9-e879-4756-84e1-2b08e3f8cdcd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/aa1996d0-0146-4c33-b653-a1ac9a12c32b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864594,
+      "session_id": "aa1996d0-0146-4c33-b653-a1ac9a12c32b",
+      "session_key": "claude-47241cfd0759",
+      "source_fingerprint": "124:1780499427681768326",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/aa1996d0-0146-4c33-b653-a1ac9a12c32b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/b55e4126-4b06-432b-9561-28791b457964.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864594,
+      "session_id": "b55e4126-4b06-432b-9561-28791b457964",
+      "session_key": "claude-2e3edb400981",
+      "source_fingerprint": "120:1780480001818142313",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/b55e4126-4b06-432b-9561-28791b457964.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/b8cafcde-3150-4707-a67c-4cb086d5755a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864594,
+      "session_id": "b8cafcde-3150-4707-a67c-4cb086d5755a",
+      "session_key": "claude-b9a72dc84ebd",
+      "source_fingerprint": "122:1780499422693988865",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/b8cafcde-3150-4707-a67c-4cb086d5755a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/c4ebe2bb-dad2-42fa-81a8-0d2566d03a29.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864595,
+      "session_id": "c4ebe2bb-dad2-42fa-81a8-0d2566d03a29",
+      "session_key": "claude-d2d002831b99",
+      "source_fingerprint": "123:1780482059202922169",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/c4ebe2bb-dad2-42fa-81a8-0d2566d03a29.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/d0cf8982-a991-4954-b262-c927c9a0a27c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864595,
+      "session_id": "d0cf8982-a991-4954-b262-c927c9a0a27c",
+      "session_key": "claude-ac1fab450a4b",
+      "source_fingerprint": "123:1780506009767753402",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/d0cf8982-a991-4954-b262-c927c9a0a27c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/d4987926-a3ee-4170-8a57-8917ef0533ce.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864596,
+      "session_id": "d4987926-a3ee-4170-8a57-8917ef0533ce",
+      "session_key": "claude-fed7d2bc260f",
+      "source_fingerprint": "108:1779952002873016670",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/d4987926-a3ee-4170-8a57-8917ef0533ce.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/d5586960-91e1-453a-bb91-46afad0b5065.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864596,
+      "session_id": "d5586960-91e1-453a-bb91-46afad0b5065",
+      "session_key": "claude-ddea4c59bdc5",
+      "source_fingerprint": "142:1779955073603676181",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/d5586960-91e1-453a-bb91-46afad0b5065.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/eb4b8374-f068-4787-839d-1373a8251ee6.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864596,
+      "session_id": "eb4b8374-f068-4787-839d-1373a8251ee6",
+      "session_key": "claude-c474cbfe5686",
+      "source_fingerprint": "126:1780488236979126941",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/eb4b8374-f068-4787-839d-1373a8251ee6.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/f2406a28-f003-4057-8142-17a4d954d3bf.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864597,
+      "session_id": "f2406a28-f003-4057-8142-17a4d954d3bf",
+      "session_key": "claude-4e15ff217d73",
+      "source_fingerprint": "121:1780488318857531690",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/f2406a28-f003-4057-8142-17a4d954d3bf.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/f3422e5c-62b6-4758-bccb-02e627f0cafa.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864597,
+      "session_id": "f3422e5c-62b6-4758-bccb-02e627f0cafa",
+      "session_key": "claude-5b9adc963b0f",
+      "source_fingerprint": "121:1779951914208350384",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/f3422e5c-62b6-4758-bccb-02e627f0cafa.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/f5fb06e5-1c04-4d64-9b3d-82025410c735.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864597,
+      "session_id": "f5fb06e5-1c04-4d64-9b3d-82025410c735",
+      "session_key": "claude-1e1ddcc602f0",
+      "source_fingerprint": "110:1779952005634469431",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/f5fb06e5-1c04-4d64-9b3d-82025410c735.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/f9e12d86-06b1-4a1f-826f-28503151ac9d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864598,
+      "session_id": "f9e12d86-06b1-4a1f-826f-28503151ac9d",
+      "session_key": "claude-a04623246540",
+      "source_fingerprint": "134:1780480929843922497",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/f9e12d86-06b1-4a1f-826f-28503151ac9d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-/f9ec6a13-5b44-471e-831a-efd4ae36d9a4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725864598,
+      "session_id": "f9ec6a13-5b44-471e-831a-efd4ae36d9a4",
+      "session_key": "claude-6d2cc11f9820",
+      "source_fingerprint": "120:1779954141192585021",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-/f9ec6a13-5b44-471e-831a-efd4ae36d9a4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-reportingtool-reporting-tool--claude-worktrees-crazy-torvalds-bc19b4/3ec27c6c-2744-4398-816b-c7a7de75e521.jsonl": {
+      "last_error": "",
+      "last_processed_line": 74,
+      "last_scan_at": 1780725865218,
+      "session_id": "3ec27c6c-2744-4398-816b-c7a7de75e521",
+      "session_key": "claude-0f9e0e301c7f",
+      "source_fingerprint": "113712:1780574611076999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-reportingtool-reporting-tool--claude-worktrees-crazy-torvalds-bc19b4/3ec27c6c-2744-4398-816b-c7a7de75e521.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/76d4e10b-8858-495c-8942-24a059da8d26.jsonl": {
+      "last_error": "",
+      "last_processed_line": 693,
+      "last_scan_at": 1780725865726,
+      "session_id": "76d4e10b-8858-495c-8942-24a059da8d26",
+      "session_key": "claude-0031728b11dc",
+      "source_fingerprint": "1960422:1779958740237980813",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/76d4e10b-8858-495c-8942-24a059da8d26.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/76d4e10b-8858-495c-8942-24a059da8d26/subagents/agent-a40cf8f58ce4ce93c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 58,
+      "last_scan_at": 1780725865698,
+      "session_id": "76d4e10b-8858-495c-8942-24a059da8d26",
+      "session_key": "claude-2cfe41be0ca0",
+      "source_fingerprint": "187273:1779951749545646437",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/76d4e10b-8858-495c-8942-24a059da8d26/subagents/agent-a40cf8f58ce4ce93c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/c63660ad-3662-436f-b4e0-d7c18195d613.jsonl": {
+      "last_error": "",
+      "last_processed_line": 645,
+      "last_scan_at": 1780725865757,
+      "session_id": "c63660ad-3662-436f-b4e0-d7c18195d613",
+      "session_key": "claude-a9369c70e504",
+      "source_fingerprint": "1798626:1779955314065760951",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/c63660ad-3662-436f-b4e0-d7c18195d613.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/c63660ad-3662-436f-b4e0-d7c18195d613/subagents/agent-ac1898b68b8e396ad.jsonl": {
+      "last_error": "",
+      "last_processed_line": 74,
+      "last_scan_at": 1780725865731,
+      "session_id": "c63660ad-3662-436f-b4e0-d7c18195d613",
+      "session_key": "claude-6319192fbb41",
+      "source_fingerprint": "175122:1779951942254509170",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/c63660ad-3662-436f-b4e0-d7c18195d613/subagents/agent-ac1898b68b8e396ad.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/fd7797fa-d720-4e8e-a872-8ec1363fa841.jsonl": {
+      "last_error": "",
+      "last_processed_line": 369,
+      "last_scan_at": 1780725865773,
+      "session_id": "fd7797fa-d720-4e8e-a872-8ec1363fa841",
+      "session_key": "claude-c19857afb0cf",
+      "source_fingerprint": "1042125:1780636597102999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-hangar/fd7797fa-d720-4e8e-a872-8ec1363fa841.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/07f46906-440f-4216-99d9-82f155e6c74e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865773,
+      "session_id": "07f46906-440f-4216-99d9-82f155e6c74e",
+      "session_key": "claude-a4abc3a74c72",
+      "source_fingerprint": "118:1780505169690590269",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/07f46906-440f-4216-99d9-82f155e6c74e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/3635ea30-f7ed-4ea6-9c0e-7d7bb9b1703f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865774,
+      "session_id": "3635ea30-f7ed-4ea6-9c0e-7d7bb9b1703f",
+      "session_key": "claude-e038c07eed92",
+      "source_fingerprint": "114:1780504951867789389",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/3635ea30-f7ed-4ea6-9c0e-7d7bb9b1703f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/3812176e-84d8-4f7d-aa82-a59a78dc9ac3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865774,
+      "session_id": "3812176e-84d8-4f7d-aa82-a59a78dc9ac3",
+      "session_key": "claude-8f1bca95a43d",
+      "source_fingerprint": "111:1780504151628129518",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/3812176e-84d8-4f7d-aa82-a59a78dc9ac3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/39d5c2ef-9e67-424d-8303-99de125870a3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865775,
+      "session_id": "39d5c2ef-9e67-424d-8303-99de125870a3",
+      "session_key": "claude-519f8a2b8b03",
+      "source_fingerprint": "116:1780502025697728313",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/39d5c2ef-9e67-424d-8303-99de125870a3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/4011afc4-72e6-4f9a-97fa-f87a9246e2cd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865775,
+      "session_id": "4011afc4-72e6-4f9a-97fa-f87a9246e2cd",
+      "session_key": "claude-6515e818d809",
+      "source_fingerprint": "115:1780505169645346821",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/4011afc4-72e6-4f9a-97fa-f87a9246e2cd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/4b3e9212-730b-464b-a1e0-8f9fdae439d2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865776,
+      "session_id": "4b3e9212-730b-464b-a1e0-8f9fdae439d2",
+      "session_key": "claude-ab5edc9f13c2",
+      "source_fingerprint": "121:1780502906084808222",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/4b3e9212-730b-464b-a1e0-8f9fdae439d2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/54642c5f-93bd-45de-a48b-425ec0b82fd4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865776,
+      "session_id": "54642c5f-93bd-45de-a48b-425ec0b82fd4",
+      "session_key": "claude-7a072807769c",
+      "source_fingerprint": "111:1780504943429622729",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/54642c5f-93bd-45de-a48b-425ec0b82fd4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/5d8a8131-2f25-440e-b86c-3560a4ce11d3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865777,
+      "session_id": "5d8a8131-2f25-440e-b86c-3560a4ce11d3",
+      "session_key": "claude-0a95f90f4715",
+      "source_fingerprint": "113:1780503354481203903",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/5d8a8131-2f25-440e-b86c-3560a4ce11d3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/6ac79989-f820-4234-97ae-2e24303f4bd4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865777,
+      "session_id": "6ac79989-f820-4234-97ae-2e24303f4bd4",
+      "session_key": "claude-1d827fe31eca",
+      "source_fingerprint": "113:1780503778476785618",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/6ac79989-f820-4234-97ae-2e24303f4bd4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/70c7bcef-9b57-4647-9a66-ae204082abfb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865778,
+      "session_id": "70c7bcef-9b57-4647-9a66-ae204082abfb",
+      "session_key": "claude-bd7192d7ba6c",
+      "source_fingerprint": "114:1780503333315443169",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/70c7bcef-9b57-4647-9a66-ae204082abfb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/8a6ea0da-c1ba-4227-8e8a-646aadf4c5ef.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865778,
+      "session_id": "8a6ea0da-c1ba-4227-8e8a-646aadf4c5ef",
+      "session_key": "claude-0fa15599feae",
+      "source_fingerprint": "126:1780504922348097991",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/8a6ea0da-c1ba-4227-8e8a-646aadf4c5ef.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/8e9af52b-7ab8-468b-b23f-d3b4128f915e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865778,
+      "session_id": "8e9af52b-7ab8-468b-b23f-d3b4128f915e",
+      "session_key": "claude-04f50d3ddf10",
+      "source_fingerprint": "138:1779701381628605995",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/8e9af52b-7ab8-468b-b23f-d3b4128f915e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/9d3cea14-0789-4905-9b2f-1c6ec63d5c74.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865779,
+      "session_id": "9d3cea14-0789-4905-9b2f-1c6ec63d5c74",
+      "session_key": "claude-ef5340d2e86f",
+      "source_fingerprint": "113:1780503769113489530",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/9d3cea14-0789-4905-9b2f-1c6ec63d5c74.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/bbc794ba-a4a1-4f61-b826-160bbd7471b5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865779,
+      "session_id": "bbc794ba-a4a1-4f61-b826-160bbd7471b5",
+      "session_key": "claude-969962e3c097",
+      "source_fingerprint": "117:1780502030707330071",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/bbc794ba-a4a1-4f61-b826-160bbd7471b5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/bc9e5263-1b56-49c1-ac6e-0ef12e648e4b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865780,
+      "session_id": "bc9e5263-1b56-49c1-ac6e-0ef12e648e4b",
+      "session_key": "claude-8441bc043661",
+      "source_fingerprint": "113:1780504172139904849",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/bc9e5263-1b56-49c1-ac6e-0ef12e648e4b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/c89b03b0-d249-4b45-972e-5ae0e8c36268.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1,
+      "last_scan_at": 1780725865780,
+      "session_id": "c89b03b0-d249-4b45-972e-5ae0e8c36268",
+      "session_key": "claude-966399be36a4",
+      "source_fingerprint": "113:1780502905252125675",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-desktop/c89b03b0-d249-4b45-972e-5ae0e8c36268.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-download/c31ab09a-24e4-4502-9b48-6621de0200eb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 15,
+      "last_scan_at": 1780725865781,
+      "session_id": "c31ab09a-24e4-4502-9b48-6621de0200eb",
+      "session_key": "claude-a647a98305ec",
+      "source_fingerprint": "17033:1780505953108739407",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman-wingman-download/c31ab09a-24e4-4502-9b48-6621de0200eb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/04508967-867b-44e4-801f-ca8dda124eeb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 292,
+      "last_scan_at": 1780725865231,
+      "session_id": "04508967-867b-44e4-801f-ca8dda124eeb",
+      "session_key": "claude-1dc9fc9ff5c1",
+      "source_fingerprint": "795005:1780506469367225875",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/04508967-867b-44e4-801f-ca8dda124eeb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/14611af8-0519-4c18-90c8-3ff318eb852b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 56,
+      "last_scan_at": 1780725865234,
+      "session_id": "14611af8-0519-4c18-90c8-3ff318eb852b",
+      "session_key": "claude-a5b7d32de5a1",
+      "source_fingerprint": "245714:1780507816067793362",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/14611af8-0519-4c18-90c8-3ff318eb852b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/201c9d58-21d2-4618-b680-da5d6de69d8b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 86,
+      "last_scan_at": 1780725865238,
+      "session_id": "201c9d58-21d2-4618-b680-da5d6de69d8b",
+      "session_key": "claude-54c1e469ae7b",
+      "source_fingerprint": "209305:1780507816066630856",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/201c9d58-21d2-4618-b680-da5d6de69d8b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/591ec871-6fe6-4368-a0e3-451adf41e1ce.jsonl": {
+      "last_error": "",
+      "last_processed_line": 404,
+      "last_scan_at": 1780725865263,
+      "session_id": "591ec871-6fe6-4368-a0e3-451adf41e1ce",
+      "session_key": "claude-8ea8bd130683",
+      "source_fingerprint": "1071996:1780645431042848581",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/591ec871-6fe6-4368-a0e3-451adf41e1ce.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/591ec871-6fe6-4368-a0e3-451adf41e1ce/subagents/agent-aa973cf135a1ae611.jsonl": {
+      "last_error": "",
+      "last_processed_line": 135,
+      "last_scan_at": 1780725865246,
+      "session_id": "591ec871-6fe6-4368-a0e3-451adf41e1ce",
+      "session_key": "claude-d4e533b56ca6",
+      "source_fingerprint": "314909:1780574870823554476",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/591ec871-6fe6-4368-a0e3-451adf41e1ce/subagents/agent-aa973cf135a1ae611.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6053a975-a03c-4cec-bfe7-982d2d1f7abf.jsonl": {
+      "last_error": "",
+      "last_processed_line": 378,
+      "last_scan_at": 1780725865287,
+      "session_id": "6053a975-a03c-4cec-bfe7-982d2d1f7abf",
+      "session_key": "claude-b9a2071605dc",
+      "source_fingerprint": "1174318:1780655216441147263",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6053a975-a03c-4cec-bfe7-982d2d1f7abf.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6053a975-a03c-4cec-bfe7-982d2d1f7abf/subagents/agent-ac7d71d648a4d2edd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 97,
+      "last_scan_at": 1780725865270,
+      "session_id": "6053a975-a03c-4cec-bfe7-982d2d1f7abf",
+      "session_key": "claude-3dd772c7a4b4",
+      "source_fingerprint": "312426:1780648624625448014",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6053a975-a03c-4cec-bfe7-982d2d1f7abf/subagents/agent-ac7d71d648a4d2edd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6c7c738c-593f-4de5-b7f8-c2b42abe3b5e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 908,
+      "last_scan_at": 1780725865320,
+      "session_id": "6c7c738c-593f-4de5-b7f8-c2b42abe3b5e",
+      "session_key": "claude-53cc80c35339",
+      "source_fingerprint": "1971818:1780630802819999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/6c7c738c-593f-4de5-b7f8-c2b42abe3b5e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/75622cbe-59fe-4d1e-8bef-52e518fce8a2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 282,
+      "last_scan_at": 1780725865337,
+      "session_id": "75622cbe-59fe-4d1e-8bef-52e518fce8a2",
+      "session_key": "claude-3e5221caccba",
+      "source_fingerprint": "593808:1780649331791104032",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/75622cbe-59fe-4d1e-8bef-52e518fce8a2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/75622cbe-59fe-4d1e-8bef-52e518fce8a2/subagents/agent-af68b00b759b06498.jsonl": {
+      "last_error": "",
+      "last_processed_line": 67,
+      "last_scan_at": 1780725865325,
+      "session_id": "75622cbe-59fe-4d1e-8bef-52e518fce8a2",
+      "session_key": "claude-c6258f979c5b",
+      "source_fingerprint": "180932:1780573615172078173",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/75622cbe-59fe-4d1e-8bef-52e518fce8a2/subagents/agent-af68b00b759b06498.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/7d709428-190e-44ab-8bc6-03dab5f3471f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 26,
+      "last_scan_at": 1780725865339,
+      "session_id": "7d709428-190e-44ab-8bc6-03dab5f3471f",
+      "session_key": "claude-38948f526f51",
+      "source_fingerprint": "81178:1780542846681933230",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/7d709428-190e-44ab-8bc6-03dab5f3471f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/896ee1c1-aca0-43bf-af89-439e48e26673.jsonl": {
+      "last_error": "",
+      "last_processed_line": 21,
+      "last_scan_at": 1780725865340,
+      "session_id": "896ee1c1-aca0-43bf-af89-439e48e26673",
+      "session_key": "claude-028fdab051ed",
+      "source_fingerprint": "35157:1780636957085999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/896ee1c1-aca0-43bf-af89-439e48e26673.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/90b3c7c8-d340-456d-bb6a-e26117ecb5ef.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1065,
+      "last_scan_at": 1780725865385,
+      "session_id": "90b3c7c8-d340-456d-bb6a-e26117ecb5ef",
+      "session_key": "claude-36928ae07e90",
+      "source_fingerprint": "2919452:1780544548731703013",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/90b3c7c8-d340-456d-bb6a-e26117ecb5ef.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f593aa9-006a-4589-ae7b-2261c7559446.jsonl": {
+      "last_error": "",
+      "last_processed_line": 130,
+      "last_scan_at": 1780725865396,
+      "session_id": "9f593aa9-006a-4589-ae7b-2261c7559446",
+      "session_key": "claude-fe2ab94987df",
+      "source_fingerprint": "304446:1780576586291990244",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f593aa9-006a-4589-ae7b-2261c7559446.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f593aa9-006a-4589-ae7b-2261c7559446/subagents/agent-a7f418bd7ff34cb9d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 70,
+      "last_scan_at": 1780725865390,
+      "session_id": "9f593aa9-006a-4589-ae7b-2261c7559446",
+      "session_key": "claude-4d11c60a6e09",
+      "source_fingerprint": "223236:1780575320750261554",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f593aa9-006a-4589-ae7b-2261c7559446/subagents/agent-a7f418bd7ff34cb9d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63.jsonl": {
+      "last_error": "",
+      "last_processed_line": 28,
+      "last_scan_at": 1780725865407,
+      "session_id": "9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63",
+      "session_key": "claude-5dd27ef36d0e",
+      "source_fingerprint": "49591:1780575207784333532",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63/subagents/agent-ad5215a5eed291823.jsonl": {
+      "last_error": "",
+      "last_processed_line": 57,
+      "last_scan_at": 1780725865400,
+      "session_id": "9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63",
+      "session_key": "claude-90ee5704abea",
+      "source_fingerprint": "149741:1780575206267661264",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63/subagents/agent-ad5215a5eed291823.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63/subagents/agent-af81222afa2714dc5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 70,
+      "last_scan_at": 1780725865405,
+      "session_id": "9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63",
+      "session_key": "claude-be0ba30d5802",
+      "source_fingerprint": "250083:1780574946222508796",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/9f6a6a51-c074-49d4-8f9d-7f70e4ab1b63/subagents/agent-af81222afa2714dc5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59.jsonl": {
+      "last_error": "",
+      "last_processed_line": 551,
+      "last_scan_at": 1780725865445,
+      "session_id": "bb1cc88e-11ec-4309-8ff7-8909c99aae59",
+      "session_key": "claude-501338bb2fb9",
+      "source_fingerprint": "1414170:1780576437707128048",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59/subagents/agent-ab8ae484f30d4d7e9.jsonl": {
+      "last_error": "",
+      "last_processed_line": 126,
+      "last_scan_at": 1780725865415,
+      "session_id": "bb1cc88e-11ec-4309-8ff7-8909c99aae59",
+      "session_key": "claude-be94f7680ee4",
+      "source_fingerprint": "356844:1780573510780967780",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59/subagents/agent-ab8ae484f30d4d7e9.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59/subagents/agent-ad5cf49c2f830d381.jsonl": {
+      "last_error": "",
+      "last_processed_line": 129,
+      "last_scan_at": 1780725865423,
+      "session_id": "bb1cc88e-11ec-4309-8ff7-8909c99aae59",
+      "session_key": "claude-52a76a801511",
+      "source_fingerprint": "367027:1780573530110602394",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bb1cc88e-11ec-4309-8ff7-8909c99aae59/subagents/agent-ad5cf49c2f830d381.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bc57742c-90c7-47b0-99a2-9a635bd3b03b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 954,
+      "last_scan_at": 1780725865480,
+      "session_id": "bc57742c-90c7-47b0-99a2-9a635bd3b03b",
+      "session_key": "claude-1e9bee71d0aa",
+      "source_fingerprint": "2424398:1780509857966621908",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/bc57742c-90c7-47b0-99a2-9a635bd3b03b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/c1ebe3af-541b-40da-a33a-9c0d4046ba3b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 360,
+      "last_scan_at": 1780725865602,
+      "session_id": "c1ebe3af-541b-40da-a33a-9c0d4046ba3b",
+      "session_key": "claude-fb76be98842f",
+      "source_fingerprint": "1029200:1780580897468960827",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/c1ebe3af-541b-40da-a33a-9c0d4046ba3b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/c1ebe3af-541b-40da-a33a-9c0d4046ba3b/subagents/agent-ac2311dfe035d5569.jsonl": {
+      "last_error": "",
+      "last_processed_line": 89,
+      "last_scan_at": 1780725865585,
+      "session_id": "c1ebe3af-541b-40da-a33a-9c0d4046ba3b",
+      "session_key": "claude-ef4452707d30",
+      "source_fingerprint": "214487:1780573705135674997",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/c1ebe3af-541b-40da-a33a-9c0d4046ba3b/subagents/agent-ac2311dfe035d5569.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 194,
+      "last_scan_at": 1780725865617,
+      "session_id": "e2ed180f-b883-4bab-8926-36e17664bca1",
+      "session_key": "claude-ed596ec164e3",
+      "source_fingerprint": "406515:1780631713678945036",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1/subagents/agent-a5853576b41669f8f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 36,
+      "last_scan_at": 1780725865605,
+      "session_id": "e2ed180f-b883-4bab-8926-36e17664bca1",
+      "session_key": "claude-218920012e3e",
+      "source_fingerprint": "104267:1780574683053100020",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1/subagents/agent-a5853576b41669f8f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1/subagents/agent-ad3d75c62b01a83e8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 61,
+      "last_scan_at": 1780725865610,
+      "session_id": "e2ed180f-b883-4bab-8926-36e17664bca1",
+      "session_key": "claude-1e06304310a2",
+      "source_fingerprint": "183024:1780576563079992573",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/e2ed180f-b883-4bab-8926-36e17664bca1/subagents/agent-ad3d75c62b01a83e8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/fc7db74f-88dd-4ca5-b13b-779fd4c30241.jsonl": {
+      "last_error": "",
+      "last_processed_line": 562,
+      "last_scan_at": 1780725865640,
+      "session_id": "fc7db74f-88dd-4ca5-b13b-779fd4c30241",
+      "session_key": "claude-9e1d993983e0",
+      "source_fingerprint": "1520027:1780631712907127002",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/fc7db74f-88dd-4ca5-b13b-779fd4c30241.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618.jsonl": {
+      "last_error": "",
+      "last_processed_line": 925,
+      "last_scan_at": 1780725865692,
+      "session_id": "ff39b0e8-8604-4b44-9202-d2b6c14c8618",
+      "session_key": "claude-332ac5fa62c9",
+      "source_fingerprint": "2200490:1780707483670887821",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-a1f3b12503a1f74f2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 73,
+      "last_scan_at": 1780725865646,
+      "session_id": "ff39b0e8-8604-4b44-9202-d2b6c14c8618",
+      "session_key": "claude-67fe3cc345f8",
+      "source_fingerprint": "278942:1780656475822735065",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-a1f3b12503a1f74f2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-a7913cb937bb63325.jsonl": {
+      "last_error": "",
+      "last_processed_line": 97,
+      "last_scan_at": 1780725865652,
+      "session_id": "ff39b0e8-8604-4b44-9202-d2b6c14c8618",
+      "session_key": "claude-10d9eb0766be",
+      "source_fingerprint": "298822:1780654329831381785",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-a7913cb937bb63325.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-adc47f984262a89f3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 49,
+      "last_scan_at": 1780725865656,
+      "session_id": "ff39b0e8-8604-4b44-9202-d2b6c14c8618",
+      "session_key": "claude-225e69c7acd1",
+      "source_fingerprint": "209819:1780627387039137926",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool-wingman/ff39b0e8-8604-4b44-9202-d2b6c14c8618/subagents/agent-adc47f984262a89f3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/01182f32-57ec-4280-ae07-a6cb30636f17.jsonl": {
+      "last_error": "",
+      "last_processed_line": 328,
+      "last_scan_at": 1780725864616,
+      "session_id": "01182f32-57ec-4280-ae07-a6cb30636f17",
+      "session_key": "claude-56078410546a",
+      "source_fingerprint": "884071:1779969812702059481",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/01182f32-57ec-4280-ae07-a6cb30636f17.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/01182f32-57ec-4280-ae07-a6cb30636f17/subagents/agent-a629db61cf76c654e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 58,
+      "last_scan_at": 1780725864602,
+      "session_id": "01182f32-57ec-4280-ae07-a6cb30636f17",
+      "session_key": "claude-988759ace1a9",
+      "source_fingerprint": "145310:1779966856757845959",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/01182f32-57ec-4280-ae07-a6cb30636f17/subagents/agent-a629db61cf76c654e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/1e392b80-24a9-4602-9807-2e6baf48f927.jsonl": {
+      "last_error": "",
+      "last_processed_line": 11,
+      "last_scan_at": 1780725864618,
+      "session_id": "1e392b80-24a9-4602-9807-2e6baf48f927",
+      "session_key": "claude-7326622e370c",
+      "source_fingerprint": "20203:1778829021781932901",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/1e392b80-24a9-4602-9807-2e6baf48f927.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/1e392b80-24a9-4602-9807-2e6baf48f927/subagents/agent-a3fe381832187a58a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 5,
+      "last_scan_at": 1780725864617,
+      "session_id": "1e392b80-24a9-4602-9807-2e6baf48f927",
+      "session_key": "claude-a3d6421bbb92",
+      "source_fingerprint": "5459:1778755693802034081",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/1e392b80-24a9-4602-9807-2e6baf48f927/subagents/agent-a3fe381832187a58a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/2f053c33-38e8-4d07-9a15-a0399350dbd4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 66,
+      "last_scan_at": 1780725864621,
+      "session_id": "2f053c33-38e8-4d07-9a15-a0399350dbd4",
+      "session_key": "claude-0bcdd11864ea",
+      "source_fingerprint": "158114:1780544601190000000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/2f053c33-38e8-4d07-9a15-a0399350dbd4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/493452ac-df45-473b-a727-e6285f553c7d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 28,
+      "last_scan_at": 1780725864623,
+      "session_id": "493452ac-df45-473b-a727-e6285f553c7d",
+      "session_key": "claude-beaa5c3c746b",
+      "source_fingerprint": "41626:1780505563029000000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/493452ac-df45-473b-a727-e6285f553c7d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/5a67efca-38c2-4e5c-b428-0d1f932251b0.jsonl": {
+      "last_error": "",
+      "last_processed_line": 615,
+      "last_scan_at": 1780725864653,
+      "session_id": "5a67efca-38c2-4e5c-b428-0d1f932251b0",
+      "session_key": "claude-d558706337e6",
+      "source_fingerprint": "2244513:1780044748632999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/5a67efca-38c2-4e5c-b428-0d1f932251b0.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/5a67efca-38c2-4e5c-b428-0d1f932251b0/subagents/agent-af460a658af903048.jsonl": {
+      "last_error": "",
+      "last_processed_line": 38,
+      "last_scan_at": 1780725864625,
+      "session_id": "5a67efca-38c2-4e5c-b428-0d1f932251b0",
+      "session_key": "claude-5ba9179c52b9",
+      "source_fingerprint": "63149:1777355994733580630",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/5a67efca-38c2-4e5c-b428-0d1f932251b0/subagents/agent-af460a658af903048.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/62143123-936f-46f2-82b5-ba416dda6df2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1348,
+      "last_scan_at": 1780725864713,
+      "session_id": "62143123-936f-46f2-82b5-ba416dda6df2",
+      "session_key": "claude-792d73275b94",
+      "source_fingerprint": "4311455:1778829021602262052",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/62143123-936f-46f2-82b5-ba416dda6df2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/6d361fe0-4cd8-4af4-880e-b302a996e10c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 150,
+      "last_scan_at": 1780725864807,
+      "session_id": "6d361fe0-4cd8-4af4-880e-b302a996e10c",
+      "session_key": "claude-b9d8c122f4f7",
+      "source_fingerprint": "455308:1780044826707999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/6d361fe0-4cd8-4af4-880e-b302a996e10c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/6d361fe0-4cd8-4af4-880e-b302a996e10c/subagents/agent-ad6f30c7e4d6a5b3f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 79,
+      "last_scan_at": 1780725864799,
+      "session_id": "6d361fe0-4cd8-4af4-880e-b302a996e10c",
+      "session_key": "claude-ef69535ca1fd",
+      "source_fingerprint": "231522:1777355764145293346",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/6d361fe0-4cd8-4af4-880e-b302a996e10c/subagents/agent-ad6f30c7e4d6a5b3f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/7c54b4ee-23a3-4b32-bd05-950a13c9b251.jsonl": {
+      "last_error": "",
+      "last_processed_line": 173,
+      "last_scan_at": 1780725864817,
+      "session_id": "7c54b4ee-23a3-4b32-bd05-950a13c9b251",
+      "session_key": "claude-8752566900cd",
+      "source_fingerprint": "730071:1778821558233650964",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/7c54b4ee-23a3-4b32-bd05-950a13c9b251.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a78df0d4-5e6c-47cd-9fb6-20a0ede3604b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1754,
+      "last_scan_at": 1780725864894,
+      "session_id": "a78df0d4-5e6c-47cd-9fb6-20a0ede3604b",
+      "session_key": "claude-0aea8b3810ff",
+      "source_fingerprint": "8227564:1778814863557278306",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a78df0d4-5e6c-47cd-9fb6-20a0ede3604b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a8476fb1-2118-459a-b4eb-9f08f91fac49.jsonl": {
+      "last_error": "",
+      "last_processed_line": 195,
+      "last_scan_at": 1780725864903,
+      "session_id": "a8476fb1-2118-459a-b4eb-9f08f91fac49",
+      "session_key": "claude-ccd2e224124c",
+      "source_fingerprint": "440149:1778829021726725675",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a8476fb1-2118-459a-b4eb-9f08f91fac49.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a9fc4bd5-6af3-4e08-999b-c39142e26118.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725864904,
+      "session_id": "a9fc4bd5-6af3-4e08-999b-c39142e26118",
+      "session_key": "claude-8b4637da0fb9",
+      "source_fingerprint": "22499:1780044809776999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/a9fc4bd5-6af3-4e08-999b-c39142e26118.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2916,
+      "last_scan_at": 1780725865060,
+      "session_id": "abfe70c0-e63c-4584-b5c9-4356687ad4e5",
+      "session_key": "claude-20c90c0173d9",
+      "source_fingerprint": "13503025:1778821412833778494",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5/subagents/agent-a32ab2381bba21f73.jsonl": {
+      "last_error": "",
+      "last_processed_line": 72,
+      "last_scan_at": 1780725864910,
+      "session_id": "abfe70c0-e63c-4584-b5c9-4356687ad4e5",
+      "session_key": "claude-4a156d807657",
+      "source_fingerprint": "186917:1778819402112758252",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5/subagents/agent-a32ab2381bba21f73.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5/subagents/agent-a3ec8ec306f28767e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 65,
+      "last_scan_at": 1780725864915,
+      "session_id": "abfe70c0-e63c-4584-b5c9-4356687ad4e5",
+      "session_key": "claude-39f737e50d9d",
+      "source_fingerprint": "233570:1778818029305478584",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/abfe70c0-e63c-4584-b5c9-4356687ad4e5/subagents/agent-a3ec8ec306f28767e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1249,
+      "last_scan_at": 1780725865120,
+      "session_id": "b90336c6-deba-4ad5-872c-8d6fc6780809",
+      "session_key": "claude-336a7f55803d",
+      "source_fingerprint": "2688112:1780657167517569447",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a19f28b55a5fac48e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 64,
+      "last_scan_at": 1780725865065,
+      "session_id": "b90336c6-deba-4ad5-872c-8d6fc6780809",
+      "session_key": "claude-dabcceaa5dc7",
+      "source_fingerprint": "212722:1780639189076199360",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a19f28b55a5fac48e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a460d1ef305ee8569.jsonl": {
+      "last_error": "",
+      "last_processed_line": 61,
+      "last_scan_at": 1780725865069,
+      "session_id": "b90336c6-deba-4ad5-872c-8d6fc6780809",
+      "session_key": "claude-91ec7145345f",
+      "source_fingerprint": "226900:1780640469572154752",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a460d1ef305ee8569.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a6e9513534ed509f3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 65,
+      "last_scan_at": 1780725865074,
+      "session_id": "b90336c6-deba-4ad5-872c-8d6fc6780809",
+      "session_key": "claude-a1bc1d741159",
+      "source_fingerprint": "219219:1780639193353228415",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/b90336c6-deba-4ad5-872c-8d6fc6780809/subagents/agent-a6e9513534ed509f3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/bc8c3d1e-c58b-432b-8887-fe630bd03667.jsonl": {
+      "last_error": "",
+      "last_processed_line": 8,
+      "last_scan_at": 1780725865121,
+      "session_id": "bc8c3d1e-c58b-432b-8887-fe630bd03667",
+      "session_key": "claude-ee1bd25adab3",
+      "source_fingerprint": "25857:1778829021755015313",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/bc8c3d1e-c58b-432b-8887-fe630bd03667.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/c8fa0abc-5e1a-4be9-988d-4f3bf28542dc.jsonl": {
+      "last_error": "",
+      "last_processed_line": 432,
+      "last_scan_at": 1780725865140,
+      "session_id": "c8fa0abc-5e1a-4be9-988d-4f3bf28542dc",
+      "session_key": "claude-c52d82292a03",
+      "source_fingerprint": "1224667:1779967606074524326",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/c8fa0abc-5e1a-4be9-988d-4f3bf28542dc.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/cc4a3a87-0c3b-42d2-ac64-bf17179a67e8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 15,
+      "last_scan_at": 1780725865141,
+      "session_id": "cc4a3a87-0c3b-42d2-ac64-bf17179a67e8",
+      "session_key": "claude-6765f198f93b",
+      "source_fingerprint": "30627:1778771498806383934",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/cc4a3a87-0c3b-42d2-ac64-bf17179a67e8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/dcdd1595-88bc-4aca-b35b-48877d165acd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 38,
+      "last_scan_at": 1780725865144,
+      "session_id": "dcdd1595-88bc-4aca-b35b-48877d165acd",
+      "session_key": "claude-94a3fdce56e4",
+      "source_fingerprint": "284720:1780044692483000000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/dcdd1595-88bc-4aca-b35b-48877d165acd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/ddcb1bfa-b11a-4759-9279-cf5ad84b4dbd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 102,
+      "last_scan_at": 1780725865148,
+      "session_id": "ddcb1bfa-b11a-4759-9279-cf5ad84b4dbd",
+      "session_key": "claude-98cb2e71a02a",
+      "source_fingerprint": "199967:1780044723032999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/ddcb1bfa-b11a-4759-9279-cf5ad84b4dbd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26.jsonl": {
+      "last_error": "",
+      "last_processed_line": 774,
+      "last_scan_at": 1780725865192,
+      "session_id": "e313fcbd-679e-4a39-abcd-2ce59a1b7e26",
+      "session_key": "claude-9b904cd8e690",
+      "source_fingerprint": "2977192:1780044723384999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26/subagents/agent-a44875f618555cfe2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 111,
+      "last_scan_at": 1780725865155,
+      "session_id": "e313fcbd-679e-4a39-abcd-2ce59a1b7e26",
+      "session_key": "claude-0316a46ab29e",
+      "source_fingerprint": "337605:1777006526894064319",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26/subagents/agent-a44875f618555cfe2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26/subagents/agent-a478e4ec2e48984e8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 19,
+      "last_scan_at": 1780725865157,
+      "session_id": "e313fcbd-679e-4a39-abcd-2ce59a1b7e26",
+      "session_key": "claude-edd4b21f7499",
+      "source_fingerprint": "73361:1777004756476993746",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e313fcbd-679e-4a39-abcd-2ce59a1b7e26/subagents/agent-a478e4ec2e48984e8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84.jsonl": {
+      "last_error": "",
+      "last_processed_line": 178,
+      "last_scan_at": 1780725865212,
+      "session_id": "e715aa4e-24ba-41f4-8d1c-ce675c82ca84",
+      "session_key": "claude-8df921eba701",
+      "source_fingerprint": "617461:1780044656019999000",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a1169e565b98772bd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 14,
+      "last_scan_at": 1780725865194,
+      "session_id": "e715aa4e-24ba-41f4-8d1c-ce675c82ca84",
+      "session_key": "claude-8a2c2a77050b",
+      "source_fingerprint": "18938:1777350750009608299",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a1169e565b98772bd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a2eee59755eeff732.jsonl": {
+      "last_error": "",
+      "last_processed_line": 107,
+      "last_scan_at": 1780725865201,
+      "session_id": "e715aa4e-24ba-41f4-8d1c-ce675c82ca84",
+      "session_key": "claude-dbb86fa49788",
+      "source_fingerprint": "260649:1777346884706692229",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a2eee59755eeff732.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a7dfa086ef8fe7b2c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 25,
+      "last_scan_at": 1780725865203,
+      "session_id": "e715aa4e-24ba-41f4-8d1c-ce675c82ca84",
+      "session_key": "claude-f47f25d18005",
+      "source_fingerprint": "50007:1777350918635185679",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/e715aa4e-24ba-41f4-8d1c-ce675c82ca84/subagents/agent-a7dfa086ef8fe7b2c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/fbd7660c-15a4-4534-9fef-015e5c43cf53.jsonl": {
+      "last_error": "",
+      "last_processed_line": 8,
+      "last_scan_at": 1780725865214,
+      "session_id": "fbd7660c-15a4-4534-9fef-015e5c43cf53",
+      "session_key": "claude-6eb9c349c4ee",
+      "source_fingerprint": "26217:1778829021746872178",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-repo-tool/fbd7660c-15a4-4534-9fef-015e5c43cf53.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/614042ba-38ac-4d62-a6fa-4a1612f86ce6.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725865782,
+      "session_id": "614042ba-38ac-4d62-a6fa-4a1612f86ce6",
+      "session_key": "claude-b681b640d164",
+      "source_fingerprint": "14673:1780656202148242351",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/614042ba-38ac-4d62-a6fa-4a1612f86ce6.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/73ac1525-04c3-4024-867c-41e7b8b8cb28.jsonl": {
+      "last_error": "",
+      "last_processed_line": 7,
+      "last_scan_at": 1780725865782,
+      "session_id": "73ac1525-04c3-4024-867c-41e7b8b8cb28",
+      "session_key": "claude-676b02340551",
+      "source_fingerprint": "12242:1779951981561622231",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/73ac1525-04c3-4024-867c-41e7b8b8cb28.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/8b50fc64-2c8f-410b-bec2-5ce79be784ac.jsonl": {
+      "last_error": "",
+      "last_processed_line": 40,
+      "last_scan_at": 1780725865784,
+      "session_id": "8b50fc64-2c8f-410b-bec2-5ce79be784ac",
+      "session_key": "claude-7d2d55ce9c22",
+      "source_fingerprint": "63337:1780645882746565565",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/8b50fc64-2c8f-410b-bec2-5ce79be784ac.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/af088883-a4c8-474b-9a7a-690489a63df8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 20,
+      "last_scan_at": 1780725865786,
+      "session_id": "af088883-a4c8-474b-9a7a-690489a63df8",
+      "session_key": "claude-bb4ecc6b632f",
+      "source_fingerprint": "25459:1780656178517793701",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/af088883-a4c8-474b-9a7a-690489a63df8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/d8ba7486-8bf4-4fe7-9b33-146719b9476d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 121,
+      "last_scan_at": 1780725865793,
+      "session_id": "d8ba7486-8bf4-4fe7-9b33-146719b9476d",
+      "session_key": "claude-41cfb3637bab",
+      "source_fingerprint": "519012:1780499402490378982",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-wingman-workspace/d8ba7486-8bf4-4fe7-9b33-146719b9476d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/07972a76-214f-4b1e-827c-79818c6bd168.jsonl": {
+      "last_error": "",
+      "last_processed_line": 15,
+      "last_scan_at": 1780725865794,
+      "session_id": "07972a76-214f-4b1e-827c-79818c6bd168",
+      "session_key": "claude-55fa5a7ad041",
+      "source_fingerprint": "23036:1780503783228147716",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/07972a76-214f-4b1e-827c-79818c6bd168.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/0a5efecd-2f17-46c4-97bf-0b1b4a697f8c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725865794,
+      "session_id": "0a5efecd-2f17-46c4-97bf-0b1b4a697f8c",
+      "session_key": "claude-f69fce18c5b7",
+      "source_fingerprint": "15690:1780502879179996863",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/0a5efecd-2f17-46c4-97bf-0b1b4a697f8c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/1614a7cb-c90f-4cbc-b591-a5cb570bdcf1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 5,
+      "last_scan_at": 1780725865795,
+      "session_id": "1614a7cb-c90f-4cbc-b591-a5cb570bdcf1",
+      "session_key": "claude-da2b43de37e0",
+      "source_fingerprint": "12398:1780553205764910552",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/1614a7cb-c90f-4cbc-b591-a5cb570bdcf1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/1ce36938-3534-4c76-8682-950badc1914b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 24,
+      "last_scan_at": 1780725865796,
+      "session_id": "1ce36938-3534-4c76-8682-950badc1914b",
+      "session_key": "claude-667abf84d6af",
+      "source_fingerprint": "44463:1780502069792710820",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/1ce36938-3534-4c76-8682-950badc1914b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/7b28a341-e9b1-4726-ad35-465fb7512e54.jsonl": {
+      "last_error": "",
+      "last_processed_line": 66,
+      "last_scan_at": 1780725865800,
+      "session_id": "7b28a341-e9b1-4726-ad35-465fb7512e54",
+      "session_key": "claude-9ca6da5f8734",
+      "source_fingerprint": "227829:1780506277921975933",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/7b28a341-e9b1-4726-ad35-465fb7512e54.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/85914927-e774-43d1-8fba-ee79c0a49dd7.jsonl": {
+      "last_error": "",
+      "last_processed_line": 17,
+      "last_scan_at": 1780725865801,
+      "session_id": "85914927-e774-43d1-8fba-ee79c0a49dd7",
+      "session_key": "claude-434f5885641d",
+      "source_fingerprint": "26117:1780503311019028969",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/85914927-e774-43d1-8fba-ee79c0a49dd7.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/969be208-1376-4f30-b961-049db2716f09.jsonl": {
+      "last_error": "",
+      "last_processed_line": 14,
+      "last_scan_at": 1780725865803,
+      "session_id": "969be208-1376-4f30-b961-049db2716f09",
+      "session_key": "claude-c0c44b962191",
+      "source_fingerprint": "24915:1780505126633148200",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/969be208-1376-4f30-b961-049db2716f09.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/b2a921f1-2d62-49a2-8fdf-dd592122c09d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 48,
+      "last_scan_at": 1780725865806,
+      "session_id": "b2a921f1-2d62-49a2-8fdf-dd592122c09d",
+      "session_key": "claude-1953134ca4d4",
+      "source_fingerprint": "128926:1780553396001275615",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/b2a921f1-2d62-49a2-8fdf-dd592122c09d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/c0dc68c8-d5e8-4456-9b2f-5fbcabaded7b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 21,
+      "last_scan_at": 1780725865807,
+      "session_id": "c0dc68c8-d5e8-4456-9b2f-5fbcabaded7b",
+      "session_key": "claude-773c6a6576ee",
+      "source_fingerprint": "31051:1780504150504758860",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/c0dc68c8-d5e8-4456-9b2f-5fbcabaded7b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/ca871406-095b-4773-a0f3-7fd4504d5f95.jsonl": {
+      "last_error": "",
+      "last_processed_line": 21,
+      "last_scan_at": 1780725865808,
+      "session_id": "ca871406-095b-4773-a0f3-7fd4504d5f95",
+      "session_key": "claude-25476c326f44",
+      "source_fingerprint": "31288:1780504943568606303",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/ca871406-095b-4773-a0f3-7fd4504d5f95.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/e31ab33b-2158-4e27-a5c4-2ef5c5ade702.jsonl": {
+      "last_error": "",
+      "last_processed_line": 7,
+      "last_scan_at": 1780725865809,
+      "session_id": "e31ab33b-2158-4e27-a5c4-2ef5c5ade702",
+      "session_key": "claude-2b07fec7907a",
+      "source_fingerprint": "14957:1780505978741737256",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/e31ab33b-2158-4e27-a5c4-2ef5c5ade702.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/e873c847-2374-4c9f-b991-7fa64f93f823.jsonl": {
+      "last_error": "",
+      "last_processed_line": 19,
+      "last_scan_at": 1780725865810,
+      "session_id": "e873c847-2374-4c9f-b991-7fa64f93f823",
+      "session_key": "claude-2acd22cc35aa",
+      "source_fingerprint": "24106:1780552051678193510",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.claude/projects/-Users-yunyuan-yu-Desktop-work-workspace/e873c847-2374-4c9f-b991-7fa64f93f823.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/15/rollout-2026-04-15T12-22-17-019d8f60-2abc-7f23-9fb2-d306fc77c8c0.jsonl": {
+      "last_error": "",
+      "last_processed_line": 69,
+      "last_scan_at": 1780725861294,
+      "session_id": "019d8f60-2abc-7f23-9fb2-d306fc77c8c0",
+      "session_key": "codex-0c66fea554bc",
+      "source_fingerprint": "69406:1776674372858043212",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/15/rollout-2026-04-15T12-22-17-019d8f60-2abc-7f23-9fb2-d306fc77c8c0.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-38-14-019da99c-6da4-7273-a438-583d6d2122dc.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725861295,
+      "session_id": "019da99c-6da4-7273-a438-583d6d2122dc",
+      "session_key": "codex-b8a98004c343",
+      "source_fingerprint": "24521:1776667098029854837",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-38-14-019da99c-6da4-7273-a438-583d6d2122dc.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-39-00-019da99d-22fa-7932-8c39-f087bddcc73b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725861296,
+      "session_id": "019da99d-22fa-7932-8c39-f087bddcc73b",
+      "session_key": "codex-4f0cf8cc7f9d",
+      "source_fingerprint": "24524:1776667142700554584",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-39-00-019da99d-22fa-7932-8c39-f087bddcc73b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-41-10-019da99f-1ec3-76f0-9d89-65babc825076.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725861297,
+      "session_id": "019da99f-1ec3-76f0-9d89-65babc825076",
+      "session_key": "codex-9a7c4d3bac62",
+      "source_fingerprint": "24524:1776667277673536243",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T14-41-10-019da99f-1ec3-76f0-9d89-65babc825076.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T16-40-16-019daa0c-281e-7352-80fa-b80bb8c39ed3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 17,
+      "last_scan_at": 1780725861299,
+      "session_id": "019daa0c-281e-7352-80fa-b80bb8c39ed3",
+      "session_key": "codex-3d6e96bce239",
+      "source_fingerprint": "30760:1776674430147794715",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T16-40-16-019daa0c-281e-7352-80fa-b80bb8c39ed3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T16-47-25-019daa12-b23e-7f73-ac9c-9a9c4aa901af.jsonl": {
+      "last_error": "",
+      "last_processed_line": 31,
+      "last_scan_at": 1780725861301,
+      "session_id": "019daa12-b23e-7f73-ac9c-9a9c4aa901af",
+      "session_key": "codex-e7f5327da2d8",
+      "source_fingerprint": "43785:1776674889010939090",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/20/rollout-2026-04-20T16-47-25-019daa12-b23e-7f73-ac9c-9a9c4aa901af.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/21/rollout-2026-04-21T11-39-02-019dae1e-bac9-7a93-b09a-7837bf422b53.jsonl": {
+      "last_error": "",
+      "last_processed_line": 268,
+      "last_scan_at": 1780725861348,
+      "session_id": "019dae1e-bac9-7a93-b09a-7837bf422b53",
+      "session_key": "codex-329e5a10f3f3",
+      "source_fingerprint": "10770279:1776744199807639642",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/21/rollout-2026-04-21T11-39-02-019dae1e-bac9-7a93-b09a-7837bf422b53.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/21/rollout-2026-04-21T14-07-17-019daea6-7549-7ae2-8388-6a8e17b4c9fd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 61,
+      "last_scan_at": 1780725861351,
+      "session_id": "019daea6-7549-7ae2-8388-6a8e17b4c9fd",
+      "session_key": "codex-0945863a7d4c",
+      "source_fingerprint": "107993:1776751701662555757",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/21/rollout-2026-04-21T14-07-17-019daea6-7549-7ae2-8388-6a8e17b4c9fd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T13-36-24-019db8d6-e714-7c73-a1f3-2b42a4920063.jsonl": {
+      "last_error": "",
+      "last_processed_line": 27,
+      "last_scan_at": 1780725861353,
+      "session_id": "019db8d6-e714-7c73-a1f3-2b42a4920063",
+      "session_key": "codex-a31b65de2b49",
+      "source_fingerprint": "81211:1776922617668750574",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T13-36-24-019db8d6-e714-7c73-a1f3-2b42a4920063.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T13-41-50-019db8db-e0b7-7793-b72a-e1eb1566e07c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 334,
+      "last_scan_at": 1780725861367,
+      "session_id": "019db8db-e0b7-7793-b72a-e1eb1566e07c",
+      "session_key": "codex-eaaddb0d88ec",
+      "source_fingerprint": "631836:1776924023165572280",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T13-41-50-019db8db-e0b7-7793-b72a-e1eb1566e07c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T14-19-38-019db8fe-7ace-7792-abdd-3e3268be11a8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 705,
+      "last_scan_at": 1780725861392,
+      "session_id": "019db8fe-7ace-7792-abdd-3e3268be11a8",
+      "session_key": "codex-7a45492416b7",
+      "source_fingerprint": "1467825:1776930063391643587",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T14-19-38-019db8fe-7ace-7792-abdd-3e3268be11a8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T14-21-34-019db900-4018-7031-9ba4-b131b285de9b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 220,
+      "last_scan_at": 1780725861402,
+      "session_id": "019db900-4018-7031-9ba4-b131b285de9b",
+      "session_key": "codex-6d828133f81b",
+      "source_fingerprint": "450245:1776925521337412787",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/23/rollout-2026-04-23T14-21-34-019db900-4018-7031-9ba4-b131b285de9b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/28/rollout-2026-04-28T16-38-30-019dd33d-69f8-7d43-bd5f-92669172d9e3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 8,
+      "last_scan_at": 1780725861403,
+      "session_id": "019dd33d-69f8-7d43-bd5f-92669172d9e3",
+      "session_key": "codex-a27689b0718f",
+      "source_fingerprint": "41434:1777365511428120694",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/28/rollout-2026-04-28T16-38-30-019dd33d-69f8-7d43-bd5f-92669172d9e3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/04/28/rollout-2026-04-28T16-39-08-019dd33d-ff53-72e3-b80e-985b81c28126.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725861404,
+      "session_id": "019dd33d-ff53-72e3-b80e-985b81c28126",
+      "session_key": "codex-6253f8664b90",
+      "source_fingerprint": "47496:1777365549628784102",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/04/28/rollout-2026-04-28T16-39-08-019dd33d-ff53-72e3-b80e-985b81c28126.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/15/rollout-2026-05-15T15-55-42-019e2aa2-566b-7f73-9e84-6a14d77a42df.jsonl": {
+      "last_error": "",
+      "last_processed_line": 5,
+      "last_scan_at": 1780725861405,
+      "session_id": "019e2aa2-566b-7f73-9e84-6a14d77a42df",
+      "session_key": "codex-ee110bcd5a31",
+      "source_fingerprint": "27970:1778831757593242634",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/15/rollout-2026-05-15T15-55-42-019e2aa2-566b-7f73-9e84-6a14d77a42df.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-03-28-019e3ac1-503e-7a23-963e-9f93226cacb9.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725861407,
+      "session_id": "019e3ac1-503e-7a23-963e-9f93226cacb9",
+      "session_key": "codex-c4dedfc603fa",
+      "source_fingerprint": "49566:1779102222171277321",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-03-28-019e3ac1-503e-7a23-963e-9f93226cacb9.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-04-01-019e3ac1-d15d-7770-9235-c39a1e9c2bbc.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725861408,
+      "session_id": "019e3ac1-d15d-7770-9235-c39a1e9c2bbc",
+      "session_key": "codex-48f724a57f8f",
+      "source_fingerprint": "43244:1779102251179826980",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-04-01-019e3ac1-d15d-7770-9235-c39a1e9c2bbc.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-04-41-019e3ac2-6d51-7863-8616-1c3d8319df38.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725861409,
+      "session_id": "019e3ac2-6d51-7863-8616-1c3d8319df38",
+      "session_key": "codex-59e888b110ab",
+      "source_fingerprint": "43244:1779102293076384818",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-04-41-019e3ac2-6d51-7863-8616-1c3d8319df38.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-05-13-019e3ac2-edd4-71b1-8bec-9e1665e9e9dc.jsonl": {
+      "last_error": "",
+      "last_processed_line": 15,
+      "last_scan_at": 1780725861410,
+      "session_id": "019e3ac2-edd4-71b1-8bec-9e1665e9e9dc",
+      "session_key": "codex-7c078647892e",
+      "source_fingerprint": "53648:1779102326489995529",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-05-13-019e3ac2-edd4-71b1-8bec-9e1665e9e9dc.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-27-18-019e3ad7-22ca-79b3-bfd4-f75bf99b2713.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725861412,
+      "session_id": "019e3ad7-22ca-79b3-bfd4-f75bf99b2713",
+      "session_key": "codex-c876e89d3f65",
+      "source_fingerprint": "54541:1779103698358263966",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/18/rollout-2026-05-18T19-27-18-019e3ad7-22ca-79b3-bfd4-f75bf99b2713.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/19/rollout-2026-05-19T15-23-03-019e3f1d-e0c1-7b72-a9bf-baad692c304b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 8071,
+      "last_scan_at": 1780725862025,
+      "session_id": "019e3f1d-e0c1-7b72-a9bf-baad692c304b",
+      "session_key": "codex-9adf72dff49d",
+      "source_fingerprint": "45455065:1779282426326423624",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/19/rollout-2026-05-19T15-23-03-019e3f1d-e0c1-7b72-a9bf-baad692c304b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T11-07-20-019e435a-2120-7332-a0f8-13b84bbc2359.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2294,
+      "last_scan_at": 1780725862113,
+      "session_id": "019e435a-2120-7332-a0f8-13b84bbc2359",
+      "session_key": "codex-5ccf1724106f",
+      "source_fingerprint": "5682924:1779265313967317912",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T11-07-20-019e435a-2120-7332-a0f8-13b84bbc2359.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T11-30-46-019e436f-9402-7bf0-a9af-f1c3fcd209ee.jsonl": {
+      "last_error": "",
+      "last_processed_line": 703,
+      "last_scan_at": 1780725862142,
+      "session_id": "019e436f-9402-7bf0-a9af-f1c3fcd209ee",
+      "session_key": "codex-f4b8706f8a10",
+      "source_fingerprint": "1616989:1779438550810446730",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T11-30-46-019e436f-9402-7bf0-a9af-f1c3fcd209ee.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T18-09-49-019e44dc-ec30-72b3-97d9-6a97bf9c5697.jsonl": {
+      "last_error": "",
+      "last_processed_line": 383,
+      "last_scan_at": 1780725862156,
+      "session_id": "019e44dc-ec30-72b3-97d9-6a97bf9c5697",
+      "session_key": "codex-30ef0655a4e4",
+      "source_fingerprint": "688959:1779272328078009343",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T18-09-49-019e44dc-ec30-72b3-97d9-6a97bf9c5697.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T20-13-33-019e454e-347c-7b00-88f1-5d333e26583c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 14,
+      "last_scan_at": 1780725862157,
+      "session_id": "019e454e-347c-7b00-88f1-5d333e26583c",
+      "session_key": "codex-e9e6d3e9747b",
+      "source_fingerprint": "57848:1779279228197716826",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/20/rollout-2026-05-20T20-13-33-019e454e-347c-7b00-88f1-5d333e26583c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T00-32-08-019e463a-f134-7172-9abd-6fdf754cfdb9.jsonl": {
+      "last_error": "",
+      "last_processed_line": 20,
+      "last_scan_at": 1780725862159,
+      "session_id": "019e463a-f134-7172-9abd-6fdf754cfdb9",
+      "session_key": "codex-5f1d999d6ca6",
+      "source_fingerprint": "48433:1779295157061123042",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T00-32-08-019e463a-f134-7172-9abd-6fdf754cfdb9.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T00-46-11-019e4647-cffa-77b1-bf7b-f9ebd4fb56c5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 45,
+      "last_scan_at": 1780725862162,
+      "session_id": "019e4647-cffa-77b1-bf7b-f9ebd4fb56c5",
+      "session_key": "codex-be8bbba82bd4",
+      "source_fingerprint": "115703:1779295881847831985",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T00-46-11-019e4647-cffa-77b1-bf7b-f9ebd4fb56c5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-10-46-019e465e-4f27-7563-a34a-fe2d255279c5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 44,
+      "last_scan_at": 1780725862165,
+      "session_id": "019e465e-4f27-7563-a34a-fe2d255279c5",
+      "session_key": "codex-8a9725d51268",
+      "source_fingerprint": "120757:1779297149831681626",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-10-46-019e465e-4f27-7563-a34a-fe2d255279c5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-12-06-019e465f-883e-7581-8315-15b56c37d7ee.jsonl": {
+      "last_error": "",
+      "last_processed_line": 73,
+      "last_scan_at": 1780725862168,
+      "session_id": "019e465f-883e-7581-8315-15b56c37d7ee",
+      "session_key": "codex-342aaf87e342",
+      "source_fingerprint": "161480:1779297464217659437",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-12-06-019e465f-883e-7581-8315-15b56c37d7ee.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-14-02-019e4661-4f02-7e11-b255-7b96a5e0c23c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 13,
+      "last_scan_at": 1780725862170,
+      "session_id": "019e4661-4f02-7e11-b255-7b96a5e0c23c",
+      "session_key": "codex-e6019eb07bcc",
+      "source_fingerprint": "56013:1779297249577171840",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-14-02-019e4661-4f02-7e11-b255-7b96a5e0c23c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-15-01-019e4662-34ab-7bb1-bef9-e0eb54bf9646.jsonl": {
+      "last_error": "",
+      "last_processed_line": 33,
+      "last_scan_at": 1780725862172,
+      "session_id": "019e4662-34ab-7bb1-bef9-e0eb54bf9646",
+      "session_key": "codex-fbd68670396b",
+      "source_fingerprint": "89530:1779297392557495313",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-15-01-019e4662-34ab-7bb1-bef9-e0eb54bf9646.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-17-04-019e4664-12eb-7af1-b0f2-3cb724fdac2b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 113,
+      "last_scan_at": 1780725862177,
+      "session_id": "019e4664-12eb-7af1-b0f2-3cb724fdac2b",
+      "session_key": "codex-0a75974dbc58",
+      "source_fingerprint": "239468:1779297739480989572",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T01-17-04-019e4664-12eb-7af1-b0f2-3cb724fdac2b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T10-46-05-019e486d-0701-7620-a2bd-c452652e6246.jsonl": {
+      "last_error": "",
+      "last_processed_line": 34,
+      "last_scan_at": 1780725862179,
+      "session_id": "019e486d-0701-7620-a2bd-c452652e6246",
+      "session_key": "codex-4a10ac1354a7",
+      "source_fingerprint": "80752:1779331636627128690",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T10-46-05-019e486d-0701-7620-a2bd-c452652e6246.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T11-14-04-019e4886-a681-7ff1-bc2e-120845d43b6a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 174,
+      "last_scan_at": 1780725862192,
+      "session_id": "019e4886-a681-7ff1-bc2e-120845d43b6a",
+      "session_key": "codex-a545ec174f16",
+      "source_fingerprint": "1305297:1779353500465743428",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T11-14-04-019e4886-a681-7ff1-bc2e-120845d43b6a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T11-23-34-019e488f-588b-71a0-a5fe-777f7e6c9af2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 13,
+      "last_scan_at": 1780725862198,
+      "session_id": "019e488f-588b-71a0-a5fe-777f7e6c9af2",
+      "session_key": "codex-c3bba3e76c03",
+      "source_fingerprint": "89053:1779333819340901251",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T11-23-34-019e488f-588b-71a0-a5fe-777f7e6c9af2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T17-05-28-019e49c8-5d2c-7b21-b11b-dfbbe472e9c4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 6180,
+      "last_scan_at": 1780725862476,
+      "session_id": "019e49c8-5d2c-7b21-b11b-dfbbe472e9c4",
+      "session_key": "codex-2755ab3bb006",
+      "source_fingerprint": "26139424:1779486319971358831",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/21/rollout-2026-05-21T17-05-28-019e49c8-5d2c-7b21-b11b-dfbbe472e9c4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-12-46-019e4dab-d1eb-7531-ad9a-bc9d30176503.jsonl": {
+      "last_error": "",
+      "last_processed_line": 71,
+      "last_scan_at": 1780725862481,
+      "session_id": "019e4dab-d1eb-7531-ad9a-bc9d30176503",
+      "session_key": "codex-ceb77d682b27",
+      "source_fingerprint": "195287:1779420233528477435",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-12-46-019e4dab-d1eb-7531-ad9a-bc9d30176503.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-14-17-019e4dad-3703-79d0-b1f5-21805cedab21.jsonl": {
+      "last_error": "",
+      "last_processed_line": 13,
+      "last_scan_at": 1780725862483,
+      "session_id": "019e4dad-3703-79d0-b1f5-21805cedab21",
+      "session_key": "codex-6a2e4274d043",
+      "source_fingerprint": "112704:1779419663104163224",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-14-17-019e4dad-3703-79d0-b1f5-21805cedab21.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-59-32-019e4dd6-a400-76b0-8c23-9b9a3c2d4c84.jsonl": {
+      "last_error": "",
+      "last_processed_line": 748,
+      "last_scan_at": 1780725862511,
+      "session_id": "019e4dd6-a400-76b0-8c23-9b9a3c2d4c84",
+      "session_key": "codex-60ca27be3f40",
+      "source_fingerprint": "1305710:1779439313023440257",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T11-59-32-019e4dd6-a400-76b0-8c23-9b9a3c2d4c84.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T12-23-44-019e4dec-cb43-7082-a15c-7d63c686464a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 34,
+      "last_scan_at": 1780725862513,
+      "session_id": "019e4dec-cb43-7082-a15c-7d63c686464a",
+      "session_key": "codex-5a1cd577d87e",
+      "source_fingerprint": "97675:1779423908881500650",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T12-23-44-019e4dec-cb43-7082-a15c-7d63c686464a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T18-02-59-019e4f23-62f7-70c1-978c-58129f040b9d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 234,
+      "last_scan_at": 1780725862525,
+      "session_id": "019e4f23-62f7-70c1-978c-58129f040b9d",
+      "session_key": "codex-c31ac9bf93c7",
+      "source_fingerprint": "906432:1779458266473270587",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T18-02-59-019e4f23-62f7-70c1-978c-58129f040b9d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T21-46-25-019e4fef-efcc-7aa1-883f-969ebba2f481.jsonl": {
+      "last_error": "",
+      "last_processed_line": 44,
+      "last_scan_at": 1780725862528,
+      "session_id": "019e4fef-efcc-7aa1-883f-969ebba2f481",
+      "session_key": "codex-a061b3c514fe",
+      "source_fingerprint": "172517:1779457778557869915",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T21-46-25-019e4fef-efcc-7aa1-883f-969ebba2f481.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T21-52-51-019e4ff5-d4f3-73d0-8bad-4d4ed7e5b966.jsonl": {
+      "last_error": "",
+      "last_processed_line": 24,
+      "last_scan_at": 1780725862530,
+      "session_id": "019e4ff5-d4f3-73d0-8bad-4d4ed7e5b966",
+      "session_key": "codex-403aed0b0b61",
+      "source_fingerprint": "143733:1779458109336072682",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T21-52-51-019e4ff5-d4f3-73d0-8bad-4d4ed7e5b966.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T22-02-20-019e4ffe-8509-7b50-a35f-f4125e5fcbdd.jsonl": {
+      "last_error": "",
+      "last_processed_line": 293,
+      "last_scan_at": 1780725862565,
+      "session_id": "019e4ffe-8509-7b50-a35f-f4125e5fcbdd",
+      "session_key": "codex-843bda5c4c66",
+      "source_fingerprint": "1089446:1779469591991532808",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T22-02-20-019e4ffe-8509-7b50-a35f-f4125e5fcbdd.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T23-07-29-019e503a-2aaf-7973-aa34-2799ae398f12.jsonl": {
+      "last_error": "",
+      "last_processed_line": 252,
+      "last_scan_at": 1780725862575,
+      "session_id": "019e503a-2aaf-7973-aa34-2799ae398f12",
+      "session_key": "codex-4545be7e8bfd",
+      "source_fingerprint": "695201:1779465162872764352",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/22/rollout-2026-05-22T23-07-29-019e503a-2aaf-7973-aa34-2799ae398f12.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T00-22-05-019e507e-74d1-7990-9db8-26c875ce820d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 13,
+      "last_scan_at": 1780725862577,
+      "session_id": "019e507e-74d1-7990-9db8-26c875ce820d",
+      "session_key": "codex-d53a14b8741f",
+      "source_fingerprint": "105026:1779466930240198498",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T00-22-05-019e507e-74d1-7990-9db8-26c875ce820d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T00-50-06-019e5098-1a78-7872-8e3a-487d73c1ebd6.jsonl": {
+      "last_error": "",
+      "last_processed_line": 409,
+      "last_scan_at": 1780725862595,
+      "session_id": "019e5098-1a78-7872-8e3a-487d73c1ebd6",
+      "session_key": "codex-f1f7d4ed9eae",
+      "source_fingerprint": "916803:1779497874486527138",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T00-50-06-019e5098-1a78-7872-8e3a-487d73c1ebd6.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T08-59-18-019e5257-fac1-7741-8cea-50dbca74a693.jsonl": {
+      "last_error": "",
+      "last_processed_line": 41,
+      "last_scan_at": 1780725862599,
+      "session_id": "019e5257-fac1-7741-8cea-50dbca74a693",
+      "session_key": "codex-146cb4e57eed",
+      "source_fingerprint": "188936:1779498039294799214",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T08-59-18-019e5257-fac1-7741-8cea-50dbca74a693.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-34-46-019e542f-ea0b-7882-8897-483016b4fc1b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1618,
+      "last_scan_at": 1780725862660,
+      "session_id": "019e542f-ea0b-7882-8897-483016b4fc1b",
+      "session_key": "codex-1df0767ac133",
+      "source_fingerprint": "2413847:1779531752591565308",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-34-46-019e542f-ea0b-7882-8897-483016b4fc1b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-44-44-019e5439-09ce-7f52-8840-14d21c28aa6f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 514,
+      "last_scan_at": 1780725862679,
+      "session_id": "019e5439-09ce-7f52-8840-14d21c28aa6f",
+      "session_key": "codex-948679ef6b56",
+      "source_fingerprint": "1416867:1779543655374995164",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-44-44-019e5439-09ce-7f52-8840-14d21c28aa6f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-45-00-019e5439-45ed-7131-9734-186fc86e8f6c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 94,
+      "last_scan_at": 1780725862685,
+      "session_id": "019e5439-45ed-7131-9734-186fc86e8f6c",
+      "session_key": "codex-7970cc4d9e89",
+      "source_fingerprint": "457453:1779530466491904911",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-45-00-019e5439-45ed-7131-9734-186fc86e8f6c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-56-37-019e5443-ebaf-7eb0-9f17-88ef24bc4a66.jsonl": {
+      "last_error": "",
+      "last_processed_line": 190,
+      "last_scan_at": 1780725862693,
+      "session_id": "019e5443-ebaf-7eb0-9f17-88ef24bc4a66",
+      "session_key": "codex-5e078f4c8109",
+      "source_fingerprint": "475273:1779531573213221112",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T17-56-37-019e5443-ebaf-7eb0-9f17-88ef24bc4a66.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-13-55-019e54f8-8bbe-7e91-b3f2-91e56e0e0e95.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725862695,
+      "session_id": "019e54f8-8bbe-7e91-b3f2-91e56e0e0e95",
+      "session_key": "codex-c7e564d048b4",
+      "source_fingerprint": "35271:1779542038576476726",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-13-55-019e54f8-8bbe-7e91-b3f2-91e56e0e0e95.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-45-28-019e5515-7076-7ee0-89a7-ef25451cf7f1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 67,
+      "last_scan_at": 1780725862699,
+      "session_id": "019e5515-7076-7ee0-89a7-ef25451cf7f1",
+      "session_key": "codex-aa204cb8dc54",
+      "source_fingerprint": "257516:1779544477952458143",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-45-28-019e5515-7076-7ee0-89a7-ef25451cf7f1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-47-17-019e5517-17ff-7b81-bba8-a5d1b6c93e10.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862701,
+      "session_id": "019e5517-17ff-7b81-bba8-a5d1b6c93e10",
+      "session_key": "codex-e0c743a9034e",
+      "source_fingerprint": "88430:1779544064997019484",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-47-17-019e5517-17ff-7b81-bba8-a5d1b6c93e10.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-52-38-019e551b-fe96-7700-8ae9-e2935922902e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725862703,
+      "session_id": "019e551b-fe96-7700-8ae9-e2935922902e",
+      "session_key": "codex-305b43b877c5",
+      "source_fingerprint": "95185:1779544364149784591",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-52-38-019e551b-fe96-7700-8ae9-e2935922902e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-54-16-019e551d-7d39-75f0-ab9d-72689becf241.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725862705,
+      "session_id": "019e551d-7d39-75f0-ab9d-72689becf241",
+      "session_key": "codex-9edb8b1d02d3",
+      "source_fingerprint": "109373:1779544465360729414",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-54-16-019e551d-7d39-75f0-ab9d-72689becf241.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-54-57-019e551e-1c0f-7971-8a3d-62dbb83680a5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862707,
+      "session_id": "019e551e-1c0f-7971-8a3d-62dbb83680a5",
+      "session_key": "codex-2f8119653115",
+      "source_fingerprint": "71559:1779544512492095625",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-54-57-019e551e-1c0f-7971-8a3d-62dbb83680a5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-56-12-019e551f-420a-7103-9ab7-5773afb2ce8d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 295,
+      "last_scan_at": 1780725862719,
+      "session_id": "019e551f-420a-7103-9ab7-5773afb2ce8d",
+      "session_key": "codex-4c4067c9be10",
+      "source_fingerprint": "833278:1779546954965273661",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-56-12-019e551f-420a-7103-9ab7-5773afb2ce8d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-57-05-019e5520-111c-7571-8e4c-ffb1b70eb0bb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 138,
+      "last_scan_at": 1780725862725,
+      "session_id": "019e5520-111c-7571-8e4c-ffb1b70eb0bb",
+      "session_key": "codex-a4e7df2e554f",
+      "source_fingerprint": "379677:1779545662902432961",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-57-05-019e5520-111c-7571-8e4c-ffb1b70eb0bb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-58-15-019e5521-2291-77e0-8253-ffb4445b2a23.jsonl": {
+      "last_error": "",
+      "last_processed_line": 156,
+      "last_scan_at": 1780725862734,
+      "session_id": "019e5521-2291-77e0-8253-ffb4445b2a23",
+      "session_key": "codex-bf042ab57a4f",
+      "source_fingerprint": "668127:1779546313346887827",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T21-58-15-019e5521-2291-77e0-8253-ffb4445b2a23.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-02-17-019e5524-d451-7da2-aee1-f5a996e4ab18.jsonl": {
+      "last_error": "",
+      "last_processed_line": 32,
+      "last_scan_at": 1780725862737,
+      "session_id": "019e5524-d451-7da2-aee1-f5a996e4ab18",
+      "session_key": "codex-bc047f2f28e7",
+      "source_fingerprint": "164600:1779553699429312411",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-02-17-019e5524-d451-7da2-aee1-f5a996e4ab18.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-07-48-019e5529-df58-7740-b504-403267b03b04.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725862739,
+      "session_id": "019e5529-df58-7740-b504-403267b03b04",
+      "session_key": "codex-a9e434eb682d",
+      "source_fingerprint": "82523:1779545276396195290",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-07-48-019e5529-df58-7740-b504-403267b03b04.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-10-18-019e552c-2b99-7113-967a-3e7c74ac7195.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862741,
+      "session_id": "019e552c-2b99-7113-967a-3e7c74ac7195",
+      "session_key": "codex-29bf5e2f92e9",
+      "source_fingerprint": "132093:1779545965751636651",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-10-18-019e552c-2b99-7113-967a-3e7c74ac7195.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-10-25-019e552c-462f-7fe3-85ac-c2c459ed45f3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 103,
+      "last_scan_at": 1780725862747,
+      "session_id": "019e552c-462f-7fe3-85ac-c2c459ed45f3",
+      "session_key": "codex-8c9ad942e75f",
+      "source_fingerprint": "358327:1779546782678299654",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-10-25-019e552c-462f-7fe3-85ac-c2c459ed45f3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-28-45-019e553d-0e9a-7562-9d50-f7d04f09799f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 417,
+      "last_scan_at": 1780725862765,
+      "session_id": "019e553d-0e9a-7562-9d50-f7d04f09799f",
+      "session_key": "codex-d3ce8d094ab6",
+      "source_fingerprint": "1738004:1779587591855953980",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/23/rollout-2026-05-23T22-28-45-019e553d-0e9a-7562-9d50-f7d04f09799f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T09-55-44-019e57b2-0267-7e31-b986-1f41ee916099.jsonl": {
+      "last_error": "",
+      "last_processed_line": 190,
+      "last_scan_at": 1780725862771,
+      "session_id": "019e57b2-0267-7e31-b986-1f41ee916099",
+      "session_key": "codex-a311f8e15d59",
+      "source_fingerprint": "385807:1779588718474272810",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T09-55-44-019e57b2-0267-7e31-b986-1f41ee916099.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-09-02-019e5a1a-6dfd-7b03-9a4f-107935b723be.jsonl": {
+      "last_error": "",
+      "last_processed_line": 201,
+      "last_scan_at": 1780725862783,
+      "session_id": "019e5a1a-6dfd-7b03-9a4f-107935b723be",
+      "session_key": "codex-9596cd280574",
+      "source_fingerprint": "952512:1779631264507292992",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-09-02-019e5a1a-6dfd-7b03-9a4f-107935b723be.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-44-21-019e5a3a-c3e6-7dc0-9b18-21a36e9c8a77.jsonl": {
+      "last_error": "",
+      "last_processed_line": 94,
+      "last_scan_at": 1780725862789,
+      "session_id": "019e5a3a-c3e6-7dc0-9b18-21a36e9c8a77",
+      "session_key": "codex-208cd1680bf6",
+      "source_fingerprint": "394348:1779631335105073191",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-44-21-019e5a3a-c3e6-7dc0-9b18-21a36e9c8a77.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-52-23-019e5a42-1ded-7051-9806-0a491fb3234f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 16,
+      "last_scan_at": 1780725862792,
+      "session_id": "019e5a42-1ded-7051-9806-0a491fb3234f",
+      "session_key": "codex-b36e8c242c33",
+      "source_fingerprint": "125351:1779630750558916266",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-52-23-019e5a42-1ded-7051-9806-0a491fb3234f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-53-02-019e5a42-b891-7212-a915-95b30d5c9164.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862794,
+      "session_id": "019e5a42-b891-7212-a915-95b30d5c9164",
+      "session_key": "codex-867a2063f75e",
+      "source_fingerprint": "102475:1779630848546335782",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T21-53-02-019e5a42-b891-7212-a915-95b30d5c9164.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-05-12-019e5a4d-db1c-79d1-ac61-ff804d1eff00.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862796,
+      "session_id": "019e5a4d-db1c-79d1-ac61-ff804d1eff00",
+      "session_key": "codex-7074082bcd41",
+      "source_fingerprint": "119795:1779631588901265355",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-05-12-019e5a4d-db1c-79d1-ac61-ff804d1eff00.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-07-26-019e5a4f-e77c-72d0-9b0e-aafea7d196e8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725862798,
+      "session_id": "019e5a4f-e77c-72d0-9b0e-aafea7d196e8",
+      "session_key": "codex-e0b541fe20fb",
+      "source_fingerprint": "51069:1779631666785553385",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-07-26-019e5a4f-e77c-72d0-9b0e-aafea7d196e8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-09-16-019e5a51-9401-7cb2-ad8f-dc972a0a4372.jsonl": {
+      "last_error": "",
+      "last_processed_line": 26,
+      "last_scan_at": 1780725862800,
+      "session_id": "019e5a51-9401-7cb2-ad8f-dc972a0a4372",
+      "session_key": "codex-eb483fcd6c19",
+      "source_fingerprint": "77411:1779631796420946397",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-09-16-019e5a51-9401-7cb2-ad8f-dc972a0a4372.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-16-44-019e5a58-6a9b-78a2-a09f-75d24aa870c4.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725862802,
+      "session_id": "019e5a58-6a9b-78a2-a09f-75d24aa870c4",
+      "session_key": "codex-9ea0dbea9adc",
+      "source_fingerprint": "103249:1779632269233197771",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-16-44-019e5a58-6a9b-78a2-a09f-75d24aa870c4.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-18-10-019e5a59-bc61-7152-a6e0-4d54ff4427c6.jsonl": {
+      "last_error": "",
+      "last_processed_line": 31,
+      "last_scan_at": 1780725862806,
+      "session_id": "019e5a59-bc61-7152-a6e0-4d54ff4427c6",
+      "session_key": "codex-f614f1889a77",
+      "source_fingerprint": "222000:1779632856612302965",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-18-10-019e5a59-bc61-7152-a6e0-4d54ff4427c6.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-36-51-019e5a6a-d718-7201-b3c1-0f9ee7745311.jsonl": {
+      "last_error": "",
+      "last_processed_line": 921,
+      "last_scan_at": 1780725862841,
+      "session_id": "019e5a6a-d718-7201-b3c1-0f9ee7745311",
+      "session_key": "codex-76ad99062fab",
+      "source_fingerprint": "3029273:1779642912543707743",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-36-51-019e5a6a-d718-7201-b3c1-0f9ee7745311.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-49-04-019e5a76-03df-7343-ba27-e3a701770a75.jsonl": {
+      "last_error": "",
+      "last_processed_line": 31,
+      "last_scan_at": 1780725862843,
+      "session_id": "019e5a76-03df-7343-ba27-e3a701770a75",
+      "session_key": "codex-830a40d6c8da",
+      "source_fingerprint": "133906:1779634204371520014",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-49-04-019e5a76-03df-7343-ba27-e3a701770a75.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-55-40-019e5a7c-0e6c-7833-95c2-83b90318fd21.jsonl": {
+      "last_error": "",
+      "last_processed_line": 365,
+      "last_scan_at": 1780725862858,
+      "session_id": "019e5a7c-0e6c-7833-95c2-83b90318fd21",
+      "session_key": "codex-5561d1d9913c",
+      "source_fingerprint": "1197936:1779638712158940579",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/24/rollout-2026-05-24T22-55-40-019e5a7c-0e6c-7833-95c2-83b90318fd21.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T14-08-21-019e5dbf-a7c6-7893-9105-10ed9998309c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9777,
+      "last_scan_at": 1780725863227,
+      "session_id": "019e5dbf-a7c6-7893-9105-10ed9998309c",
+      "session_key": "codex-bfd3afa5b73e",
+      "source_fingerprint": "15697407:1779777280209208623",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T14-08-21-019e5dbf-a7c6-7893-9105-10ed9998309c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-07-14-019e5df5-9033-7021-8a25-3b7bad48b34c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 316,
+      "last_scan_at": 1780725863241,
+      "session_id": "019e5df5-9033-7021-8a25-3b7bad48b34c",
+      "session_key": "codex-bd04398f5242",
+      "source_fingerprint": "632133:1779693505501100043",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-07-14-019e5df5-9033-7021-8a25-3b7bad48b34c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-15-24-019e5dfd-07ee-76c2-9692-e195adfd9383.jsonl": {
+      "last_error": "",
+      "last_processed_line": 40,
+      "last_scan_at": 1780725863243,
+      "session_id": "019e5dfd-07ee-76c2-9692-e195adfd9383",
+      "session_key": "codex-7e8d64485d7f",
+      "source_fingerprint": "151948:1779693483350756626",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-15-24-019e5dfd-07ee-76c2-9692-e195adfd9383.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-54-35-019e5e20-e6cf-7b82-afab-9af2fc21da9f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 617,
+      "last_scan_at": 1780725863267,
+      "session_id": "019e5e20-e6cf-7b82-afab-9af2fc21da9f",
+      "session_key": "codex-0cd9a9e36a41",
+      "source_fingerprint": "1221720:1779697269767710865",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T15-54-35-019e5e20-e6cf-7b82-afab-9af2fc21da9f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-05-14-019e5e2a-a74f-7891-9e28-d8c0fa4929d3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725863268,
+      "session_id": "019e5e2a-a74f-7891-9e28-d8c0fa4929d3",
+      "session_key": "codex-a697ca9dc070",
+      "source_fingerprint": "51480:1779696320793108073",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-05-14-019e5e2a-a74f-7891-9e28-d8c0fa4929d3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-08-03-019e5e2d-3e71-7183-8525-3467b855024f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 4066,
+      "last_scan_at": 1780725863424,
+      "session_id": "019e5e2d-3e71-7183-8525-3467b855024f",
+      "session_key": "codex-ce5b24d008bf",
+      "source_fingerprint": "7401605:1780048411614190307",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-08-03-019e5e2d-3e71-7183-8525-3467b855024f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-12-15-019e5e31-1364-72a0-8bb3-2be9171dbfb8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 40,
+      "last_scan_at": 1780725863427,
+      "session_id": "019e5e31-1364-72a0-8bb3-2be9171dbfb8",
+      "session_key": "codex-120cc0eb9e69",
+      "source_fingerprint": "177688:1779697977963001595",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T16-12-15-019e5e31-1364-72a0-8bb3-2be9171dbfb8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T18-42-39-019e5eba-c6b6-7893-ac85-4128430e97ff.jsonl": {
+      "last_error": "",
+      "last_processed_line": 542,
+      "last_scan_at": 1780725863452,
+      "session_id": "019e5eba-c6b6-7893-ac85-4128430e97ff",
+      "session_key": "codex-d021ca84e84b",
+      "source_fingerprint": "2616445:1779729842870499127",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T18-42-39-019e5eba-c6b6-7893-ac85-4128430e97ff.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T21-01-02-019e5f39-7714-7dc1-91b3-7dfa55ef4c81.jsonl": {
+      "last_error": "",
+      "last_processed_line": 579,
+      "last_scan_at": 1780725863522,
+      "session_id": "019e5f39-7714-7dc1-91b3-7dfa55ef4c81",
+      "session_key": "codex-79702d79b3ce",
+      "source_fingerprint": "1338409:1779715448889461857",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T21-01-02-019e5f39-7714-7dc1-91b3-7dfa55ef4c81.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T22-00-39-019e5f70-0c13-70d3-8905-f37a31fa7c5f.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725863524,
+      "session_id": "019e5f70-0c13-70d3-8905-f37a31fa7c5f",
+      "session_key": "codex-f37e7ef74288",
+      "source_fingerprint": "58032:1779717648481153136",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/25/rollout-2026-05-25T22-00-39-019e5f70-0c13-70d3-8905-f37a31fa7c5f.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T00-22-30-019e5ff1-eb2f-7163-8504-feff2663b404.jsonl": {
+      "last_error": "",
+      "last_processed_line": 31,
+      "last_scan_at": 1780725863528,
+      "session_id": "019e5ff1-eb2f-7163-8504-feff2663b404",
+      "session_key": "codex-092ebb94490b",
+      "source_fingerprint": "302413:1779777184518514453",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T00-22-30-019e5ff1-eb2f-7163-8504-feff2663b404.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T11-09-32-019e6242-4a38-7973-9aa4-d4066ac343e0.jsonl": {
+      "last_error": "",
+      "last_processed_line": 580,
+      "last_scan_at": 1780725863554,
+      "session_id": "019e6242-4a38-7973-9aa4-d4066ac343e0",
+      "session_key": "codex-080f55172270",
+      "source_fingerprint": "2612854:1779785183040290445",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T11-09-32-019e6242-4a38-7973-9aa4-d4066ac343e0.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T11-14-58-019e6247-45eb-7da0-b79b-3aa1beba1834.jsonl": {
+      "last_error": "",
+      "last_processed_line": 233,
+      "last_scan_at": 1780725863562,
+      "session_id": "019e6247-45eb-7da0-b79b-3aa1beba1834",
+      "session_key": "codex-7240250a17f7",
+      "source_fingerprint": "547443:1779766313279336116",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T11-14-58-019e6247-45eb-7da0-b79b-3aa1beba1834.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T12-02-02-019e6272-5b94-7352-a5d1-35bdfca9f8b7.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725863564,
+      "session_id": "019e6272-5b94-7352-a5d1-35bdfca9f8b7",
+      "session_key": "codex-1e57f67d5f88",
+      "source_fingerprint": "118589:1779768355967722688",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T12-02-02-019e6272-5b94-7352-a5d1-35bdfca9f8b7.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-14-28-019e62eb-9b48-7b32-b67d-0c4e13d0361b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 515,
+      "last_scan_at": 1780725863583,
+      "session_id": "019e62eb-9b48-7b32-b67d-0c4e13d0361b",
+      "session_key": "codex-ea95e0a5ef22",
+      "source_fingerprint": "702168:1779780731155153316",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-14-28-019e62eb-9b48-7b32-b67d-0c4e13d0361b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-17-03-019e62ed-f7be-7c41-841b-a7799decdd4e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 102,
+      "last_scan_at": 1780725863589,
+      "session_id": "019e62ed-f7be-7c41-841b-a7799decdd4e",
+      "session_key": "codex-87932bff76b1",
+      "source_fingerprint": "497313:1779780663737484064",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-17-03-019e62ed-f7be-7c41-841b-a7799decdd4e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-55-26-019e6311-1c7f-7863-ae77-87a801391324.jsonl": {
+      "last_error": "",
+      "last_processed_line": 425,
+      "last_scan_at": 1780725863607,
+      "session_id": "019e6311-1c7f-7863-ae77-87a801391324",
+      "session_key": "codex-0c62c9f3b5c5",
+      "source_fingerprint": "646843:1779779177930694798",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T14-55-26-019e6311-1c7f-7863-ae77-87a801391324.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T15-21-23-019e6328-ddd6-7002-86bd-8a8bcad4bca2.jsonl": {
+      "last_error": "",
+      "last_processed_line": 893,
+      "last_scan_at": 1780725863642,
+      "session_id": "019e6328-ddd6-7002-86bd-8a8bcad4bca2",
+      "session_key": "codex-a753b6cdcd52",
+      "source_fingerprint": "1613506:1779809821509903111",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T15-21-23-019e6328-ddd6-7002-86bd-8a8bcad4bca2.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T16-00-52-019e634d-0643-7040-9a38-8cbf92d4ca57.jsonl": {
+      "last_error": "",
+      "last_processed_line": 59,
+      "last_scan_at": 1780725863649,
+      "session_id": "019e634d-0643-7040-9a38-8cbf92d4ca57",
+      "session_key": "codex-481c6b6cc93f",
+      "source_fingerprint": "298606:1779784537459395769",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T16-00-52-019e634d-0643-7040-9a38-8cbf92d4ca57.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T16-48-43-019e6378-d37b-7cc1-8035-c39f92f9cf80.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725863671,
+      "session_id": "019e6378-d37b-7cc1-8035-c39f92f9cf80",
+      "session_key": "codex-a25075f92557",
+      "source_fingerprint": "98003:1779785328366072324",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T16-48-43-019e6378-d37b-7cc1-8035-c39f92f9cf80.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T17-10-52-019e638d-1c43-7940-ad9f-5985edf7d326.jsonl": {
+      "last_error": "",
+      "last_processed_line": 22,
+      "last_scan_at": 1780725863694,
+      "session_id": "019e638d-1c43-7940-ad9f-5985edf7d326",
+      "session_key": "codex-36a1dd84aa15",
+      "source_fingerprint": "94441:1779786709118615766",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T17-10-52-019e638d-1c43-7940-ad9f-5985edf7d326.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T19-21-56-019e6405-1b1d-7a00-bbbc-b352dfdfbe1e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 353,
+      "last_scan_at": 1780725863743,
+      "session_id": "019e6405-1b1d-7a00-bbbc-b352dfdfbe1e",
+      "session_key": "codex-4fe2bff6b7cb",
+      "source_fingerprint": "1317001:1779805590350496459",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T19-21-56-019e6405-1b1d-7a00-bbbc-b352dfdfbe1e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T23-09-00-019e64d4-fb5f-7311-86c5-f5accdced57c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 4,
+      "last_scan_at": 1780725863744,
+      "session_id": "019e64d4-fb5f-7311-86c5-f5accdced57c",
+      "session_key": "codex-cd5b3c0ab799",
+      "source_fingerprint": "28048:1779808142940374896",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/26/rollout-2026-05-26T23-09-00-019e64d4-fb5f-7311-86c5-f5accdced57c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/27/rollout-2026-05-27T00-15-49-019e6512-27b6-76a0-9d20-8ebba1970e72.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725863747,
+      "session_id": "019e6512-27b6-76a0-9d20-8ebba1970e72",
+      "session_key": "codex-898dc28697f6",
+      "source_fingerprint": "107697:1779812152744533109",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/27/rollout-2026-05-27T00-15-49-019e6512-27b6-76a0-9d20-8ebba1970e72.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T10-43-46-019e6c77-6db5-77f0-bf5d-7c54dc9d8d30.jsonl": {
+      "last_error": "",
+      "last_processed_line": 190,
+      "last_scan_at": 1780725863756,
+      "session_id": "019e6c77-6db5-77f0-bf5d-7c54dc9d8d30",
+      "session_key": "codex-146808bc3fd0",
+      "source_fingerprint": "594174:1779937173763909725",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T10-43-46-019e6c77-6db5-77f0-bf5d-7c54dc9d8d30.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T21-52-14-019e6edb-6bd0-7fb0-9b44-f4f7e73b76c7.jsonl": {
+      "last_error": "",
+      "last_processed_line": 352,
+      "last_scan_at": 1780725863773,
+      "session_id": "019e6edb-6bd0-7fb0-9b44-f4f7e73b76c7",
+      "session_key": "codex-4ebcd43590e1",
+      "source_fingerprint": "785496:1779977346145338314",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T21-52-14-019e6edb-6bd0-7fb0-9b44-f4f7e73b76c7.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-00-42-019e6ee3-2da5-7e52-8efd-699249614d80.jsonl": {
+      "last_error": "",
+      "last_processed_line": 225,
+      "last_scan_at": 1780725863783,
+      "session_id": "019e6ee3-2da5-7e52-8efd-699249614d80",
+      "session_key": "codex-39a421ba1b1f",
+      "source_fingerprint": "440975:1779977229366420354",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-00-42-019e6ee3-2da5-7e52-8efd-699249614d80.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-11-27-019e6eed-040c-7b53-a1c4-7c37ddd425b1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 727,
+      "last_scan_at": 1780725863815,
+      "session_id": "019e6eed-040c-7b53-a1c4-7c37ddd425b1",
+      "session_key": "codex-d146284f85a0",
+      "source_fingerprint": "3293027:1779980329534882122",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-11-27-019e6eed-040c-7b53-a1c4-7c37ddd425b1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-25-29-019e6ef9-de0f-7c71-9822-4b3fed280c61.jsonl": {
+      "last_error": "",
+      "last_processed_line": 931,
+      "last_scan_at": 1780725863859,
+      "session_id": "019e6ef9-de0f-7c71-9822-4b3fed280c61",
+      "session_key": "codex-65a86f401399",
+      "source_fingerprint": "1642763:1779986313523892034",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-25-29-019e6ef9-de0f-7c71-9822-4b3fed280c61.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-54-53-019e6f14-c972-73f2-a94d-acc735354de8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1677,
+      "last_scan_at": 1780725863920,
+      "session_id": "019e6f14-c972-73f2-a94d-acc735354de8",
+      "session_key": "codex-3abc4090835a",
+      "source_fingerprint": "2729385:1779986339446861123",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T22-54-53-019e6f14-c972-73f2-a94d-acc735354de8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T23-01-05-019e6f1a-75cb-76c2-9806-f38cfe32bf7d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 760,
+      "last_scan_at": 1780725863949,
+      "session_id": "019e6f1a-75cb-76c2-9806-f38cfe32bf7d",
+      "session_key": "codex-a630b0e1a96e",
+      "source_fingerprint": "1503788:1779985443843794998",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/28/rollout-2026-05-28T23-01-05-019e6f1a-75cb-76c2-9806-f38cfe32bf7d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T00-04-42-019e6f54-b189-7052-b8c3-932d2bedd550.jsonl": {
+      "last_error": "",
+      "last_processed_line": 249,
+      "last_scan_at": 1780725863962,
+      "session_id": "019e6f54-b189-7052-b8c3-932d2bedd550",
+      "session_key": "codex-4964aa1fae76",
+      "source_fingerprint": "429973:1779984561962634152",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T00-04-42-019e6f54-b189-7052-b8c3-932d2bedd550.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T10-34-52-019e7195-a258-7e03-8362-78fcc130e5a6.jsonl": {
+      "last_error": "",
+      "last_processed_line": 480,
+      "last_scan_at": 1780725863980,
+      "session_id": "019e7195-a258-7e03-8362-78fcc130e5a6",
+      "session_key": "codex-8e887650bb11",
+      "source_fingerprint": "806541:1780022711585429410",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T10-34-52-019e7195-a258-7e03-8362-78fcc130e5a6.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T10-35-07-019e7195-dee9-71c1-9ed8-21c3685dd527.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2297,
+      "last_scan_at": 1780725864064,
+      "session_id": "019e7195-dee9-71c1-9ed8-21c3685dd527",
+      "session_key": "codex-034d076ee51b",
+      "source_fingerprint": "5018853:1780034060230903668",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T10-35-07-019e7195-dee9-71c1-9ed8-21c3685dd527.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T11-08-44-019e71b4-a2e5-7b42-8301-aaa9027fa300.jsonl": {
+      "last_error": "",
+      "last_processed_line": 67,
+      "last_scan_at": 1780725864067,
+      "session_id": "019e71b4-a2e5-7b42-8301-aaa9027fa300",
+      "session_key": "codex-d52d1d5147bf",
+      "source_fingerprint": "191152:1780025248211601479",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T11-08-44-019e71b4-a2e5-7b42-8301-aaa9027fa300.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T12-14-22-019e71f0-b9d2-7e90-8c0b-529820b24ba3.jsonl": {
+      "last_error": "",
+      "last_processed_line": 230,
+      "last_scan_at": 1780725864138,
+      "session_id": "019e71f0-b9d2-7e90-8c0b-529820b24ba3",
+      "session_key": "codex-fd666d3ffee4",
+      "source_fingerprint": "307149:1780028685351967099",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T12-14-22-019e71f0-b9d2-7e90-8c0b-529820b24ba3.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T13-44-40-019e7243-67c7-7121-b293-c020275712f8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 131,
+      "last_scan_at": 1780725864144,
+      "session_id": "019e7243-67c7-7121-b293-c020275712f8",
+      "session_key": "codex-f1a071ba8424",
+      "source_fingerprint": "258401:1780033653461962772",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T13-44-40-019e7243-67c7-7121-b293-c020275712f8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-04-50-019e7255-db9e-7862-8138-1c4d584f55e8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 97,
+      "last_scan_at": 1780725864150,
+      "session_id": "019e7255-db9e-7862-8138-1c4d584f55e8",
+      "session_key": "codex-112451f09205",
+      "source_fingerprint": "226802:1780034794608641541",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-04-50-019e7255-db9e-7862-8138-1c4d584f55e8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-12-37-019e725c-fce0-7631-ae2d-8269f9e57b2a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 307,
+      "last_scan_at": 1780725864165,
+      "session_id": "019e725c-fce0-7631-ae2d-8269f9e57b2a",
+      "session_key": "codex-e83688d19b4d",
+      "source_fingerprint": "1463472:1780035597689890590",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-12-37-019e725c-fce0-7631-ae2d-8269f9e57b2a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-38-44-019e7274-e664-7742-980f-56fb6eb68f40.jsonl": {
+      "last_error": "",
+      "last_processed_line": 31,
+      "last_scan_at": 1780725864167,
+      "session_id": "019e7274-e664-7742-980f-56fb6eb68f40",
+      "session_key": "codex-a531cd49155b",
+      "source_fingerprint": "71215:1780036758578695633",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-38-44-019e7274-e664-7742-980f-56fb6eb68f40.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-39-49-019e7275-e6a0-7083-87d9-304a0617b9de.jsonl": {
+      "last_error": "",
+      "last_processed_line": 71,
+      "last_scan_at": 1780725864171,
+      "session_id": "019e7275-e6a0-7083-87d9-304a0617b9de",
+      "session_key": "codex-3c51d3834c4f",
+      "source_fingerprint": "137332:1780036888226680458",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T14-39-49-019e7275-e6a0-7083-87d9-304a0617b9de.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-37-23-019e72aa-998f-7583-98ba-2996181711d8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 9,
+      "last_scan_at": 1780725864172,
+      "session_id": "019e72aa-998f-7583-98ba-2996181711d8",
+      "session_key": "codex-bed9794087f3",
+      "source_fingerprint": "54868:1780040326898712661",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-37-23-019e72aa-998f-7583-98ba-2996181711d8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-38-51-019e72ab-effe-7213-8c22-26d570582397.jsonl": {
+      "last_error": "",
+      "last_processed_line": 42,
+      "last_scan_at": 1780725864175,
+      "session_id": "019e72ab-effe-7213-8c22-26d570582397",
+      "session_key": "codex-6c8e20dc48e3",
+      "source_fingerprint": "99706:1780040414326521864",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-38-51-019e72ab-effe-7213-8c22-26d570582397.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-44-02-019e72b0-af48-7522-ba62-13ddab5dfc8e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 26,
+      "last_scan_at": 1780725864177,
+      "session_id": "019e72b0-af48-7522-ba62-13ddab5dfc8e",
+      "session_key": "codex-2bb25a55a091",
+      "source_fingerprint": "68679:1780040655652145999",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T15-44-02-019e72b0-af48-7522-ba62-13ddab5dfc8e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T17-25-17-019e730d-62b8-7ac2-a0c3-b7e26d222a3b.jsonl": {
+      "last_error": "",
+      "last_processed_line": 97,
+      "last_scan_at": 1780725864182,
+      "session_id": "019e730d-62b8-7ac2-a0c3-b7e26d222a3b",
+      "session_key": "codex-7a64f4fb3d8a",
+      "source_fingerprint": "276383:1780046805370071974",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T17-25-17-019e730d-62b8-7ac2-a0c3-b7e26d222a3b.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T17-54-10-019e7327-d4b4-7090-84e8-6ec01ab4259d.jsonl": {
+      "last_error": "",
+      "last_processed_line": 150,
+      "last_scan_at": 1780725864189,
+      "session_id": "019e7327-d4b4-7090-84e8-6ec01ab4259d",
+      "session_key": "codex-8fececdbbdd4",
+      "source_fingerprint": "353243:1780048697388171590",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T17-54-10-019e7327-d4b4-7090-84e8-6ec01ab4259d.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T18-06-38-019e7333-3ccd-7a81-bdc7-fd10a762f599.jsonl": {
+      "last_error": "",
+      "last_processed_line": 148,
+      "last_scan_at": 1780725864195,
+      "session_id": "019e7333-3ccd-7a81-bdc7-fd10a762f599",
+      "session_key": "codex-36813d449234",
+      "source_fingerprint": "299908:1780049377803597265",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T18-06-38-019e7333-3ccd-7a81-bdc7-fd10a762f599.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T18-25-55-019e7344-e532-7b71-98c7-f9ab8a858b9a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 296,
+      "last_scan_at": 1780725864206,
+      "session_id": "019e7344-e532-7b71-98c7-f9ab8a858b9a",
+      "session_key": "codex-09b6c39b403a",
+      "source_fingerprint": "547542:1780050753114987183",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/05/29/rollout-2026-05-29T18-25-55-019e7344-e532-7b71-98c7-f9ab8a858b9a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T10-45-20-019e8638-a97d-7ea1-90aa-367f0ac9be17.jsonl": {
+      "last_error": "",
+      "last_processed_line": 969,
+      "last_scan_at": 1780725864241,
+      "session_id": "019e8638-a97d-7ea1-90aa-367f0ac9be17",
+      "session_key": "codex-84b65b48260f",
+      "source_fingerprint": "1877277:1780380545505547322",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T10-45-20-019e8638-a97d-7ea1-90aa-367f0ac9be17.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T13-41-47-019e86da-317e-7993-90db-02c2aee4dc8a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 344,
+      "last_scan_at": 1780725864256,
+      "session_id": "019e86da-317e-7993-90db-02c2aee4dc8a",
+      "session_key": "codex-f7ace4c6aa84",
+      "source_fingerprint": "810692:1780379420426706921",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T13-41-47-019e86da-317e-7993-90db-02c2aee4dc8a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T14-04-35-019e86ef-140a-7640-92fb-10f08b848ed9.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1984,
+      "last_scan_at": 1780725864325,
+      "session_id": "019e86ef-140a-7640-92fb-10f08b848ed9",
+      "session_key": "codex-e5b243b110df",
+      "source_fingerprint": "3702823:1780387759733366848",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T14-04-35-019e86ef-140a-7640-92fb-10f08b848ed9.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-30-45-019e873d-f6eb-7321-b26d-3470635a9562.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2086,
+      "last_scan_at": 1780725864398,
+      "session_id": "019e873d-f6eb-7321-b26d-3470635a9562",
+      "session_key": "codex-0420228d5122",
+      "source_fingerprint": "4244868:1780398187801457441",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-30-45-019e873d-f6eb-7321-b26d-3470635a9562.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-32-29-019e873f-8e94-78d1-b5c9-0f3179d2541a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 300,
+      "last_scan_at": 1780725864412,
+      "session_id": "019e873f-8e94-78d1-b5c9-0f3179d2541a",
+      "session_key": "codex-e5b7377c3e8c",
+      "source_fingerprint": "701799:1780386068108070320",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-32-29-019e873f-8e94-78d1-b5c9-0f3179d2541a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-33-26-019e8740-6cfc-72c1-a265-309d06a56b99.jsonl": {
+      "last_error": "",
+      "last_processed_line": 216,
+      "last_scan_at": 1780725864422,
+      "session_id": "019e8740-6cfc-72c1-a265-309d06a56b99",
+      "session_key": "codex-c467247ddfab",
+      "source_fingerprint": "533661:1780386043492097150",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-33-26-019e8740-6cfc-72c1-a265-309d06a56b99.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-48-55-019e874e-98a1-7403-8c6e-0d23697bd137.jsonl": {
+      "last_error": "",
+      "last_processed_line": 121,
+      "last_scan_at": 1780725864429,
+      "session_id": "019e874e-98a1-7403-8c6e-0d23697bd137",
+      "session_key": "codex-e5e4e2cd9ec7",
+      "source_fingerprint": "352294:1780386855895407510",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-48-55-019e874e-98a1-7403-8c6e-0d23697bd137.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-49-31-019e874f-26c0-7d23-8f79-fae94dd59e33.jsonl": {
+      "last_error": "",
+      "last_processed_line": 207,
+      "last_scan_at": 1780725864438,
+      "session_id": "019e874f-26c0-7d23-8f79-fae94dd59e33",
+      "session_key": "codex-9c53c8947faa",
+      "source_fingerprint": "605934:1780387170948834442",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-49-31-019e874f-26c0-7d23-8f79-fae94dd59e33.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-56-39-019e8755-abf6-7ce2-b4a5-b035e3767f86.jsonl": {
+      "last_error": "",
+      "last_processed_line": 97,
+      "last_scan_at": 1780725864444,
+      "session_id": "019e8755-abf6-7ce2-b4a5-b035e3767f86",
+      "session_key": "codex-a168de2e1f1d",
+      "source_fingerprint": "213352:1780387146931013925",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T15-56-39-019e8755-abf6-7ce2-b4a5-b035e3767f86.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-03-32-019e875b-fbb6-7091-abcd-960603d0a9f8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 156,
+      "last_scan_at": 1780725864450,
+      "session_id": "019e875b-fbb6-7091-abcd-960603d0a9f8",
+      "session_key": "codex-a63f3d2c4600",
+      "source_fingerprint": "375419:1780393325875089281",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-03-32-019e875b-fbb6-7091-abcd-960603d0a9f8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-10-57-019e8762-c362-7da1-9f4a-4679b4e0bef8.jsonl": {
+      "last_error": "",
+      "last_processed_line": 69,
+      "last_scan_at": 1780725864454,
+      "session_id": "019e8762-c362-7da1-9f4a-4679b4e0bef8",
+      "session_key": "codex-8b7f53ee7c38",
+      "source_fingerprint": "256872:1780387954108093196",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-10-57-019e8762-c362-7da1-9f4a-4679b4e0bef8.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-16-19-019e8767-ad46-7610-aef1-cb0e79a59aa7.jsonl": {
+      "last_error": "",
+      "last_processed_line": 59,
+      "last_scan_at": 1780725864459,
+      "session_id": "019e8767-ad46-7610-aef1-cb0e79a59aa7",
+      "session_key": "codex-b3207a57137d",
+      "source_fingerprint": "164086:1780388304190538960",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T16-16-19-019e8767-ad46-7610-aef1-cb0e79a59aa7.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-04-44-019e87ca-f1a1-7b22-ae35-b7a9680eb103.jsonl": {
+      "last_error": "",
+      "last_processed_line": 371,
+      "last_scan_at": 1780725864471,
+      "session_id": "019e87ca-f1a1-7b22-ae35-b7a9680eb103",
+      "session_key": "codex-845b708dc3e4",
+      "source_fingerprint": "656680:1780396389188907400",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-04-44-019e87ca-f1a1-7b22-ae35-b7a9680eb103.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-41-53-019e87ec-f430-7fc2-b1ee-78eed110d976.jsonl": {
+      "last_error": "",
+      "last_processed_line": 192,
+      "last_scan_at": 1780725864480,
+      "session_id": "019e87ec-f430-7fc2-b1ee-78eed110d976",
+      "session_key": "codex-d0ff7bb6b923",
+      "source_fingerprint": "561243:1780397726042077737",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-41-53-019e87ec-f430-7fc2-b1ee-78eed110d976.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-56-21-019e87fa-3124-7fc0-9a7c-49c2af038947.jsonl": {
+      "last_error": "",
+      "last_processed_line": 98,
+      "last_scan_at": 1780725864484,
+      "session_id": "019e87fa-3124-7fc0-9a7c-49c2af038947",
+      "session_key": "codex-86c0bcc959e6",
+      "source_fingerprint": "210743:1780398138008013168",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T18-56-21-019e87fa-3124-7fc0-9a7c-49c2af038947.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-02-51-019e8800-274b-79e0-afe4-32c261ff1b99.jsonl": {
+      "last_error": "",
+      "last_processed_line": 231,
+      "last_scan_at": 1780725864492,
+      "session_id": "019e8800-274b-79e0-afe4-32c261ff1b99",
+      "session_key": "codex-fff281230b2d",
+      "source_fingerprint": "349709:1780398772116879986",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-02-51-019e8800-274b-79e0-afe4-32c261ff1b99.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-07-43-019e8804-9bc1-7ad0-b430-bd125cc69d92.jsonl": {
+      "last_error": "",
+      "last_processed_line": 40,
+      "last_scan_at": 1780725864495,
+      "session_id": "019e8804-9bc1-7ad0-b430-bd125cc69d92",
+      "session_key": "codex-f29377f1b803",
+      "source_fingerprint": "196773:1780398755284214174",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-07-43-019e8804-9bc1-7ad0-b430-bd125cc69d92.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-20-50-019e8810-9e02-70a2-b933-4e93a07244df.jsonl": {
+      "last_error": "",
+      "last_processed_line": 48,
+      "last_scan_at": 1780725864498,
+      "session_id": "019e8810-9e02-70a2-b933-4e93a07244df",
+      "session_key": "codex-e3cd5c206f54",
+      "source_fingerprint": "197314:1780399662109871208",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/02/rollout-2026-06-02T19-20-50-019e8810-9e02-70a2-b933-4e93a07244df.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-26-25-019e8cce-36d0-7d40-b601-e1a53ffa48e5.jsonl": {
+      "last_error": "",
+      "last_processed_line": 225,
+      "last_scan_at": 1780725864510,
+      "session_id": "019e8cce-36d0-7d40-b601-e1a53ffa48e5",
+      "session_key": "codex-8c466469737a",
+      "source_fingerprint": "917691:1780479113577006143",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-26-25-019e8cce-36d0-7d40-b601-e1a53ffa48e5.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-32-13-019e8cd3-892e-7e11-9029-63d80b617a66.jsonl": {
+      "last_error": "",
+      "last_processed_line": 401,
+      "last_scan_at": 1780725864527,
+      "session_id": "019e8cd3-892e-7e11-9029-63d80b617a66",
+      "session_key": "codex-ad7c231c0f5b",
+      "source_fingerprint": "967230:1780480550528766214",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-32-13-019e8cd3-892e-7e11-9029-63d80b617a66.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-32-45-019e8cd4-0386-79f0-a257-cd0440180573.jsonl": {
+      "last_error": "",
+      "last_processed_line": 20,
+      "last_scan_at": 1780725864529,
+      "session_id": "019e8cd4-0386-79f0-a257-cd0440180573",
+      "session_key": "codex-35b0f0e053a3",
+      "source_fingerprint": "80950:1780479189897985201",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-32-45-019e8cd4-0386-79f0-a257-cd0440180573.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-36-58-019e8cd7-e126-7193-9a70-24857b4fc05e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 253,
+      "last_scan_at": 1780725864539,
+      "session_id": "019e8cd7-e126-7193-9a70-24857b4fc05e",
+      "session_key": "codex-d3528a3d375f",
+      "source_fingerprint": "514885:1780479820901948416",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-36-58-019e8cd7-e126-7193-9a70-24857b4fc05e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-40-31-019e8cdb-2276-7d32-8a89-e123e9687811.jsonl": {
+      "last_error": "",
+      "last_processed_line": 12,
+      "last_scan_at": 1780725864541,
+      "session_id": "019e8cdb-2276-7d32-8a89-e123e9687811",
+      "session_key": "codex-7f727cab5919",
+      "source_fingerprint": "87069:1780479653062905177",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/03/rollout-2026-06-03T17-40-31-019e8cdb-2276-7d32-8a89-e123e9687811.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/05/rollout-2026-06-05T13-53-00-019e9657-8d4f-7190-ae46-c414e72caf0a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 171,
+      "last_scan_at": 1780725864548,
+      "session_id": "019e9657-8d4f-7190-ae46-c414e72caf0a",
+      "session_key": "codex-35b728dfefea",
+      "source_fingerprint": "419327:1780640612904713712",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/05/rollout-2026-06-05T13-53-00-019e9657-8d4f-7190-ae46-c414e72caf0a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T10-22-51-019e9abd-838e-70b2-a27e-8e11f79e9afb.jsonl": {
+      "last_error": "",
+      "last_processed_line": 68,
+      "last_scan_at": 1780725864552,
+      "session_id": "019e9abd-838e-70b2-a27e-8e11f79e9afb",
+      "session_key": "codex-46f11591faec",
+      "source_fingerprint": "148139:1780712872252826958",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T10-22-51-019e9abd-838e-70b2-a27e-8e11f79e9afb.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T13-09-21-019e9b55-f044-7963-b353-301736f706c1.jsonl": {
+      "last_error": "",
+      "last_processed_line": 534,
+      "last_scan_at": 1780725864571,
+      "session_id": "019e9b55-f044-7963-b353-301736f706c1",
+      "session_key": "codex-04e38d08d826",
+      "source_fingerprint": "1105147:1780725775008037802",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T13-09-21-019e9b55-f044-7963-b353-301736f706c1.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T13-39-42-019e9b71-bb05-70a1-98fa-2c6b94254e2e.jsonl": {
+      "last_error": "",
+      "last_processed_line": 402,
+      "last_scan_at": 1780725864588,
+      "session_id": "019e9b71-bb05-70a1-98fa-2c6b94254e2e",
+      "session_key": "codex-d6bc1ce310f6",
+      "source_fingerprint": "804941:1780725705808784721",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T13-39-42-019e9b71-bb05-70a1-98fa-2c6b94254e2e.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T14-24-05-019e9b9a-5b51-76b3-956b-566ed3c76e2c.jsonl": {
+      "last_error": "",
+      "last_processed_line": 1499,
+      "last_scan_at": 1780732139475,
+      "session_id": "019e9b9a-5b51-76b3-956b-566ed3c76e2c",
+      "session_key": "codex-1512390d2956",
+      "source_fingerprint": "5222749:1780731311490729063",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T14-24-05-019e9b9a-5b51-76b3-956b-566ed3c76e2c.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-39-19-019e9bdf-3e42-7681-a32b-dbc9d6737b73.jsonl": {
+      "last_error": "",
+      "last_processed_line": 143,
+      "last_scan_at": 1780732139482,
+      "session_id": "019e9bdf-3e42-7681-a32b-dbc9d6737b73",
+      "session_key": "codex-dc828291dfeb",
+      "source_fingerprint": "380108:1780731837843572965",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-39-19-019e9bdf-3e42-7681-a32b-dbc9d6737b73.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-40-36-019e9be0-6a39-7341-bafc-ff074d7b3570.jsonl": {
+      "last_error": "",
+      "last_processed_line": 126,
+      "last_scan_at": 1780732139490,
+      "session_id": "019e9be0-6a39-7341-bafc-ff074d7b3570",
+      "session_key": "codex-7f2c238a6d00",
+      "source_fingerprint": "936776:1780731920655153537",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-40-36-019e9be0-6a39-7341-bafc-ff074d7b3570.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-42-13-019e9be1-e51c-7433-a01d-d4522cb2f66a.jsonl": {
+      "last_error": "",
+      "last_processed_line": 140,
+      "last_scan_at": 1780732139497,
+      "session_id": "019e9be1-e51c-7433-a01d-d4522cb2f66a",
+      "session_key": "codex-3664ebeb9499",
+      "source_fingerprint": "308649:1780731985979353494",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.codex/sessions/2026/06/06/rollout-2026-06-06T15-42-13-019e9be1-e51c-7433-a01d-d4522cb2f66a.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.radar/test_sources/chat_skill_processor/claude/projects/-tmp-radar-claude/session.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2,
+      "last_scan_at": 1780728996203,
+      "session_id": "claude-session-1",
+      "session_key": "claude-bee5e10f739d",
+      "source_fingerprint": "676:1780728996198690453",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_skill_processor/claude/projects/-tmp-radar-claude/session.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.radar/test_sources/chat_skill_processor/codex/sessions/2026/06/06/session.jsonl": {
+      "last_error": "",
+      "last_processed_line": 5,
+      "last_scan_at": 1780728996203,
+      "session_id": "codex-session-1",
+      "session_key": "codex-88c403cb3963",
+      "source_fingerprint": "863:1780728996197831779",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_skill_processor/codex/sessions/2026/06/06/session.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl": {
+      "last_error": "",
+      "last_processed_line": 2,
+      "last_scan_at": 1780721301751,
+      "session_id": "claude-session-1",
+      "session_key": "claude-e92cfd281c4e",
+      "source_fingerprint": "676:1780721301746139785",
+      "source_type": "claude_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/claude/projects/-tmp-radar-claude/session.jsonl"
+    },
+    "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl": {
+      "last_error": "",
+      "last_processed_line": 5,
+      "last_scan_at": 1780721301750,
+      "session_id": "codex-session-1",
+      "session_key": "codex-22b990307ba9",
+      "source_fingerprint": "863:1780721301745373321",
+      "source_type": "codex_jsonl",
+      "source_uri": "file:///Users/yunyuan.yu/.radar/test_sources/chat_transcript/codex/sessions/2026/06/06/session.jsonl"
+    }
+  },
+  "version": 1
+}
