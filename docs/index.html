@@ -70,7 +70,7 @@
       .nav-inner {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         min-height: 76px;
         gap: 24px;
       }
@@ -103,6 +103,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        margin-left: 4px;
         color: var(--muted);
         font-size: 14px;
       }
@@ -115,6 +116,34 @@
       .nav-links a:hover {
         background: rgba(255, 255, 255, 0.08);
         color: var(--text);
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .nav-actions a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        color: var(--text);
+      }
+
+      .nav-actions a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--cyan);
+      }
+
+      .nav-actions svg {
+        width: 15px;
+        height: 15px;
       }
 
       .hero {
@@ -952,11 +981,21 @@
           width: 100%;
           flex-wrap: wrap;
           gap: 6px;
+          margin-left: 0;
           overflow: visible;
           padding-bottom: 0;
         }
 
         .nav-links a {
+          padding: 8px 10px;
+        }
+
+        .nav-actions {
+          width: 100%;
+          margin-left: 0;
+        }
+
+        .nav-actions a {
           padding: 8px 10px;
         }
 
@@ -1022,6 +1061,15 @@
             <a href="#user-guide">User Guide</a>
             <a href="#developer-guide">Developer Guide</a>
             <a href="#local-setup">Local Setup</a>
+          </div>
+          <div class="nav-actions" aria-label="External links">
+            <a href="https://github.com/shotnothing/radar" target="_blank" rel="noreferrer">
+              <span>GitHub</span>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 7h10v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </a>
           </div>
         </div>
       </nav>
